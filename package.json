@@ -1,0 +1,15 @@
+{
+  "name": "aristurtle-website",
+  "version": "1.0.0",
+  "description": "Aristurtle Racing Team Website - Static HTML/CSS/JS",
+  "scripts": {
+    "build": "tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --minify",
+    "watch": "tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --watch",
+    "dev": "tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --watch --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0"
+  }
+}

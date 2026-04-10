@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<link href="../dist/css/style.css" rel="stylesheet"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-secondary selection:text-on-secondary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-neutral-950/80 backdrop-blur-md tonal-shift">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-none">
+<a href="index.html" class="flex items-center"><img src="assets/images/logo-horizontal.png" alt="Aristurtle Logo" class="h-24 w-auto"/></a>
+<!-- Desktop Links -->
+<div class="hidden md:flex gap-6 items-center">
+<a class="font-['Space_Grotesk'] tracking-tight font-bold uppercase text-base text-neutral-400 hover:text-white transition-colors" href="index.html">Home</a>
+<a class="font-['Space_Grotesk'] tracking-tight font-bold uppercase text-base text-neutral-400 hover:text-white transition-colors" href="about.html">About</a>
+<a class="font-['Space_Grotesk'] tracking-tight font-bold uppercase text-base text-neutral-400 hover:text-white transition-colors" href="garage.html">Cars</a>
+<a class="font-['Space_Grotesk'] tracking-tight font-bold uppercase text-base text-secondary border-b-2 border-secondary pb-1" href="divisions.html">Divisions</a>
+<a class="font-['Space_Grotesk'] tracking-tight font-bold uppercase text-base text-neutral-400 hover:text-white transition-colors" href="partners.html">Partners</a>
+<a class="font-['Space_Grotesk'] tracking-tight font-bold uppercase text-base text-neutral-400 hover:text-white transition-colors" href="recruitment.html">Recruitment</a>
+<a class="font-['Space_Grotesk'] tracking-tight font-bold uppercase text-base text-neutral-400 hover:text-white transition-colors" href="contact.html">Contact</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-['Space_Grotesk'] tracking-tight font-bold uppercase text-base text-secondary">EN/GR</span>
+    <button class="md:hidden text-white mobile-menu-btn"><span class="material-symbols-outlined">menu</span></button>
+<button class="md:hidden text-white"><span class="material-symbols-outlined">menu</span></button>
+</div>
+</div>
+  <button class="md:hidden text-white mobile-menu-btn"><span class="material-symbols-outlined">menu</span></button>
+</div>
+<!-- Mobile Menu -->
+<div class="mobile-menu hidden md:hidden bg-neutral-950 border-t border-outline-variant/20">
+  <div class="flex flex-col px-6 py-3 gap-3">
+    <a class="text-neutral-400 hover:text-white uppercase text-base" href="index.html">Home</a>
+    <a class="text-neutral-400 hover:text-white uppercase text-base" href="about.html">About</a>
+    <a class="text-neutral-400 hover:text-white uppercase text-base" href="garage.html">Cars</a>
+    <a class="text-neutral-400 hover:text-white uppercase text-base" href="divisions.html">Divisions</a>
+    <a class="text-neutral-400 hover:text-white uppercase text-base" href="partners.html">Partners</a>
+    <a class="text-neutral-400 hover:text-white uppercase text-base" href="recruitment.html">Recruitment</a>
+    <a class="text-neutral-400 hover:text-white uppercase text-base" href="contact.html">Contact</a>
+  </div>
+</div>
+</nav>
+<main class="pt-24 min-h-screen">
+<!-- Hero Section -->
+<section class="relative px-8 py-24 md:py-32 overflow-hidden bg-surface">
+<div class="absolute inset-0 z-0 opacity-20">
+<div class="absolute inset-0 bg-gradient-to-r from-background to-transparent z-10"></div>
+<img alt="Engineering Workshop" class="w-full h-full object-cover grayscale" src="assets/images/IMG_7764_2-scaled-1200x644.jpg"/>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-highest mb-6 rounded-sm">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-[10px] font-bold tracking-widest uppercase text-tertiary font-label">ENGINEERING EXCELLENCE</span>
+</div>
+<h1 class="text-6xl md:text-8xl font-black font-headline tracking-tighter text-white mb-8 leading-[0.9]">
+                    OUR<br/><span class="text-secondary bg-clip-text">DIVISIONS</span>
+</h1>
+<p class="max-w-2xl text-lg md:text-xl text-on-surface-variant leading-relaxed">
+                    A multi-disciplinary collective of engineers, researchers, and strategists. Eight specialized units synchronized to redefine the limits of electric and autonomous performance.
+                </p>
+</div>
+</section>
+<!-- Divisions Grid -->
+<section class="px-8 pb-32">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Aerodynamics -->
+<div class="bg-surface-container-low p-8 group border-b-2 border-transparent hover:border-secondary transition-all duration-300">
+<div class="mb-12">
+<span class="material-symbols-outlined text-4xl text-secondary" data-icon="air">air</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-4 tracking-tight uppercase">Aerodynamics</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Optimization of the car's drag and downforce through CFD simulations and wind tunnel testing.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">CFD ANALYSIS</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">WING DESIGN</span>
+</div>
+</div>
+</div>
+<!-- Autonomous System -->
+<div class="bg-surface-container-low p-8 group border-b-2 border-transparent hover:border-tertiary transition-all duration-300">
+<div class="mb-12">
+<span class="material-symbols-outlined text-4xl text-tertiary" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-4 tracking-tight uppercase">Autonomous System</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Developing the brains of our driverless vehicle using SLAM, perception, and path planning algorithms.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">LIDAR SLAM</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">AI PERCEPTION</span>
+</div>
+</div>
+</div>
+<!-- Chassis & Ergonomics -->
+<div class="bg-surface-container-low p-8 group border-b-2 border-transparent hover:border-secondary transition-all duration-300">
+<div class="mb-12">
+<span class="material-symbols-outlined text-4xl text-secondary" data-icon="architecture">architecture</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-4 tracking-tight uppercase">Chassis &amp; Ergonomics</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Designing the structural frame and the interface between the human driver and the machine.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">FEA ANALYSIS</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">DRIVER INTERFACE</span>
+</div>
+</div>
+</div>
+<!-- Composite Materials -->
+<div class="bg-surface-container-low p-8 group border-b-2 border-transparent hover:border-secondary transition-all duration-300">
+<div class="mb-12">
+<span class="material-symbols-outlined text-4xl text-secondary" data-icon="layers">layers</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-4 tracking-tight uppercase">Composite Materials</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Manufacturing high-strength, lightweight carbon fiber components for maximum structural efficiency.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">CFRP CURING</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">MONOCOQUE</span>
+</div>
+</div>
+</div>
+<!-- High Voltage -->
+<div class="bg-surface-container-low p-8 group border-b-2 border-transparent hover:border-secondary transition-all duration-300">
+<div class="mb-12">
+<span class="material-symbols-outlined text-4xl text-secondary" data-icon="bolt">bolt</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-4 tracking-tight uppercase">High Voltage</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">The powerhouse. Designing the battery pack, inverter systems, and electric motor integration.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">BATTERY MGMT</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">POWERTRAIN</span>
+</div>
+</div>
+</div>
+<!-- Low Voltage -->
+<div class="bg-surface-container-low p-8 group border-b-2 border-transparent hover:border-secondary transition-all duration-300">
+<div class="mb-12">
+<span class="material-symbols-outlined text-4xl text-secondary" data-icon="settings_input_component">settings_input_component</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-4 tracking-tight uppercase">Low Voltage</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Managing the electronic nervous system, telemetry, sensors, and PCB design.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">PCB DESIGN</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">TELEMETRY</span>
+</div>
+</div>
+</div>
+<!-- Operations -->
+<div class="bg-surface-container-low p-8 group border-b-2 border-transparent hover:border-secondary transition-all duration-300">
+<div class="mb-12">
+<span class="material-symbols-outlined text-4xl text-secondary" data-icon="campaign">campaign</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-4 tracking-tight uppercase">Operations</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">The logistics core. Managing sponsorships, media, branding, and strategic planning.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">SPONSORSHIP</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">STRATEGIC PR</span>
+</div>
+</div>
+</div>
+<!-- Suspension -->
+<div class="bg-surface-container-low p-8 group border-b-2 border-transparent hover:border-secondary transition-all duration-300">
+<div class="mb-12">
+<span class="material-symbols-outlined text-4xl text-secondary" data-icon="tune">tune</span>
+</div>
+<h3 class="text-2xl font-bold font-headline mb-4 tracking-tight uppercase">Suspension</h3>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Dynamic handling and mechanical grip. Designing dampers, uprights, and kinematic geometry.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">KINEMATICS</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1 h-1 bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary font-label">TIRE MODELING</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical Integration Section -->
+<section class="bg-surface-container-lowest py-24 px-8">
+<div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+<div class="w-full lg:w-1/2">
+<h2 class="text-4xl font-bold font-headline tracking-tighter text-white mb-6 uppercase">Inter-Divisional<br/><span class="text-tertiary">Synchronization</span></h2>
+<p class="text-on-surface-variant leading-relaxed mb-8">Engineering a Formula Student car is not about individual components; it is about the seamless integration of systems. Our divisions work in a constant feedback loop, where data from one unit drives the design decisions of the next.</p>
+<div class="grid grid-cols-2 gap-8">
+<div class="border-l-2 border-secondary pl-6">
+<div class="text-3xl font-black text-white font-headline">200+</div>
+<div class="text-[10px] font-bold tracking-widest text-secondary uppercase font-label">TEAM MEMBERS</div>
+</div>
+<div class="border-l-2 border-tertiary pl-6">
+<div class="text-3xl font-black text-white font-headline">50GB+</div>
+<div class="text-[10px] font-bold tracking-widest text-tertiary uppercase font-label">DAILY TELEMETRY</div>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-1/2 aspect-video bg-surface-container-high relative overflow-hidden rounded-sm">
+<img alt="Technical Schematics" class="w-full h-full object-cover opacity-40 grayscale" data-alt="close-up of complex mechanical engineering blueprints and cad models on multiple monitors in a dark room with neon blue highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu-DwvrwR8Q_6GdXoLOt6Z_EJdGdCAsDiFTmMqheGWRC-yr9ES_LH1Mppk55jb9oSOpHzemF6UKiNDPi3ztMrU-sK9AmIMY9vvC1weGmkmU-gLl9V6eaBnY7MZRN1gVU4EM96uVHPBSgVI0TyXaisi5sh3DL0Sf5obo6DpydYOAo9u0cvbstx7muUENLM7MgqqTdqsr4zTs4DuRlrdvdjY6IzrTgcHzR-CCum9AZjmy7rDG6_MLWgi0BqCM3rX8YzyIPATrNjqIVvw"/>
+<div class="absolute inset-0 glass-panel flex items-center justify-center">
+<div class="text-center p-8 border border-outline-variant/20">
+<span class="material-symbols-outlined text-tertiary text-5xl mb-4" data-icon="terminal">terminal</span>
+<div class="text-xs font-mono text-tertiary opacity-70">SYSTEM_CHECK: OPTIMAL</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-neutral-900 border-t border-neutral-800">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-12 py-16 w-full">
+<div class="space-y-6">
+<div class="text-xl font-black text-white font-headline tracking-tighter">ARISTURTLE</div>
+<p class="text-xs font-label leading-relaxed text-neutral-500 uppercase tracking-widest">
+                    Pioneering Electric and Autonomous Racing in Greece.
+                </p>
+</div>
+<div class="space-y-4">
+<h4 class="text-white text-sm font-bold uppercase font-headline">Explore</h4>
+<nav class="flex flex-col gap-2">
+<a class="text-xs font-label tracking-widest uppercase text-neutral-500 hover:text-cyan-400 transition-colors" href="https://instagram.com/aristurtle" target="_blank" rel="noopener">Instagram</a>
+<a class="text-xs font-label tracking-widest uppercase text-neutral-500 hover:text-cyan-400 transition-colors" href="https://linkedin.com/company/aristurtle" target="_blank" rel="noopener">LinkedIn</a>
+<a class="text-xs font-label tracking-widest uppercase text-neutral-500 hover:text-cyan-400 transition-colors" href="https://facebook.com/aristurtle" target="_blank" rel="noopener">Facebook</a>
+<a class="text-xs font-label tracking-widest uppercase text-neutral-500 hover:text-cyan-400 transition-colors" href="https://youtube.com/@aristurtle" target="_blank" rel="noopener">YouTube</a>
+</nav>
+</div>
+<div class="space-y-4">
+<h4 class="text-white text-sm font-bold uppercase font-headline">Resources</h4>
+<nav class="flex flex-col gap-2">
+<a class="text-xs font-label tracking-widest uppercase text-neutral-500 hover:text-cyan-400 transition-colors" href="#">Privacy Policy</a>
+<a class="text-xs font-label tracking-widest uppercase text-neutral-500 hover:text-cyan-400 transition-colors" href="#">Technical Specs</a>
+</nav>
+</div>
+<div class="space-y-6">
+<h4 class="text-white text-sm font-bold uppercase font-headline">Join The Paddock</h4>
+<div class="relative">
+<input class="w-full bg-transparent border-b border-outline py-2 text-xs font-label tracking-widest text-white focus:outline-none focus:border-secondary transition-all" placeholder="EMAIL ADDRESS" type="email"/>
+<button class="absolute right-0 bottom-2 text-secondary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="px-12 py-8 border-t border-neutral-800 flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="text-[10px] font-label leading-relaxed text-neutral-500 tracking-widest uppercase">© 2024 ARISTURTLE RACING TEAM. ENGINEERED FOR VELOCITY.</span>
+<div class="flex gap-4">
+<span class="text-[10px] font-label text-orange-500 tracking-widest uppercase">STATUS: RACEREADY</span>
+</div>
+</div>
+</footer>
+<script src="js/main.js"></script>
+<script src="js/main.js"></script>
+</body></html>
