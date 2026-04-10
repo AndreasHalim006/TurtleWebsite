@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global scale: 1.5x browser zoom equivalent */
+html {
+  font-size: 1.5rem;
+}
+
+/* Sponsor logo scroll animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-16.666%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 50s linear infinite;
+  width: max-content;
+  will-change: transform;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
 /* Custom styles for Aristurtle website */
 
 /* Material Symbols */
