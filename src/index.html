@@ -80,75 +80,100 @@
 </div>
 </div>
 </section>
-<section class="py-24 bg-surface relative">
-<div class="max-w-7xl mx-auto px-8">
-<div class="text-center mb-16">
-<h2 class="font-headline text-4xl md:text-5xl font-bold text-white mb-4 uppercase tracking-tight">Built From Scratch. <span class="text-secondary">Engineered to Win.</span></h2>
-<p class="text-on-surface-variant text-lg max-w-2xl mx-auto">Every component designed, manufactured, and tested by our team. No shortcuts. No compromises.</p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-<!-- Custom Motors -->
-<div class="group bg-surface-container-low overflow-hidden border border-outline-variant/10 hover:border-secondary/30 transition-all duration-300">
-<div class="h-64 bg-black/50 flex items-center justify-center overflow-hidden">
-<img alt="Custom Motors" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="assets/images/motors1.png"/>
-</div>
-<div class="p-6">
-<h3 class="font-headline text-xl font-bold text-white mb-2 uppercase">Custom Motors</h3>
-<p class="text-on-surface-variant text-sm leading-relaxed">In-house designed quad-motor powertrain delivering peak performance and torque vectoring.</p>
-</div>
-</div>
-<!-- Custom ECU -->
-<div class="group bg-surface-container-low overflow-hidden border border-outline-variant/10 hover:border-secondary/30 transition-all duration-300">
-<div class="h-64 bg-black/50 flex items-center justify-center overflow-hidden">
-<img alt="Custom ECU" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="assets/images/ECU.png"/>
-</div>
-<div class="p-6">
-<h3 class="font-headline text-xl font-bold text-white mb-2 uppercase">Custom ECU</h3>
-<p class="text-on-surface-variant text-sm leading-relaxed">Proprietary electronic control unit managing every aspect of vehicle performance in real-time.</p>
-</div>
-</div>
-<!-- Aluminum Chassis -->
-<div class="group bg-surface-container-low overflow-hidden border border-outline-variant/10 hover:border-secondary/30 transition-all duration-300">
-<div class="h-64 bg-black/50 flex items-center justify-center overflow-hidden">
-<img alt="Aluminum Chassis" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="assets/images/chassis.png"/>
-</div>
-<div class="p-6">
-<h3 class="font-headline text-xl font-bold text-white mb-2 uppercase">Aluminum Chassis</h3>
-<p class="text-on-surface-variant text-sm leading-relaxed">Lightweight aluminum spaceframe designed for maximum torsional stiffness and driver safety.</p>
-</div>
-</div>
-<!-- Powertrain -->
-<div class="group bg-surface-container-low overflow-hidden border border-outline-variant/10 hover:border-secondary/30 transition-all duration-300">
-<div class="h-64 bg-black/50 flex items-center justify-center overflow-hidden">
-<img alt="Powertrain" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="assets/images/powertrain1.jpg"/>
-</div>
-<div class="p-6">
-<h3 class="font-headline text-xl font-bold text-white mb-2 uppercase">Powertrain</h3>
-<p class="text-on-surface-variant text-sm leading-relaxed">High-voltage battery pack and inverter system optimized for endurance and acceleration.</p>
-</div>
-</div>
-<!-- Autonomous System -->
-<div class="group bg-surface-container-low overflow-hidden border border-outline-variant/10 hover:border-secondary/30 transition-all duration-300">
-<div class="h-64 bg-black/50 flex items-center justify-center overflow-hidden">
-<img alt="Autonomous System" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="assets/images/driverless.png"/>
-</div>
-<div class="p-6">
-<h3 class="font-headline text-xl font-bold text-white mb-2 uppercase">Autonomous System</h3>
-<p class="text-on-surface-variant text-sm leading-relaxed">Custom perception stack with LiDAR, cameras, and AI for driverless racing.</p>
-</div>
-</div>
-<!-- Aerodynamics -->
-<div class="group bg-surface-container-low overflow-hidden border border-outline-variant/10 hover:border-secondary/30 transition-all duration-300">
-<div class="h-64 bg-black/50 flex items-center justify-center overflow-hidden">
-<img alt="Aerodynamics" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" src="assets/images/aero.png"/>
-</div>
-<div class="p-6">
-<h3 class="font-headline text-xl font-bold text-white mb-2 uppercase">Aerodynamics</h3>
-<p class="text-on-surface-variant text-sm leading-relaxed">CFD-optimized wings and bodywork generating maximum downforce with minimal drag.</p>
-</div>
-</div>
-</div>
+<!-- Achievements Showcase Section -->
+<section id="achievements-showcase" class="relative h-[600vh] bg-neutral-950">
+    <!-- The Sticky Stage -->
+    <div class="sticky top-0 h-screen w-full flex flex-col overflow-hidden">
+
+        <!-- Header (compact, above stage) -->
+        <div class="max-w-7xl mx-auto w-full px-8 pt-10 md:pt-14 z-20 flex-shrink-0">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                <div>
+                    <span class="text-secondary font-label text-xs uppercase tracking-[0.2em] mb-2 block">Engineering Milestones</span>
+                    <h2 class="font-headline text-3xl md:text-5xl font-bold text-white uppercase tracking-tighter leading-[0.9]">From CAD to <span class="text-secondary">Circuit.</span></h2>
+                </div>
+                <div class="md:max-w-xs md:text-right">
+                    <p class="text-on-surface-variant text-sm font-body leading-relaxed mb-3">
+                        Scroll to explore how we build the machine, one component at a time.
+                    </p>
+                    <div class="flex items-center gap-3 md:justify-end">
+                        <div class="flex-1 md:max-w-[200px] h-[2px] bg-neutral-900 rounded-full overflow-hidden">
+                            <div id="showcase-progress" class="h-full bg-secondary w-0"></div>
+                        </div>
+                        <span id="showcase-counter" class="text-secondary font-label text-xs tabular-nums tracking-widest">01 / 06</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full-width Coverflow Stage -->
+        <div class="flex-1 relative px-4 pb-10">
+            <div class="showcase-stack max-w-7xl w-full h-full relative mx-auto">
+                    <!-- Custom Motors -->
+                    <div class="showcase-card" data-index="0">
+                        <div class="showcase-card__media">
+                            <img alt="Custom Motors" src="assets/images/motors1.png"/>
+                        </div>
+                        <div class="showcase-card__body">
+                            <h3 class="font-headline text-2xl font-bold text-white mb-2 uppercase">Custom Motors</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">In-house designed quad-motor powertrain delivering peak performance.</p>
+                        </div>
+                    </div>
+                    <!-- Custom ECU -->
+                    <div class="showcase-card" data-index="1">
+                        <div class="showcase-card__media">
+                            <img alt="Custom ECU" src="assets/images/ECU.png"/>
+                        </div>
+                        <div class="showcase-card__body">
+                            <h3 class="font-headline text-2xl font-bold text-white mb-2 uppercase">Custom ECU</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">Proprietary electronic control unit managing vehicle performance in real-time.</p>
+                        </div>
+                    </div>
+                    <!-- Aluminum Chassis -->
+                    <div class="showcase-card" data-index="2">
+                        <div class="showcase-card__media">
+                            <img alt="Aluminum Chassis" src="assets/images/chassis.png"/>
+                        </div>
+                        <div class="showcase-card__body">
+                            <h3 class="font-headline text-2xl font-bold text-white mb-2 uppercase">Aluminum Chassis</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">Lightweight aluminum spaceframe designed for maximum torsional stiffness.</p>
+                        </div>
+                    </div>
+                    <!-- Powertrain -->
+                    <div class="showcase-card" data-index="3">
+                        <div class="showcase-card__media">
+                            <img alt="Powertrain" src="assets/images/powertrain1.jpg"/>
+                        </div>
+                        <div class="showcase-card__body">
+                            <h3 class="font-headline text-2xl font-bold text-white mb-2 uppercase">Powertrain</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">High-voltage battery pack optimized for endurance and acceleration.</p>
+                        </div>
+                    </div>
+                    <!-- Autonomous System -->
+                    <div class="showcase-card" data-index="4">
+                        <div class="showcase-card__media">
+                            <img alt="Autonomous System" src="assets/images/driverless.png"/>
+                        </div>
+                        <div class="showcase-card__body">
+                            <h3 class="font-headline text-2xl font-bold text-white mb-2 uppercase">Autonomous System</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">Custom perception stack with LiDAR and AI for driverless racing.</p>
+                        </div>
+                    </div>
+                    <!-- Aerodynamics -->
+                    <div class="showcase-card" data-index="5">
+                        <div class="showcase-card__media">
+                            <img alt="Aerodynamics" src="assets/images/aero.png"/>
+                        </div>
+                        <div class="showcase-card__body">
+                            <h3 class="font-headline text-2xl font-bold text-white mb-2 uppercase">Aerodynamics</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">CFD-optimized wings generating maximum downforce with minimal drag.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
 </section>
+
 <section class="py-24 bg-surface-container-lowest overflow-hidden">
 <div class="max-w-7xl mx-auto px-8">
 <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">

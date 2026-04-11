@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* Force-generate utility classes for every brand token so that
+   `bg-<token>`, `text-<token>`, `border-<token>` are always available
+   even before a component uses them. Tailwind v4 is JIT by default. */
+@source inline("{bg,text,border,ring,outline,fill,stroke,from,via,to}-{primary,primary-light,primary-dark,secondary,secondary-light,secondary-dark,secondary-container,on-secondary-container,tertiary,tertiary-light,tertiary-dark,tertiary-container,surface,surface-container,surface-container-low,surface-container-lowest,surface-container-high,surface-container-highest,surface-bright,surface-dim,surface-variant,on-surface,on-surface-variant,on-primary,on-secondary,on-tertiary,outline,outline-variant,background,on-background,error,error-container,on-error,on-error-container,inverse-surface,inverse-on-surface,inverse-primary,gold,silver,bronze}");
+
+@theme static {
+  /* Primary: Black (team logo) */
+  --color-primary: #0a0a0a;
+  --color-primary-light: #1a1a1a;
+  --color-primary-dark: #000000;
+
+  /* Secondary: Orange (Protergia brand) */
+  --color-secondary: #f7941d;
+  --color-secondary-light: #ffaa33;
+  --color-secondary-dark: #e07a0a;
+  --color-secondary-container: #c47515;
+  --color-on-secondary-container: #fff5e6;
+
+  /* Tertiary: Cyan (electric/autonomous tech) */
+  --color-tertiary: #00d4ff;
+  --color-tertiary-light: #33ddff;
+  --color-tertiary-dark: #00b8e6;
+  --color-tertiary-container: #000c11;
+
+  /* Surface (dark theme) */
+  --color-surface: #131313;
+  --color-surface-container: #1f2020;
+  --color-surface-container-low: #1b1c1c;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353535;
+  --color-surface-bright: #393939;
+  --color-surface-dim: #131313;
+  --color-surface-variant: #353535;
+
+  /* Text */
+  --color-on-surface: #e4e2e1;
+  --color-on-surface-variant: #c4c7c7;
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-on-tertiary: #003642;
+
+  /* Outline */
+  --color-outline: #8e9192;
+  --color-outline-variant: #444748;
+
+  /* Background */
+  --color-background: #131313;
+  --color-on-background: #e4e2e1;
+
+  /* Error */
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+
+  /* Inverse */
+  --color-inverse-surface: #e4e2e1;
+  --color-inverse-on-surface: #303030;
+  --color-inverse-primary: #5f5e5e;
+
+  /* Fixed variants */
+  --color-primary-fixed: #e5e2e1;
+  --color-primary-fixed-dim: #c9c6c5;
+  --color-on-primary-fixed: #1c1b1b;
+  --color-on-primary-fixed-variant: #474646;
+  --color-secondary-fixed: #ffdbd0;
+  --color-secondary-fixed-dim: #ffb59d;
+  --color-on-secondary-fixed: #390c00;
+  --color-on-secondary-fixed-variant: #832600;
+  --color-tertiary-fixed: #b4ebff;
+  --color-tertiary-fixed-dim: #3cd7ff;
+  --color-on-tertiary-fixed: #001f27;
+  --color-on-tertiary-fixed-variant: #004e5f;
+
+  /* Sponsor tiers */
+  --color-gold: #ffd700;
+  --color-silver: #c0c0c0;
+  --color-bronze: #cd7f32;
+
+  /* Font families */
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Material Symbols default weight */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Selection color */
+::selection {
+  background-color: #ff6b35;
+  color: #ffffff;
+}
+
+/* Focus-visible outline */
+:focus-visible {
+  outline: 2px solid #ff6b35;
+  outline-offset: 2px;
+}
+
+/* Grayscale hover utility */
+img.grayscale-hover {
+  filter: grayscale(100%);
+  transition: filter 0.5s ease;
+}
+img.grayscale-hover:hover {
+  filter: grayscale(0%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #131313;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ff6b35;
+}
