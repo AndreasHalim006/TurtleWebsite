@@ -1,0 +1,144 @@
+---
+// Sponsors: Premium partner (Protergia) + Platinum partners carousel.
+// Ported from legacy src/index.html:298-358. The platinum strip uses a CSS
+// keyframes animation to scroll horizontally, doubled for seamless loop.
+import { Image } from 'astro:assets';
+import protergia from '../assets/logos/premium/protergia.png';
+import dspace from '../assets/logos/platinum/dspace.png';
+import jamsport from '../assets/logos/platinum/jamsport.png';
+import sensoric from '../assets/logos/platinum/sensoric.png';
+import ey from '../assets/logos/platinum/ey.png';
+
+const platinum = [
+  { src: dspace, alt: 'dSPACE' },
+  { src: jamsport, alt: 'JAMSport' },
+  { src: sensoric, alt: 'Sensoric Solutions' },
+  { src: ey, alt: 'EY' },
+];
+// Render ONE base set. JS clones enough copies at runtime to fill any viewport
+// and sets --set-width in px so the keyframe translates by exactly one set.
+---
+
+<!-- Premium Sponsor -->
+<section class="py-12 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto px-8 text-center">
+    <span class="text-neutral-500 font-label text-xs uppercase tracking-[0.4em] mb-6 block">Premium Partner</span>
+    <div class="flex justify-center items-center">
+      <Image
+        src={protergia}
+        alt="Protergia"
+        class="h-32 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity"
+        widths={[240, 360, 480]}
+        sizes="240px"
+      />
+    </div>
+  </div>
+</section>
+
+<!-- Platinum Sponsors carousel -->
+<section class="py-16 bg-surface overflow-hidden">
+  <div class="max-w-7xl mx-auto px-8 mb-12">
+    <span class="text-neutral-500 font-label text-xs uppercase tracking-[0.4em] block text-center">Platinum Partners</span>
+  </div>
+  <div class="relative overflow-hidden w-full">
+    <div class="sponsors-track flex items-center" data-sponsors-track>
+      {platinum.map((logo) => (
+        <div class="sponsors-slot flex items-center px-8 flex-shrink-0" data-sponsors-slot>
+          <Image
+            src={logo.src}
+            alt={logo.alt}
+            class="h-16 w-auto object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
+            widths={[160, 240]}
+            sizes="160px"
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes sponsors-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(calc(-1 * var(--set-width, 100%))); }
+  }
+  .sponsors-track {
+    animation: sponsors-scroll 30s linear infinite;
+    width: max-content;
+    will-change: transform;
+  }
+</style>
+
+<script>
+  // Responsive infinite marquee: measures one base set of logos, then clones
+  // enough copies to guarantee (total width) >= (viewport + one set), so the
+  // strip never reveals a gap on any screen size. Re-runs on resize.
+  function initSponsorsMarquee() {
+    const track = document.querySelector<HTMLElement>('[data-sponsors-track]');
+    if (!track) return;
+
+    // Snapshot the original DOM set once; subsequent layouts clone from here.
+    const originals = Array.from(
+      track.querySelectorAll<HTMLElement>('[data-sponsors-slot]')
+    );
+    if (!originals.length) return;
+
+    function measureSet(): number {
+      return originals.reduce(
+        (sum, el) => sum + el.getBoundingClientRect().width,
+        0
+      );
+    }
+
+    function layout() {
+      // Strip any previous clones, keep only the originals.
+      Array.from(track.children).forEach((el) => {
+        if (!originals.includes(el as HTMLElement)) el.remove();
+      });
+
+      const setWidth = measureSet();
+      if (setWidth <= 0) return;
+
+      // We need the track to be at least (viewport + one set) wide so there is
+      // always a full set off-screen to the right when the animation loops.
+      const vw = window.innerWidth;
+      const setsNeeded = Math.max(2, Math.ceil((vw + setWidth) / setWidth) + 1);
+      for (let copy = 1; copy < setsNeeded; copy++) {
+        for (const el of originals) {
+          track.appendChild(el.cloneNode(true));
+        }
+      }
+
+      track.style.setProperty('--set-width', `${setWidth}px`);
+    }
+
+    // Wait for images to have intrinsic sizes before the first measure.
+    const imgs = originals.flatMap((el) =>
+      Array.from(el.querySelectorAll('img'))
+    );
+    const waitImages = Promise.all(
+      imgs.map((img) =>
+        img.complete && img.naturalWidth > 0
+          ? Promise.resolve()
+          : new Promise<void>((resolve) => {
+              img.addEventListener('load', () => resolve(), { once: true });
+              img.addEventListener('error', () => resolve(), { once: true });
+            })
+      )
+    );
+    waitImages.then(layout);
+
+    // Re-layout on resize (debounced) so the strip adapts to window changes.
+    let resizeTimer: number | undefined;
+    window.addEventListener('resize', () => {
+      if (resizeTimer) window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(layout, 150);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSponsorsMarquee);
+  } else {
+    initSponsorsMarquee();
+  }
+</script>

@@ -1,0 +1,56 @@
+---
+// Hero: full-viewport landing. Background video + left-to-right dark gradient.
+// Headline + tagline stacked and vertically centered in the viewport.
+// Typography is fluid via clamp() so it always fits between nav and bottom.
+---
+<section class="hero relative h-screen w-full overflow-hidden">
+  <!-- Background video + gradient -->
+  <div class="absolute inset-0 z-0">
+    <video
+      class="w-full h-full object-cover brightness-50"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      aria-hidden="true"
+    >
+      <source src="/assets/video/hero-video.mp4" type="video/mp4" />
+    </video>
+    <div class="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/40 to-transparent"></div>
+  </div>
+
+  <!-- Content: single block, vertically centered -->
+  <div class="relative z-10 h-full flex flex-col justify-center px-6 sm:px-10 md:px-16 lg:px-20">
+    <h1 class="hero-headline font-headline font-bold uppercase tracking-tight text-white leading-[0.95]">
+      <span class="block whitespace-nowrap">Engineering the</span>
+      <span class="block whitespace-nowrap">Future of</span>
+      <span class="block whitespace-nowrap"><span class="text-secondary">Electric</span> Racing</span>
+    </h1>
+    <p class="hero-tagline font-body text-on-surface-variant leading-relaxed max-w-2xl mt-6 md:mt-8">
+      We design, build, and manufacture high-performance electric and autonomous racing vehicles.
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Headline: viewport-width driven so it scales with window.
+     At 1280 ≈ 121px (vs legacy 144px — a bit smaller as requested).
+     Capped at 10rem so ultrawide displays don't get absurd. */
+  .hero-headline {
+    font-size: clamp(1.4rem, 6.65vw, 7rem);
+  }
+
+  .hero-tagline {
+    font-size: clamp(0.7rem, 1.75vw, 1.575rem);
+  }
+
+  @media (max-width: 767px) {
+    .hero-headline {
+      font-size: clamp(1.4rem, 7.7vw, 2.8rem);
+    }
+    .hero-tagline {
+      font-size: clamp(0.665rem, 2.8vw, 0.7875rem);
+    }
+  }
+</style>
