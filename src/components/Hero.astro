@@ -2,6 +2,7 @@
 // Hero: full-viewport landing. Background video + left-to-right dark gradient.
 // Headline + tagline stacked and vertically centered in the viewport.
 // Typography is fluid via clamp() so it always fits between nav and bottom.
+const base = import.meta.env.BASE_URL;
 ---
 <section class="hero relative h-screen w-full overflow-hidden">
   <!-- Background video + gradient -->
@@ -15,7 +16,7 @@
       preload="auto"
       aria-hidden="true"
     >
-      <source src="/assets/video/hero-video.mp4" type="video/mp4" />
+      <source src={`${base}assets/video/hero-video.mp4`} type="video/mp4" />
     </video>
     <div class="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/40 to-transparent"></div>
   </div>
