@@ -1,25 +1,219 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Nav from '../components/Nav.astro';
-import Hero from '../components/Hero.astro';
-import Stats from '../components/Stats.astro';
-import Showcase from '../components/Showcase.astro';
-import Rhea from '../components/Rhea.astro';
-import Divisions from '../components/Divisions.astro';
-import Sponsors from '../components/Sponsors.astro';
-import JoinTheTeam from '../components/JoinTheTeam.astro';
-import Footer from '../components/Footer.astro';
+import carImage from '../assets/cars/rhea.jpg';
+
+const base = import.meta.env.BASE_URL;
+const phaseImage1 = `${base}assets/images/oikiskos.png`;
+const phaseImage2 = `${base}assets/images/team.png`;
+const phaseImage3 = `${base}assets/images/Aristurtle_photo_2-1_2.jpg`;
+const phaseImage4 = `${base}assets/images/oikiskos.png`;
 ---
-<BaseLayout>
-  <Nav />
-  <main>
-    <Hero />
-    <Stats />
-    <Showcase />
-    <Rhea />
-    <Divisions />
-    <Sponsors />
-    <JoinTheTeam />
+
+<BaseLayout title="ARISTURTLE | Formula Student Electric & Driverless">
+  <div
+    class="pointer-events-none fixed top-[0.55rem] left-[0.55rem] right-[0.8rem] z-50 flex items-start justify-between gap-6 font-headline text-[clamp(0.56rem,0.9vw,0.72rem)] leading-none font-black text-[#f6f7fb] italic uppercase [text-shadow:0_0.35rem_1rem_rgba(0,0,0,0.8)] max-[760px]:right-2.5 max-[760px]:grid max-[760px]:gap-[0.62rem] max-[760px]:text-[0.58rem]"
+    aria-label="Site navigation and team origin"
+  >
+    <div class="flex items-center gap-[clamp(0.72rem,1.5vw,1.15rem)] whitespace-nowrap max-[760px]:gap-[0.52rem] max-[760px]:whitespace-normal">
+      <span class="text-[#ff9800]">FROM 2013</span>
+      <span>THESSALONIKI, GR</span>
+      <span>40&deg;37'41.2"N 22&deg;57'33.0"E</span>
+    </div>
+    <nav
+      class="pointer-events-auto flex items-center gap-[clamp(0.72rem,1.5vw,1.15rem)] whitespace-nowrap max-[760px]:w-full max-[760px]:justify-between max-[760px]:gap-2 max-[760px]:text-[0.55rem]"
+      aria-label="Primary"
+    >
+      <a class="text-[#f6f7fb] no-underline transition-colors duration-200 hover:text-[#f6f7fb]" href="/" aria-current="page">HOME</a>
+      <a class="text-[rgba(246,247,251,0.58)] no-underline transition-colors duration-200 hover:text-[#f6f7fb]" href="/subteams/">SUBTEAMS</a>
+      <a class="text-[rgba(246,247,251,0.58)] no-underline transition-colors duration-200 hover:text-[#f6f7fb]" href="/history/">HISTORY</a>
+      <a class="text-[rgba(246,247,251,0.58)] no-underline transition-colors duration-200 hover:text-[#f6f7fb]" href="/sponsors/">SPONSORS</a>
+      <a class="text-[rgba(246,247,251,0.58)] no-underline transition-colors duration-200 hover:text-[#f6f7fb]" href="/contact/">CONTACT</a>
+    </nav>
+  </div>
+
+  <main class="bg-[#081024] font-body text-[#f6f7fb]">
+    <section class="relative h-svh min-h-[32rem] w-full overflow-hidden">
+      <img src={carImage.src} alt="Aristurtle Car Rhea" class="h-full w-full object-cover object-center" />
+    </section>
+
+    <section class="relative min-h-[600svh] bg-[#081024]" data-cinematic-scroll>
+      <div class="sticky top-0 h-svh min-h-[32rem] w-full overflow-hidden">
+
+        <svg
+          class="tour-image-mask-stage pointer-events-none absolute inset-0 z-0 h-full w-full"
+          data-tour-stage-svg
+          preserveAspectRatio="none"
+          role="img"
+          aria-label="ARISTURTLE"
+          focusable="false"
+        >
+          <defs>
+            <mask
+              id="tour-image-mask"
+              maskUnits="userSpaceOnUse"
+              x="-50000"
+              y="-50000"
+              width="100000"
+              height="100000"
+            >
+              <rect x="-50000" y="-50000" width="100000" height="100000" fill="#000" />
+              <g data-mask-wordmark fill="#fff">
+                <path d="M414.11,156.35v93.22H391.4V225.43L373,202.53l3.38-9.76H391V177.38s-7.13-3-18,10.13-17.83,29-27,62.06h-21.4s6-32.59,16.71-55.68,19.43-28.52,21.77-30.78,11.73-6.76,15.2-6.76Z" transform="translate(-51.46 -83.14)" />
+                <path d="M414.11,249.57l27.78-93.21h41.67s14.08-1.6,21.77,14.07-3.28,29.71-5.63,32.26-9.2,6.5-15.95,7.35l20.47,39.68h-21l-25.17-47,3.13-9.73H478.3s8.26.56,10.33-7.32-8.45-9.58-8.45-9.58H457.47l-22,73.51Z" transform="translate(-51.46 -83.14)" />
+                <polygon points="480.52 73.22 452.76 166.59 473.96 166.59 502.3 73.22 480.52 73.22" />
+                <path d="M525.7,249.72h63.81s9.29-.64,16.61-9.65a31.25,31.25,0,0,0,7-26.09c-1.32-8.17-7.79-18.49-20.09-19.71H578.16s-6-1.31-5.63-9.57,6.28-11.17,9.94-11.08,56.5,0,56.5,0l-23,75.8h21.73l22.71-75.8H684l13.16-17.33h-117a24.19,24.19,0,0,0-18.58,9.64c-7.56,9.95-7.7,19.38-7.13,23.74s3.33,11.73,6.1,14.45,6.1,7.14,16.61,7.51h11.31s6,.47,5.91,8.26-4.88,10.89-4.88,10.89a9.07,9.07,0,0,1-3.43,1.36H538.59Z" transform="translate(-51.46 -83.14)" />
+                <path d="M697.06,156.36,681.43,207.6s-6.12,15.34.71,28.15,20.63,13.65,21.23,13.78c.08,0,17.29,2.08,28.74-5.48,11.07-7.3,13.44-16.54,16.47-25.62l13.94-42.65H783s11.82.35,10.41,8.45-5.63,7.74-9.15,8.51h-18L762.73,203l25.34,46.61h21.11l-20.55-39.72a24.06,24.06,0,0,0,14.19-6.1c6.85-6,9.53-14.83,9.76-18.11s.1-11-3-16.71-8.73-10.74-15.86-12.1a32.36,32.36,0,0,0-4.85-.47H745.06l-17.22,58.56s-3.19,11.82-9,13.6-11.21,1.46-15.39-2.44S700.67,214,702,209.85l15.58-53.5Z" transform="translate(-51.46 -83.14)" />
+                <polygon points="772.08 73.22 846.68 73.22 833.52 90.68 810.06 90.68 787.49 166.41 765.95 166.41 788.34 90.53 760.75 90.53 772.08 73.22" />
+                <polygon points="846.68 73.22 819.31 165.99 880.4 165.99 880.4 148.81 846.17 148.81 868.22 73.22 846.68 73.22" />
+                <path d="M1030.3,156.35H988.45s-12.46.1-23.27,12c-11.08,12.2-15.08,21.77-19,31.53-5.07,12.76-12.11,33.17-14.27,49.22h88V232H958.32L964.89,213h39.89l7.69-17.65h-39s5.49-8.91,9.76-12.39,8.54-5.3,12.49-5.53h24.77Z" transform="translate(-51.46 -83.14)" />
+              </g>
+            </mask>
+          </defs>
+
+          <g data-masked-content mask="url(#tour-image-mask)">
+            <rect data-stage-bg x="0" y="0" width="100%" height="100%" fill="#f6f7fb" />
+            <image data-masked-img="1" href={phaseImage1} x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" opacity="0" />
+            <image data-masked-img="2" href={phaseImage2} x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" opacity="0" />
+            <image data-masked-img="3" href={phaseImage3} x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" opacity="0" />
+            <image data-masked-img="4" href={phaseImage4} x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" opacity="0" />
+          </g>
+        </svg>
+
+        <div
+          class="tour-copy-stage pointer-events-none absolute inset-0 z-20 h-full w-full"
+          data-tour-copy-stage
+        >
+          <article class="tour-slide opacity-0" data-slide="1" data-copy-side="right">
+            <span class="sr-only">RHEA MONOCOQUE. Designed, manufactured, and raced by students in Thessaloniki.</span>
+            <div class="typeit-copy" aria-hidden="true" data-typeit-copy data-typeit-title="RHEA MONOCOQUE" data-typeit-body="Designed, manufactured, and raced by students in Thessaloniki."></div>
+            <a class="tour-cta" href="/subteams/">Subteams</a>
+          </article>
+
+          <article class="tour-slide opacity-0" data-slide="2" data-copy-side="left">
+            <span class="sr-only">BUILT BY SUBTEAMS. Mechanical, electrical, software, and operations work as one race program.</span>
+            <div class="typeit-copy" aria-hidden="true" data-typeit-copy data-typeit-title="BUILT BY SUBTEAMS" data-typeit-body="Mechanical, electrical, software, and operations work as one race program."></div>
+            <a class="tour-cta" href="/history/">History</a>
+          </article>
+
+          <article class="tour-slide opacity-0" data-slide="3" data-copy-side="right">
+            <span class="sr-only">NEXT LAP FORWARD. From electric performance to autonomous systems, every season pushes the car further.</span>
+            <div class="typeit-copy" aria-hidden="true" data-typeit-copy data-typeit-title="NEXT LAP FORWARD" data-typeit-body="From electric performance to autonomous systems, every season pushes the car further."></div>
+            <a class="tour-cta" href="/sponsors/">Sponsors</a>
+          </article>
+
+          <article class="tour-slide opacity-0" data-slide="4" data-copy-side="right">
+            <span class="sr-only">BACK THE TEAM. Partners, alumni, and new members keep Aristurtle moving from concept to competition.</span>
+            <div class="typeit-copy" aria-hidden="true" data-typeit-copy data-typeit-title="BACK THE TEAM" data-typeit-body="Partners, alumni, and new members keep Aristurtle moving from concept to competition."></div>
+            <a class="tour-cta" href="/contact/">Contact</a>
+          </article>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="flex min-h-[34svh] items-end border-t border-white/10 px-[clamp(1.25rem,5vw,4rem)] py-[clamp(1.5rem,5vw,3rem)]" aria-label="Footer">
+      <footer class="grid w-full gap-4 font-headline text-[clamp(0.62rem,1vw,0.78rem)] leading-none font-black text-[#f6f7fb] italic uppercase sm:grid-cols-[1fr_auto] sm:items-end">
+        <div class="grid gap-2">
+          <span class="text-[#ff9800]">ARISTURTLE RACING TEAM</span>
+          <span class="text-white/58">Formula Student Electric & Driverless</span>
+        </div>
+        <nav class="flex flex-wrap gap-x-5 gap-y-2 text-white/58" aria-label="Footer">
+          <a class="no-underline transition-colors duration-200 hover:text-[#f6f7fb]" href="/subteams/">Subteams</a>
+          <a class="no-underline transition-colors duration-200 hover:text-[#f6f7fb]" href="/sponsors/">Sponsors</a>
+          <a class="no-underline transition-colors duration-200 hover:text-[#f6f7fb]" href="/contact/">Contact</a>
+        </nav>
+      </footer>
+    </section>
   </main>
-  <Footer />
 </BaseLayout>
+
+<style>
+  :global(html), :global(body) { margin: 0; padding: 0; background: #081024; }
+
+  .tour-image-mask-stage { overflow: visible; }
+  .tour-copy-stage { left: 0; top: 0; }
+  .tour-slide {
+    position: absolute;
+    top: clamp(5.25rem, 13svh, 8.5rem);
+    width: min(30rem, calc(50vw - 3rem));
+    pointer-events: none;
+    will-change: opacity, transform;
+  }
+  .tour-slide[data-copy-side='left'] {
+    left: clamp(1.15rem, 5vw, 4.75rem);
+  }
+  .tour-slide[data-copy-side='right'] {
+    right: clamp(1.15rem, 5vw, 4.75rem);
+  }
+  .tour-slide a { pointer-events: auto; }
+  .typeit-copy {
+    margin-bottom: clamp(1rem, 3svh, 1.5rem);
+    min-height: clamp(10.5rem, 25svh, 14rem);
+    color: #f6f7fb;
+    font-family: var(--font-headline, inherit);
+    font-size: clamp(2.1rem, 4.2vw, 3.4rem);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 0.98;
+    text-transform: uppercase;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    text-shadow: 0 0.35rem 1.1rem rgba(0,0,0,0.72);
+  }
+  .typeit-copy .typeit-body {
+    display: block;
+    margin-top: clamp(0.75rem, 2svh, 1rem);
+    max-width: 26rem;
+    color: rgba(246,247,251,0.72);
+    font-family: var(--font-body, inherit);
+    font-size: clamp(0.95rem, 1.35vw, 1.08rem);
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.55;
+    text-transform: none;
+    overflow-wrap: normal;
+  }
+  .tour-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border: 1px solid #ff9800;
+    padding: 0.9rem 1.2rem;
+    color: #ff9800;
+    font-family: var(--font-headline, inherit);
+    font-size: 0.72rem;
+    font-style: italic;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 180ms ease, background-color 180ms ease;
+  }
+  .tour-cta:hover {
+    background: #ff9800;
+    color: #081024;
+  }
+  @media (max-width: 760px), (orientation: portrait) {
+    .tour-slide {
+      top: auto;
+      right: auto;
+      bottom: clamp(1.15rem, 4svh, 2rem);
+      left: clamp(1rem, 5vw, 2rem);
+      width: min(30rem, calc(100vw - 2rem));
+    }
+    .typeit-copy {
+      min-height: clamp(8.75rem, 22svh, 11.5rem);
+      font-size: clamp(1.75rem, 8.4vw, 2.55rem);
+    }
+    .typeit-copy .typeit-body {
+      max-width: 100%;
+      font-size: clamp(0.92rem, 3.6vw, 1rem);
+      line-height: 1.45;
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/homeGuidedTour.ts';
+</script>

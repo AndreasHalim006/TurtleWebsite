@@ -1,0 +1,78 @@
+local_backend: true
+
+backend:
+  name: github
+  repo: iasonastsaousis/TurtleWebsite
+  branch: master
+
+media_folder: "src/assets/cms"
+public_folder: "../../assets/cms"
+
+collections:
+  - name: "showcase"
+    label: "Showcase"
+    folder: "src/content/showcase"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    slug: "{{fields.order}}-{{slug}}"
+    fields:
+      - { label: "Order", name: "order", widget: "number", value_type: "int", min: 1, step: 1 }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Caption", name: "caption", widget: "text" }
+      - { label: "Image", name: "image", widget: "image", allow_multiple: false }
+      - { label: "Alt Text", name: "alt", widget: "string" }
+
+  - name: "sponsor_categories"
+    label: "Sponsor Categories"
+    folder: "src/content/sponsor-categories"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    slug: "{{fields.key}}"
+    identifier_field: "title"
+    fields:
+      - label: "Key"
+        name: "key"
+        widget: "string"
+        pattern: ["^[a-z0-9-]+$", "Use lowercase letters, numbers, and hyphens only."]
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Order", name: "order", widget: "number", value_type: "int", min: 1, step: 1 }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Sponsors"
+        name: "sponsors"
+        widget: "list"
+        required: false
+        fields:
+          - label: "Sponsor"
+            name: "sponsor"
+            widget: "relation"
+            collection: "sponsors"
+            search_fields: ["name"]
+            value_field: "name"
+            display_fields: ["name"]
+
+  - name: "sponsors"
+    label: "Sponsors"
+    folder: "src/content/sponsors"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    slug: "{{fields.category}}-{{slug}}"
+    identifier_field: "name"
+    media_folder: "../../assets/cms/sponsors"
+    public_folder: "../../assets/cms/sponsors"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - label: "Category"
+        name: "category"
+        widget: "relation"
+        collection: "sponsor_categories"
+        search_fields: ["title", "key"]
+        value_field: "key"
+        display_fields: ["title"]
+      - { label: "Order", name: "order", widget: "number", value_type: "int", min: 1, step: 1 }
+      - { label: "Logo", name: "logo", widget: "image", allow_multiple: false }
+      - { label: "Website", name: "website", widget: "string", required: false }
+      - { label: "Alt Text", name: "alt", widget: "string" }
+      - { label: "Active", name: "active", widget: "boolean", default: true }

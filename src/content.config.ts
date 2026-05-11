@@ -13,4 +13,31 @@ const showcase = defineCollection({
     }),
 });
 
-export const collections = { showcase };
+const sponsors = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/sponsors' }),
+  schema: ({ image }) =>
+    z.object({
+      name: z.string(),
+      category: z.string(),
+      order: z.number(),
+      logo: image(),
+      website: z.string().url().optional(),
+      alt: z.string(),
+      active: z.boolean().default(true),
+    }),
+});
+
+const sponsorCategories = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/sponsor-categories' }),
+  schema: z.object({
+    key: z.string(),
+    title: z.string(),
+    order: z.number(),
+    description: z.string().optional(),
+    sponsors: z
+      .array(z.object({ sponsor: z.string() }))
+      .optional(),
+  }),
+});
+
+export const collections = { showcase, sponsorCategories, sponsors };
