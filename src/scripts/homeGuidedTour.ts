@@ -30,9 +30,14 @@ type TypeItInstance = {
 gsap.registerPlugin(ScrollTrigger);
 
 const SNAP_POINTS = [0, 0.2, 0.4, 0.6, 0.8, 1];
+
 const PHASE_SPACING = 1;
-const HOLD_EXIT_OFFSET = 0.34;
-const TRANSITION_DURATION = 0.46;
+
+/*
+ * HOLD: portion at the start of each segment where the current phase
+ * stays fully visible (reading time). Transition begins after this.
+ */
+const HOLD = 0.15;
 
 const WORDMARK_BOUNDS = {
   x: 270,
@@ -47,17 +52,6 @@ const cleanFocus: WordmarkFocus = {
   measureBounds: true,
 };
 
-const getStoryFillRatio = () => {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const portrait = height > width;
-
-  if (width < 520) return 1.08;
-  if (portrait) return 1.32;
-  if (height < 760) return 1.62;
-  return 1.84;
-};
-
 const getWideFillRatio = () => {
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -68,17 +62,21 @@ const getWideFillRatio = () => {
   return 0.48;
 };
 
+const getMidFillRatio = () => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const portrait = height > width;
+
+  if (width < 520) return 0.52;
+  if (portrait) return 0.58;
+  return 0.68;
+};
+
 const getWordmarkBounds = (measureBounds = false) => {
   if (measureBounds && maskWordmark instanceof SVGGraphicsElement) {
     const bbox = maskWordmark.getBBox();
-    return {
-      x: bbox.x,
-      y: bbox.y,
-      width: bbox.width,
-      height: bbox.height,
-    };
+    return { x: bbox.x, y: bbox.y, width: bbox.width, height: bbox.height };
   }
-
   return WORDMARK_BOUNDS;
 };
 
@@ -93,7 +91,6 @@ const resolveFocus = (focus: WordmarkFocus) => {
   const scale = Math.min(heightScale, widthScale);
   const x = sw / 2 - focusCx * scale;
   const y = sh / 2 - focusCy * scale;
-
   return { scale, x, y };
 };
 
@@ -120,7 +117,7 @@ const slide1 = document.querySelector('[data-slide="1"]');
 const slide2 = document.querySelector('[data-slide="2"]');
 const slide3 = document.querySelector('[data-slide="3"]');
 const slide4 = document.querySelector('[data-slide="4"]');
-const slides = [slide1, slide2, slide3, slide4].filter((slide): slide is Element => slide !== null);
+const slides = [slide1, slide2, slide3, slide4].filter((s): s is Element => s !== null);
 
 if (scrollSection && stageBg && maskWordmark) {
   const typeInstances = new Map<Element, TypeItInstance>();
@@ -129,14 +126,10 @@ if (scrollSection && stageBg && maskWordmark) {
   let activePhaseIndex = -1;
 
   const buildPhases = (): PhaseDefinition[] => {
-    const storyFillRatio = getStoryFillRatio();
     const wideFillRatio = getWideFillRatio();
 
     return [
-      {
-        kind: 'clean',
-        focus: cleanFocus,
-      },
+      { kind: 'clean', focus: cleanFocus },
       {
         kind: 'story',
         image: '[data-masked-img="1"]',
@@ -165,16 +158,13 @@ if (scrollSection && stageBg && maskWordmark) {
         focus: { cx: 880, cy: 21, fillRatio: wideFillRatio },
         imageTransform: { scale: 1.04, xPercent: 0, yPercent: 0 },
       },
-      {
-        kind: 'clean',
-        focus: cleanFocus,
-      },
+      { kind: 'clean', focus: cleanFocus },
     ];
   };
 
   const resetTypeTarget = (slide: Element) => {
-    const target = slide.querySelector<HTMLElement>('[data-typeit-copy]');
-    if (target) target.textContent = '';
+    const t = slide.querySelector<HTMLElement>('[data-typeit-copy]');
+    if (t) t.textContent = '';
   };
 
   const destroyTypeInstance = (slide: Element) => {
@@ -184,7 +174,6 @@ if (scrollSection && stageBg && maskWordmark) {
 
   const clearTypeIt = (slide: Element | null) => {
     if (!slide) return;
-
     typedSlides.delete(slide);
     destroyTypeInstance(slide);
     resetTypeTarget(slide);
@@ -197,7 +186,6 @@ if (scrollSection && stageBg && maskWordmark) {
 
   const runTypeIt = (slide: Element | null) => {
     if (!slide || typedSlides.has(slide)) return;
-
     const target = slide.querySelector<HTMLElement>('[data-typeit-copy]');
     if (!target) return;
 
@@ -222,16 +210,8 @@ if (scrollSection && stageBg && maskWordmark) {
   };
 
   const activateSlide = (slide: Element | null) => {
-    if (!slide) {
-      clearActiveTypeIt();
-      return;
-    }
-
-    if (slide !== activeTypedSlide) {
-      clearActiveTypeIt();
-      activeTypedSlide = slide;
-    }
-
+    if (!slide) { clearActiveTypeIt(); return; }
+    if (slide !== activeTypedSlide) { clearActiveTypeIt(); activeTypedSlide = slide; }
     runTypeIt(slide);
   };
 
@@ -239,14 +219,10 @@ if (scrollSection && stageBg && maskWordmark) {
     maskWordmark.setAttribute('transform', `matrix(${wm.scale},0,0,${wm.scale},${wm.x},${wm.y})`);
   };
 
-  const setCleanWordmark = () => {
-    const wm = resolveFocus(cleanFocus);
-    applyWordmarkMatrix(wm);
-  };
+  const setCleanWordmark = () => applyWordmarkMatrix(resolveFocus(cleanFocus));
 
   const setPhaseActive = (phaseIndex: number, phases: PhaseDefinition[]) => {
     if (phaseIndex === activePhaseIndex) return;
-
     activePhaseIndex = phaseIndex;
     const phase = phases[phaseIndex];
     activateSlide(phase?.kind === 'story' ? phase.slide ?? null : null);
@@ -259,21 +235,18 @@ if (scrollSection && stageBg && maskWordmark) {
     const wm = resolveFocus(phase.focus);
     const activeImage = phase.kind === 'story' ? document.querySelector(phase.image ?? '') : null;
     const inactiveImages = activeImage
-      ? maskedImages.filter((image) => image !== activeImage)
+      ? maskedImages.filter((i) => i !== activeImage)
       : maskedImages;
     const inactiveSlides = phase.slide
-      ? slides.filter((slide) => slide !== phase.slide)
+      ? slides.filter((s) => s !== phase.slide)
       : slides;
 
     if (phase.kind === 'clean') {
       applyWordmarkMatrix(wm);
     } else {
       gsap.set(maskWordmark, {
-        scale: wm.scale,
-        x: wm.x,
-        y: wm.y,
-        transformOrigin: '0px 0px',
-        force3D: true,
+        scale: wm.scale, x: wm.x, y: wm.y,
+        transformOrigin: '0px 0px', force3D: true,
       });
     }
     gsap.set(stageBg, { opacity: phase.kind === 'clean' ? 1 : 0 });
@@ -282,8 +255,7 @@ if (scrollSection && stageBg && maskWordmark) {
 
     if (phase.kind === 'story' && phase.image && phase.slide && phase.imageTransform) {
       gsap.set(phase.image, {
-        opacity: 1,
-        filter: 'blur(0px)',
+        opacity: 1, filter: 'blur(0px)',
         scale: phase.imageTransform.scale,
         xPercent: phase.imageTransform.xPercent,
         yPercent: phase.imageTransform.yPercent,
@@ -292,16 +264,28 @@ if (scrollSection && stageBg && maskWordmark) {
     }
   };
 
-  slides.forEach(resetTypeTarget);
+  const computeMidFocus = (from: PhaseDefinition, to: PhaseDefinition): WordmarkFocus => {
+    if (from.kind === 'clean' || to.kind === 'clean') return cleanFocus;
 
+    const bounds = getWordmarkBounds(false);
+    const fromCx = from.focus.cx ?? bounds.x + bounds.width / 2;
+    const fromCy = from.focus.cy ?? bounds.y + bounds.height / 2;
+    const toCx = to.focus.cx ?? bounds.x + bounds.width / 2;
+    const toCy = to.focus.cy ?? bounds.y + bounds.height / 2;
+
+    return {
+      cx: (fromCx + toCx) / 2,
+      cy: (fromCy + toCy) / 2,
+      fillRatio: getMidFillRatio(),
+      maxWidthRatio: 0.92,
+    };
+  };
+
+  slides.forEach(resetTypeTarget);
   gsap.set(maskedImages, {
-    opacity: 0,
-    filter: 'blur(14px)',
-    scale: 1,
-    xPercent: 0,
-    yPercent: 0,
-    transformOrigin: '50% 50%',
-    force3D: true,
+    opacity: 0, filter: 'blur(14px)',
+    scale: 1, xPercent: 0, yPercent: 0,
+    transformOrigin: '50% 50%', force3D: true,
   });
   gsap.set(stageBg, { opacity: 1 });
   gsap.set(slides, { opacity: 0, y: 18, pointerEvents: 'none' });
@@ -314,22 +298,20 @@ if (scrollSection && stageBg && maskWordmark) {
     if (tl) tl.kill();
     removeEndpointScrollListener?.();
     removeEndpointScrollListener = null;
-    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    ScrollTrigger.getAll().forEach((t) => t.kill());
 
     activePhaseIndex = -1;
     clearActiveTypeIt();
     slides.forEach(resetTypeTarget);
 
     const phases = buildPhases();
-    const totalDuration = phases.length - 1;
+    const totalDuration = (phases.length - 1) * PHASE_SPACING;
 
     setPhaseVisualState(phases[0]);
 
     const settleCleanEndpoint = (progress: number) => {
-      const nearestIndex = getNearestPhaseIndex(progress, phases.length);
-      if (nearestIndex === 0 || nearestIndex === phases.length - 1) {
-        setPhaseVisualState(phases[nearestIndex]);
-      }
+      const idx = getNearestPhaseIndex(progress, phases.length);
+      if (idx === 0 || idx === phases.length - 1) setPhaseVisualState(phases[idx]);
     };
     let endpointSettleTimer = 0;
     const queueEndpointSettle = () => {
@@ -337,14 +319,10 @@ if (scrollSection && stageBg && maskWordmark) {
       endpointSettleTimer = window.setTimeout(() => {
         const start = scrollSection.offsetTop;
         const end = start + scrollSection.offsetHeight - window.innerHeight;
-        const progress = (window.scrollY - start) / Math.max(1, end - start);
-
-        if (progress <= 0.045 || progress >= 0.955) {
-          settleCleanEndpoint(progress);
-        }
+        const p = (window.scrollY - start) / Math.max(1, end - start);
+        if (p <= 0.045 || p >= 0.955) settleCleanEndpoint(p);
       }, 760);
     };
-
     window.addEventListener('scroll', queueEndpointSettle, { passive: true });
     removeEndpointScrollListener = () => {
       window.clearTimeout(endpointSettleTimer);
@@ -357,90 +335,277 @@ if (scrollSection && stageBg && maskWordmark) {
         trigger: scrollSection,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 0.62,
+        scrub: 1,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          const nearestIndex = getNearestPhaseIndex(self.progress, phases.length);
-          const exactProgress = nearestIndex / (phases.length - 1);
-
-          if (Math.abs(self.progress - exactProgress) < 0.045) {
-            setPhaseActive(nearestIndex, phases);
-            if (nearestIndex === 0 || nearestIndex === phases.length - 1) {
-              setPhaseVisualState(phases[nearestIndex]);
-            }
+          const idx = getNearestPhaseIndex(self.progress, phases.length);
+          const exact = idx / (phases.length - 1);
+          if (Math.abs(self.progress - exact) < 0.045) {
+            setPhaseActive(idx, phases);
+            if (idx === 0 || idx === phases.length - 1) setPhaseVisualState(phases[idx]);
           }
         },
         onScrubComplete: (self) => settleCleanEndpoint(self.progress),
         onSnapComplete: (self) => settleCleanEndpoint(self.progress),
         snap: {
           snapTo: SNAP_POINTS,
-          duration: { min: 0.24, max: 0.7 },
-          delay: 0.16,
+          duration: { min: 0.3, max: 0.9 },
+          delay: 0.2,
           ease: 'power3.out',
         },
       },
     });
 
-    phases.slice(1).forEach((phase, index) => {
-      const position = index * PHASE_SPACING + HOLD_EXIT_OFFSET;
-      const wm = resolveFocus(phase.focus);
-      const activeImage = phase.kind === 'story' ? document.querySelector(phase.image ?? '') : null;
-      const inactiveImages = activeImage
-        ? maskedImages.filter((image) => image !== activeImage)
-        : maskedImages;
-      const inactiveSlides = phase.slide
-        ? slides.filter((slide) => slide !== phase.slide)
-        : slides;
+    phases.slice(1).forEach((toPhase, index) => {
+      const fromPhase = phases[index];
+      const segStart = index * PHASE_SPACING;
 
-      tl!
-        .to(maskWordmark, {
-          scale: wm.scale,
-          x: wm.x,
-          y: wm.y,
-          duration: TRANSITION_DURATION,
-          ease: 'power1.inOut',
-        }, position)
-        .to(stageBg, {
-          opacity: phase.kind === 'clean' ? 1 : 0,
-          duration: TRANSITION_DURATION * 0.82,
-          ease: 'power1.inOut',
-        }, position)
-        .to(inactiveImages, {
-          opacity: 0,
-          filter: 'blur(14px)',
-          duration: TRANSITION_DURATION * 0.7,
-          ease: 'power2.inOut',
-        }, position)
-        .to(inactiveSlides, {
-          opacity: 0,
-          y: phase.kind === 'clean' ? 18 : -12,
-          pointerEvents: 'none',
-          duration: TRANSITION_DURATION * 0.58,
-          ease: 'power2.inOut',
-        }, position);
+      const toWm = resolveFocus(toPhase.focus);
 
-      if (phase.kind === 'story' && phase.image && phase.slide && phase.imageTransform) {
-        tl!
-          .to(phase.image, {
+      const toImage = toPhase.kind === 'story' ? document.querySelector(toPhase.image ?? '') : null;
+      const toSlide = toPhase.kind === 'story' ? toPhase.slide ?? null : null;
+      const fromImage = fromPhase.kind === 'story' ? document.querySelector(fromPhase.image ?? '') : null;
+      const fromSlide = fromPhase.kind === 'story' ? fromPhase.slide ?? null : null;
+
+      const inactiveImages = toImage ? maskedImages.filter((i) => i !== toImage) : maskedImages;
+      const inactiveSlides = toSlide ? slides.filter((s) => s !== toSlide) : slides;
+
+      const isStoryToStory = fromPhase.kind === 'story' && toPhase.kind === 'story';
+
+      const transStart = segStart + HOLD;
+      const transLen = PHASE_SPACING - HOLD;
+
+      if (isStoryToStory) {
+        /*
+         * ── CINEMATIC STORY → STORY ──
+         *
+         * 4 steps across the transition window:
+         *
+         *  0%  – 12%   Step 1: Fade out image & text → white
+         * 12%  – 48%   Step 2: Zoom out to mid-breathe (white bg)
+         * 48%  – 84%   Step 3: Zoom in to next position (still white)
+         * 84%  – 96%   Step 4: Fade in new image & text
+         * 96%  – 100%  Settle
+         *
+         * The zoom steps get 36% each = large slow sweeps.
+         * The fades are quick 12% bookends.
+         */
+
+        const midFocus = computeMidFocus(fromPhase, toPhase);
+        const midWm = resolveFocus(midFocus);
+
+        // Fade out old
+        const s1 = transStart;
+        const s1Dur = transLen * 0.12;
+
+        // Zoom out
+        const s2 = transStart + transLen * 0.12;
+        const s2Dur = transLen * 0.36;
+
+        // Zoom in
+        const s3 = transStart + transLen * 0.48;
+        const s3Dur = transLen * 0.36;
+
+        // Fade in new
+        const s4 = transStart + transLen * 0.84;
+        const s4Dur = transLen * 0.12;
+
+        /* ── Step 1: fade out outgoing ── */
+        if (fromImage) {
+          tl!.to(fromImage, {
+            opacity: 0,
+            filter: 'blur(12px)',
+            duration: s1Dur,
+            ease: 'power2.in',
+          }, s1);
+        }
+        if (fromSlide) {
+          tl!.to(fromSlide, {
+            opacity: 0,
+            y: -16,
+            pointerEvents: 'none',
+            duration: s1Dur * 0.9,
+            ease: 'power2.in',
+          }, s1);
+        }
+        tl!.to(stageBg, {
+          opacity: 1,
+          duration: s1Dur,
+          ease: 'power1.inOut',
+        }, s1);
+
+        /* ── Step 2: zoom out to midpoint ── */
+        tl!.to(maskWordmark, {
+          scale: midWm.scale,
+          x: midWm.x,
+          y: midWm.y,
+          duration: s2Dur,
+          ease: 'power1.inOut',
+          transformOrigin: '0px 0px',
+          force3D: true,
+        }, s2);
+
+        // Ensure all images hidden during zoom
+        tl!.set(inactiveImages, { opacity: 0, filter: 'blur(14px)' }, s2);
+        if (fromImage) {
+          tl!.set(fromImage, { opacity: 0, filter: 'blur(14px)' }, s2);
+        }
+        tl!.set(inactiveSlides, { opacity: 0, y: 18, pointerEvents: 'none' }, s2);
+
+        /* ── Step 3: zoom in to next position ── */
+        tl!.to(maskWordmark, {
+          scale: toWm.scale,
+          x: toWm.x,
+          y: toWm.y,
+          duration: s3Dur,
+          ease: 'power1.inOut',
+          transformOrigin: '0px 0px',
+          force3D: true,
+        }, s3);
+
+        // Pre-position incoming image (hidden)
+        if (toImage && toPhase.imageTransform) {
+          tl!.set(toImage, {
+            opacity: 0,
+            filter: 'blur(12px)',
+            scale: toPhase.imageTransform.scale,
+            xPercent: toPhase.imageTransform.xPercent,
+            yPercent: toPhase.imageTransform.yPercent,
+          }, s3);
+        }
+        if (toSlide) {
+          tl!.set(toSlide, { opacity: 0, y: 20, pointerEvents: 'none' }, s3);
+        }
+
+        /* ── Step 4: fade in incoming ── */
+        tl!.to(stageBg, {
+          opacity: 0,
+          duration: s4Dur,
+          ease: 'power1.inOut',
+        }, s4);
+
+        if (toImage) {
+          tl!.to(toImage, {
             opacity: 1,
             filter: 'blur(0px)',
-            scale: phase.imageTransform.scale,
-            xPercent: phase.imageTransform.xPercent,
-            yPercent: phase.imageTransform.yPercent,
-            duration: TRANSITION_DURATION * 0.9,
+            duration: s4Dur,
             ease: 'power2.out',
-          }, position + 0.08)
-          .to(phase.slide, {
+          }, s4);
+        }
+        if (toSlide) {
+          tl!.to(toSlide, {
             opacity: 1,
             y: 0,
             pointerEvents: 'auto',
-            duration: TRANSITION_DURATION * 0.75,
+            duration: s4Dur * 0.9,
             ease: 'power2.out',
-          }, position + 0.16);
+          }, s4 + s4Dur * 0.1);
+        }
+
+      } else {
+        /*
+         * ── CLEAN ↔ STORY ──
+         *
+         * 3-step transition:
+         *  0%  – 15%   Fade out outgoing
+         * 10%  – 80%   Zoom (long, slow sweep)
+         * 80%  – 95%   Fade in incoming
+         * 95%  – 100%  Settle
+         */
+
+        const fadeOutStart = transStart;
+        const fadeOutDur = transLen * 0.15;
+
+        const zoomStart = transStart + transLen * 0.10;
+        const zoomDur = transLen * 0.70;
+
+        const fadeInStart = transStart + transLen * 0.80;
+        const fadeInDur = transLen * 0.15;
+
+        /* Fade out outgoing */
+        if (fromImage) {
+          tl!.to(fromImage, {
+            opacity: 0,
+            filter: 'blur(12px)',
+            duration: fadeOutDur,
+            ease: 'power2.in',
+          }, fadeOutStart);
+        }
+        if (fromSlide) {
+          tl!.to(fromSlide, {
+            opacity: 0,
+            y: fromPhase.kind === 'story' ? -16 : 18,
+            pointerEvents: 'none',
+            duration: fadeOutDur * 0.85,
+            ease: 'power2.in',
+          }, fadeOutStart);
+        }
+
+        if (toPhase.kind === 'clean') {
+          tl!.to(stageBg, {
+            opacity: 1,
+            duration: fadeOutDur,
+            ease: 'power1.inOut',
+          }, fadeOutStart);
+        }
+
+        /* Hide inactive */
+        tl!.set(inactiveImages, { opacity: 0, filter: 'blur(14px)' }, zoomStart);
+        tl!.set(inactiveSlides, { opacity: 0, y: 18, pointerEvents: 'none' }, zoomStart);
+
+        /* Zoom */
+        tl!.to(maskWordmark, {
+          scale: toWm.scale,
+          x: toWm.x,
+          y: toWm.y,
+          duration: zoomDur,
+          ease: 'power1.inOut',
+          transformOrigin: '0px 0px',
+          force3D: true,
+        }, zoomStart);
+
+        /* Pre-position incoming */
+        if (toImage && toPhase.imageTransform) {
+          tl!.set(toImage, {
+            opacity: 0,
+            filter: 'blur(12px)',
+            scale: toPhase.imageTransform.scale,
+            xPercent: toPhase.imageTransform.xPercent,
+            yPercent: toPhase.imageTransform.yPercent,
+          }, zoomStart);
+        }
+
+        /* Fade in incoming */
+        if (toPhase.kind === 'story') {
+          tl!.to(stageBg, {
+            opacity: 0,
+            duration: fadeInDur,
+            ease: 'power1.inOut',
+          }, fadeInStart);
+        }
+
+        if (toImage) {
+          tl!.to(toImage, {
+            opacity: 1,
+            filter: 'blur(0px)',
+            duration: fadeInDur,
+            ease: 'power2.out',
+          }, fadeInStart);
+        }
+        if (toSlide) {
+          tl!.to(toSlide, {
+            opacity: 1,
+            y: 0,
+            pointerEvents: 'auto',
+            duration: fadeInDur * 0.85,
+            ease: 'power2.out',
+          }, fadeInStart + fadeInDur * 0.1);
+        }
       }
     });
 
+    /* Final settle */
     const finalPhase = phases[phases.length - 1];
     const finalWm = resolveFocus(finalPhase.focus);
 
@@ -460,7 +625,6 @@ if (scrollSection && stageBg && maskWordmark) {
     gsap.set(stageBg, { opacity: 1 });
 
     const handleResizeReduced = () => setCleanWordmark();
-
     window.addEventListener('resize', handleResizeReduced);
     document.addEventListener('astro:before-swap', () => {
       window.removeEventListener('resize', handleResizeReduced);
@@ -482,7 +646,7 @@ if (scrollSection && stageBg && maskWordmark) {
       removeEndpointScrollListener = null;
       slides.forEach(destroyTypeInstance);
       clearActiveTypeIt();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      ScrollTrigger.getAll().forEach((t) => t.kill());
       tl?.kill();
     }, { once: true });
   }
