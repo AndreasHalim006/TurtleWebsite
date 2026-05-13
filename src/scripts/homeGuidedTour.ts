@@ -1,4 +1,5 @@
 import gsap from 'gsap';
+import { Observer } from 'gsap/Observer';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import TypeIt from 'typeit';
 
@@ -27,17 +28,38 @@ type TypeItInstance = {
   go: () => TypeItInstance;
 };
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, Observer);
 
-const SNAP_POINTS = [0, 0.2, 0.4, 0.6, 0.8, 1];
+const CHAPTER_TRANSITION_DURATION = 4.8;
+const PHASE_SPACING = CHAPTER_TRANSITION_DURATION;
+const CHAPTER_TRANSITION_EASE = 'power3.inOut';
+const OBSERVER_TOLERANCE = 18;
+const POST_TRANSITION_INPUT_COOLDOWN = 850;
+const SCROLLBAR_PHASE_DEBOUNCE = 180;
 
-const PHASE_SPACING = 1;
+const STORY_TO_STORY_TIMING = {
+  fadeOutStart: 0,
+  fadeOutDuration: 0.10,
+  zoomOutStart: 0.10,
+  zoomOutDuration: 0.34,
+  zoomInStart: 0.58,
+  zoomInDuration: 0.30,
+  fadeInStart: 0.90,
+  fadeInDuration: 0.10,
+  slideFadeInOffset: 0.1,
+  slideDurationRatio: 0.9,
+};
 
-/*
- * HOLD: portion at the start of each segment where the current phase
- * stays fully visible (reading time). Transition begins after this.
- */
-const HOLD = 0.15;
+const CLEAN_STORY_TIMING = {
+  fadeOutStart: 0,
+  fadeOutDuration: 0.15,
+  zoomStart: 0.1,
+  zoomDuration: 0.7,
+  fadeInStart: 0.8,
+  fadeInDuration: 0.15,
+  slideFadeInOffset: 0.1,
+  slideDurationRatio: 0.85,
+};
 
 const WORDMARK_BOUNDS = {
   x: 270,
@@ -47,8 +69,10 @@ const WORDMARK_BOUNDS = {
 };
 
 const cleanFocus: WordmarkFocus = {
-  fillRatio: 0.24,
-  maxWidthRatio: 0.78,
+  cx: 560,
+  cy: 104,
+  fillRatio: 0.2,
+  maxWidthRatio: 0.68,
   measureBounds: true,
 };
 
@@ -108,7 +132,6 @@ const escapeHtml = (value: string) =>
     return entities[char];
   });
 
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scrollSection = document.querySelector<HTMLElement>('[data-cinematic-scroll]');
 const stageBg = document.querySelector<SVGRectElement>('[data-stage-bg]');
 const maskWordmark = document.querySelector('[data-mask-wordmark]');
@@ -155,8 +178,8 @@ if (scrollSection && stageBg && maskWordmark) {
         kind: 'story',
         image: '[data-masked-img="4"]',
         slide: slide4,
-        focus: { cx: 880, cy: 21, fillRatio: wideFillRatio },
-        imageTransform: { scale: 1.04, xPercent: 0, yPercent: 0 },
+        focus: { cx: 640, cy: 21, fillRatio: 9 },
+        imageTransform: { scale: 2.04, xPercent: 0, yPercent: 0 },
       },
       { kind: 'clean', focus: cleanFocus },
     ];
@@ -215,11 +238,18 @@ if (scrollSection && stageBg && maskWordmark) {
     runTypeIt(slide);
   };
 
-  const applyWordmarkMatrix = (wm: ResolvedWordmarkFocus) => {
-    maskWordmark.setAttribute('transform', `matrix(${wm.scale},0,0,${wm.scale},${wm.x},${wm.y})`);
+  const applyWordmarkTransform = (wm: ResolvedWordmarkFocus) => {
+    maskWordmark.removeAttribute('transform');
+    gsap.set(maskWordmark, {
+      scale: wm.scale,
+      x: wm.x,
+      y: wm.y,
+      transformOrigin: '0px 0px',
+      force3D: true,
+    });
   };
 
-  const setCleanWordmark = () => applyWordmarkMatrix(resolveFocus(cleanFocus));
+  const setCleanWordmark = () => applyWordmarkTransform(resolveFocus(cleanFocus));
 
   const setPhaseActive = (phaseIndex: number, phases: PhaseDefinition[]) => {
     if (phaseIndex === activePhaseIndex) return;
@@ -227,9 +257,6 @@ if (scrollSection && stageBg && maskWordmark) {
     const phase = phases[phaseIndex];
     activateSlide(phase?.kind === 'story' ? phase.slide ?? null : null);
   };
-
-  const getNearestPhaseIndex = (progress: number, totalPhases: number) =>
-    Math.max(0, Math.min(totalPhases - 1, Math.round(progress * (totalPhases - 1))));
 
   const setPhaseVisualState = (phase: PhaseDefinition) => {
     const wm = resolveFocus(phase.focus);
@@ -241,17 +268,10 @@ if (scrollSection && stageBg && maskWordmark) {
       ? slides.filter((s) => s !== phase.slide)
       : slides;
 
-    if (phase.kind === 'clean') {
-      applyWordmarkMatrix(wm);
-    } else {
-      gsap.set(maskWordmark, {
-        scale: wm.scale, x: wm.x, y: wm.y,
-        transformOrigin: '0px 0px', force3D: true,
-      });
-    }
+    applyWordmarkTransform(wm);
     gsap.set(stageBg, { opacity: phase.kind === 'clean' ? 1 : 0 });
     gsap.set(inactiveImages, { opacity: 0, filter: 'blur(14px)' });
-    gsap.set(inactiveSlides, { opacity: 0, y: 18, pointerEvents: 'none' });
+    gsap.set(inactiveSlides, { autoAlpha: 0, y: 18, pointerEvents: 'none' });
 
     if (phase.kind === 'story' && phase.image && phase.slide && phase.imageTransform) {
       gsap.set(phase.image, {
@@ -260,7 +280,7 @@ if (scrollSection && stageBg && maskWordmark) {
         xPercent: phase.imageTransform.xPercent,
         yPercent: phase.imageTransform.yPercent,
       });
-      gsap.set(phase.slide, { opacity: 1, y: 0, pointerEvents: 'auto' });
+      gsap.set(phase.slide, { autoAlpha: 1, y: 0, pointerEvents: 'auto' });
     }
   };
 
@@ -288,74 +308,57 @@ if (scrollSection && stageBg && maskWordmark) {
     transformOrigin: '50% 50%', force3D: true,
   });
   gsap.set(stageBg, { opacity: 1 });
-  gsap.set(slides, { opacity: 0, y: 18, pointerEvents: 'none' });
+  gsap.set(slides, { autoAlpha: 0, y: 18, pointerEvents: 'none' });
   setCleanWordmark();
 
   let tl: gsap.core.Timeline | null = null;
-  let removeEndpointScrollListener: (() => void) | null = null;
+  let pinTrigger: ScrollTrigger | null = null;
+  let chapterObserver: Observer | null = null;
+  let phaseTween: gsap.core.Tween | null = null;
+  let activePhases: PhaseDefinition[] = [];
+  let isTransitioning = false;
+  let currentPhaseIndex = 0;
+  let suppressInputUntil = 0;
+  let scrollSyncTimer = 0;
+  let ignoreScrollSync = false;
 
-  const buildTimeline = () => {
-    if (tl) tl.kill();
-    removeEndpointScrollListener?.();
-    removeEndpointScrollListener = null;
-    ScrollTrigger.getAll().forEach((t) => t.kill());
+  const destroyTimeline = () => {
+    phaseTween?.kill();
+    phaseTween = null;
+    chapterObserver?.kill();
+    chapterObserver = null;
+    pinTrigger?.kill();
+    pinTrigger = null;
+    tl?.scrollTrigger?.kill();
+    tl?.kill();
+    tl = null;
+    isTransitioning = false;
+    suppressInputUntil = 0;
+    window.clearTimeout(scrollSyncTimer);
+    ignoreScrollSync = false;
+  };
 
-    activePhaseIndex = -1;
+  const clearTypingState = () => {
+    slides.forEach(destroyTypeInstance);
     clearActiveTypeIt();
     slides.forEach(resetTypeTarget);
+  };
+
+  const buildTimeline = () => {
+    destroyTimeline();
+    activePhaseIndex = -1;
+    clearTypingState();
 
     const phases = buildPhases();
+    activePhases = phases;
     const totalDuration = (phases.length - 1) * PHASE_SPACING;
 
     setPhaseVisualState(phases[0]);
+    setPhaseActive(0, phases);
+    currentPhaseIndex = 0;
 
-    const settleCleanEndpoint = (progress: number) => {
-      const idx = getNearestPhaseIndex(progress, phases.length);
-      if (idx === 0 || idx === phases.length - 1) setPhaseVisualState(phases[idx]);
-    };
-    let endpointSettleTimer = 0;
-    const queueEndpointSettle = () => {
-      window.clearTimeout(endpointSettleTimer);
-      endpointSettleTimer = window.setTimeout(() => {
-        const start = scrollSection.offsetTop;
-        const end = start + scrollSection.offsetHeight - window.innerHeight;
-        const p = (window.scrollY - start) / Math.max(1, end - start);
-        if (p <= 0.045 || p >= 0.955) settleCleanEndpoint(p);
-      }, 760);
-    };
-    window.addEventListener('scroll', queueEndpointSettle, { passive: true });
-    removeEndpointScrollListener = () => {
-      window.clearTimeout(endpointSettleTimer);
-      window.removeEventListener('scroll', queueEndpointSettle);
-    };
-
-    tl = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        trigger: scrollSection,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 1,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const idx = getNearestPhaseIndex(self.progress, phases.length);
-          const exact = idx / (phases.length - 1);
-          if (Math.abs(self.progress - exact) < 0.045) {
-            setPhaseActive(idx, phases);
-            if (idx === 0 || idx === phases.length - 1) setPhaseVisualState(phases[idx]);
-          }
-        },
-        onScrubComplete: (self) => settleCleanEndpoint(self.progress),
-        onSnapComplete: (self) => settleCleanEndpoint(self.progress),
-        snap: {
-          snapTo: SNAP_POINTS,
-          duration: { min: 0.3, max: 0.9 },
-          delay: 0.2,
-          ease: 'power3.out',
-        },
-      },
-    });
+    tl = gsap.timeline({ paused: true, defaults: { ease: CHAPTER_TRANSITION_EASE } });
+    phases.forEach((_, index) => tl!.add(`phase-${index}`, index * PHASE_SPACING));
 
     phases.slice(1).forEach((toPhase, index) => {
       const fromPhase = phases[index];
@@ -373,8 +376,8 @@ if (scrollSection && stageBg && maskWordmark) {
 
       const isStoryToStory = fromPhase.kind === 'story' && toPhase.kind === 'story';
 
-      const transStart = segStart + HOLD;
-      const transLen = PHASE_SPACING - HOLD;
+      const transStart = segStart;
+      const transLen = PHASE_SPACING;
 
       if (isStoryToStory) {
         /*
@@ -396,20 +399,20 @@ if (scrollSection && stageBg && maskWordmark) {
         const midWm = resolveFocus(midFocus);
 
         // Fade out old
-        const s1 = transStart;
-        const s1Dur = transLen * 0.12;
+        const s1 = transStart + transLen * STORY_TO_STORY_TIMING.fadeOutStart;
+        const s1Dur = transLen * STORY_TO_STORY_TIMING.fadeOutDuration;
 
         // Zoom out
-        const s2 = transStart + transLen * 0.12;
-        const s2Dur = transLen * 0.36;
+        const s2 = transStart + transLen * STORY_TO_STORY_TIMING.zoomOutStart;
+        const s2Dur = transLen * STORY_TO_STORY_TIMING.zoomOutDuration;
 
         // Zoom in
-        const s3 = transStart + transLen * 0.48;
-        const s3Dur = transLen * 0.36;
+        const s3 = transStart + transLen * STORY_TO_STORY_TIMING.zoomInStart;
+        const s3Dur = transLen * STORY_TO_STORY_TIMING.zoomInDuration;
 
         // Fade in new
-        const s4 = transStart + transLen * 0.84;
-        const s4Dur = transLen * 0.12;
+        const s4 = transStart + transLen * STORY_TO_STORY_TIMING.fadeInStart;
+        const s4Dur = transLen * STORY_TO_STORY_TIMING.fadeInDuration;
 
         /* ── Step 1: fade out outgoing ── */
         if (fromImage) {
@@ -422,10 +425,10 @@ if (scrollSection && stageBg && maskWordmark) {
         }
         if (fromSlide) {
           tl!.to(fromSlide, {
-            opacity: 0,
+            autoAlpha: 0,
             y: -16,
             pointerEvents: 'none',
-            duration: s1Dur * 0.9,
+            duration: s1Dur * STORY_TO_STORY_TIMING.slideDurationRatio,
             ease: 'power2.in',
           }, s1);
         }
@@ -451,7 +454,7 @@ if (scrollSection && stageBg && maskWordmark) {
         if (fromImage) {
           tl!.set(fromImage, { opacity: 0, filter: 'blur(14px)' }, s2);
         }
-        tl!.set(inactiveSlides, { opacity: 0, y: 18, pointerEvents: 'none' }, s2);
+        tl!.set(inactiveSlides, { autoAlpha: 0, y: 18, pointerEvents: 'none' }, s2);
 
         /* ── Step 3: zoom in to next position ── */
         tl!.to(maskWordmark, {
@@ -475,7 +478,7 @@ if (scrollSection && stageBg && maskWordmark) {
           }, s3);
         }
         if (toSlide) {
-          tl!.set(toSlide, { opacity: 0, y: 20, pointerEvents: 'none' }, s3);
+          tl!.set(toSlide, { autoAlpha: 0, y: 20, pointerEvents: 'none' }, s3);
         }
 
         /* ── Step 4: fade in incoming ── */
@@ -495,12 +498,12 @@ if (scrollSection && stageBg && maskWordmark) {
         }
         if (toSlide) {
           tl!.to(toSlide, {
-            opacity: 1,
+            autoAlpha: 1,
             y: 0,
             pointerEvents: 'auto',
-            duration: s4Dur * 0.9,
+            duration: s4Dur * STORY_TO_STORY_TIMING.slideDurationRatio,
             ease: 'power2.out',
-          }, s4 + s4Dur * 0.1);
+          }, s4 + s4Dur * STORY_TO_STORY_TIMING.slideFadeInOffset);
         }
 
       } else {
@@ -514,14 +517,14 @@ if (scrollSection && stageBg && maskWordmark) {
          * 95%  – 100%  Settle
          */
 
-        const fadeOutStart = transStart;
-        const fadeOutDur = transLen * 0.15;
+        const fadeOutStart = transStart + transLen * CLEAN_STORY_TIMING.fadeOutStart;
+        const fadeOutDur = transLen * CLEAN_STORY_TIMING.fadeOutDuration;
 
-        const zoomStart = transStart + transLen * 0.10;
-        const zoomDur = transLen * 0.70;
+        const zoomStart = transStart + transLen * CLEAN_STORY_TIMING.zoomStart;
+        const zoomDur = transLen * CLEAN_STORY_TIMING.zoomDuration;
 
-        const fadeInStart = transStart + transLen * 0.80;
-        const fadeInDur = transLen * 0.15;
+        const fadeInStart = transStart + transLen * CLEAN_STORY_TIMING.fadeInStart;
+        const fadeInDur = transLen * CLEAN_STORY_TIMING.fadeInDuration;
 
         /* Fade out outgoing */
         if (fromImage) {
@@ -534,10 +537,10 @@ if (scrollSection && stageBg && maskWordmark) {
         }
         if (fromSlide) {
           tl!.to(fromSlide, {
-            opacity: 0,
+            autoAlpha: 0,
             y: fromPhase.kind === 'story' ? -16 : 18,
             pointerEvents: 'none',
-            duration: fadeOutDur * 0.85,
+            duration: fadeOutDur * CLEAN_STORY_TIMING.slideDurationRatio,
             ease: 'power2.in',
           }, fadeOutStart);
         }
@@ -552,7 +555,7 @@ if (scrollSection && stageBg && maskWordmark) {
 
         /* Hide inactive */
         tl!.set(inactiveImages, { opacity: 0, filter: 'blur(14px)' }, zoomStart);
-        tl!.set(inactiveSlides, { opacity: 0, y: 18, pointerEvents: 'none' }, zoomStart);
+        tl!.set(inactiveSlides, { autoAlpha: 0, y: 18, pointerEvents: 'none' }, zoomStart);
 
         /* Zoom */
         tl!.to(maskWordmark, {
@@ -595,12 +598,12 @@ if (scrollSection && stageBg && maskWordmark) {
         }
         if (toSlide) {
           tl!.to(toSlide, {
-            opacity: 1,
+            autoAlpha: 1,
             y: 0,
             pointerEvents: 'auto',
-            duration: fadeInDur * 0.85,
+            duration: fadeInDur * CLEAN_STORY_TIMING.slideDurationRatio,
             ease: 'power2.out',
-          }, fadeInStart + fadeInDur * 0.1);
+          }, fadeInStart + fadeInDur * CLEAN_STORY_TIMING.slideFadeInOffset);
         }
       }
     });
@@ -610,44 +613,223 @@ if (scrollSection && stageBg && maskWordmark) {
     const finalWm = resolveFocus(finalPhase.focus);
 
     tl
-      .call(() => applyWordmarkMatrix(finalWm), [], totalDuration)
+      .call(() => applyWordmarkTransform(finalWm), [], totalDuration)
       .set(stageBg, { opacity: 1 }, totalDuration)
       .set(maskedImages, { opacity: 0, filter: 'blur(14px)' }, totalDuration)
-      .set(slides, { opacity: 0, y: 18, pointerEvents: 'none' }, totalDuration);
+      .set(slides, { autoAlpha: 0, y: 18, pointerEvents: 'none' }, totalDuration);
 
     tl.to({}, { duration: 0.01 }, totalDuration);
   };
 
-  if (reducedMotion) {
+  const setPhaseInstant = (phaseIndex: number) => {
+    if (!tl || !activePhases.length) return;
+    const safeIndex = Math.max(0, Math.min(activePhases.length - 1, phaseIndex));
+    phaseTween?.kill();
+    phaseTween = null;
+    tl.pause(`phase-${safeIndex}`);
+    currentPhaseIndex = safeIndex;
+    isTransitioning = false;
+    suppressInputUntil = 0;
+    setPhaseVisualState(activePhases[safeIndex]);
+    setPhaseActive(safeIndex, activePhases);
+  };
+
+  const releaseNativeScroll = (direction: 'forward' | 'backward') => {
+    chapterObserver?.disable();
+    isTransitioning = false;
+    suppressInputUntil = 0;
+    if (!pinTrigger) return;
+    const top = direction === 'forward' ? pinTrigger.end + 2 : Math.max(0, pinTrigger.start - 2);
+    ignoreScrollSync = true;
+    window.scrollTo({ top, behavior: 'auto' });
+    window.setTimeout(() => { ignoreScrollSync = false; }, SCROLLBAR_PHASE_DEBOUNCE);
+  };
+
+  const goToPhase = (phaseIndex: number) => {
+    if (!tl || !activePhases.length || isTransitioning || Date.now() < suppressInputUntil) return;
+
+    if (phaseIndex < 0) {
+      releaseNativeScroll('backward');
+      return;
+    }
+
+    if (phaseIndex >= activePhases.length) {
+      releaseNativeScroll('forward');
+      return;
+    }
+
+    if (phaseIndex === currentPhaseIndex) return;
+
+    phaseTween?.kill();
+    clearActiveTypeIt();
+    isTransitioning = true;
+    phaseTween = tl.tweenTo(`phase-${phaseIndex}`, {
+      duration: CHAPTER_TRANSITION_DURATION,
+      ease: CHAPTER_TRANSITION_EASE,
+      onComplete: () => {
+        currentPhaseIndex = phaseIndex;
+        phaseTween = null;
+        isTransitioning = false;
+        suppressInputUntil = Date.now() + POST_TRANSITION_INPUT_COOLDOWN;
+        setPhaseVisualState(activePhases[phaseIndex]);
+        setPhaseActive(phaseIndex, activePhases);
+      },
+      onInterrupt: () => {
+        phaseTween = null;
+        isTransitioning = false;
+      },
+    });
+  };
+
+  const enableChapterControl = (entryPhase: number) => {
+    setPhaseInstant(entryPhase);
+    chapterObserver?.enable();
+  };
+
+  const getScrollPhaseIndex = () => {
+    if (!pinTrigger || activePhases.length < 2) return currentPhaseIndex;
+    const progress = (window.scrollY - pinTrigger.start) / Math.max(1, pinTrigger.end - pinTrigger.start);
+    return Math.max(0, Math.min(activePhases.length - 1, Math.round(progress * (activePhases.length - 1))));
+  };
+
+  const syncPhaseFromScrollPosition = () => {
+    if (!isInsidePinnedRange() || ignoreScrollSync || !activePhases.length) return;
+    const phaseIndex = getScrollPhaseIndex();
+    if (isTransitioning) {
+      phaseTween?.kill();
+      phaseTween = null;
+      isTransitioning = false;
+      suppressInputUntil = Date.now() + POST_TRANSITION_INPUT_COOLDOWN;
+    }
+    if (phaseIndex !== currentPhaseIndex) setPhaseInstant(phaseIndex);
+    chapterObserver?.enable();
+  };
+
+  const queueScrollPhaseSync = () => {
+    window.clearTimeout(scrollSyncTimer);
+    scrollSyncTimer = window.setTimeout(syncPhaseFromScrollPosition, SCROLLBAR_PHASE_DEBOUNCE);
+  };
+
+  const isInsidePinnedRange = () => {
+    if (pinTrigger?.isActive) return true;
+    const rect = scrollSection.getBoundingClientRect();
+    return rect.top <= 2 && rect.bottom >= window.innerHeight - 2;
+  };
+
+  const handleChapterKeydown = (event: KeyboardEvent) => {
+    if (!isInsidePinnedRange()) return;
+
+    const forwardKeys = new Set(['ArrowDown', 'PageDown', ' ', 'Spacebar']);
+    const backwardKeys = new Set(['ArrowUp', 'PageUp']);
+    const exitForwardKeys = new Set(['End']);
+    const exitBackwardKeys = new Set(['Home']);
+
+    if (forwardKeys.has(event.key)) {
+      event.preventDefault();
+      syncPhaseFromScrollPosition();
+      chapterObserver?.enable();
+      goToPhase(currentPhaseIndex + 1);
+    } else if (backwardKeys.has(event.key)) {
+      event.preventDefault();
+      syncPhaseFromScrollPosition();
+      chapterObserver?.enable();
+      goToPhase(currentPhaseIndex - 1);
+    } else if (exitForwardKeys.has(event.key)) {
+      event.preventDefault();
+      releaseNativeScroll('forward');
+    } else if (exitBackwardKeys.has(event.key)) {
+      event.preventDefault();
+      releaseNativeScroll('backward');
+    }
+  };
+
+  const createChapterController = () => {
+    chapterObserver?.kill();
+    pinTrigger?.kill();
+
+    chapterObserver = Observer.create({
+      target: window,
+      type: 'wheel,touch,pointer',
+      preventDefault: true,
+      tolerance: OBSERVER_TOLERANCE,
+      wheelSpeed: -1,
+      onUp: () => goToPhase(currentPhaseIndex + 1),
+      onDown: () => goToPhase(currentPhaseIndex - 1),
+    });
+    chapterObserver.disable();
+
+    pinTrigger = ScrollTrigger.create({
+      trigger: scrollSection,
+      start: 'top top',
+      end: () => `+=${window.innerHeight * (activePhases.length + 1)}`,
+      pin: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onEnter: () => enableChapterControl(0),
+      onEnterBack: () => enableChapterControl(activePhases.length - 1),
+      onToggle: (self) => {
+        if (self.isActive) queueScrollPhaseSync();
+      },
+      onUpdate: (self) => {
+        if (self.isActive && !chapterObserver?.isEnabled) chapterObserver?.enable();
+        if (self.isActive && !isTransitioning) queueScrollPhaseSync();
+      },
+      onLeave: () => chapterObserver?.disable(),
+      onLeaveBack: () => chapterObserver?.disable(),
+    });
+  };
+
+  const media = gsap.matchMedia();
+
+  media.add('(prefers-reduced-motion: reduce)', () => {
+    destroyTimeline();
     setCleanWordmark();
     gsap.set(maskedImages, { opacity: 0 });
-    gsap.set(slides, { opacity: 0, pointerEvents: 'none' });
+    gsap.set(slides, { autoAlpha: 0, pointerEvents: 'none' });
     gsap.set(stageBg, { opacity: 1 });
 
     const handleResizeReduced = () => setCleanWordmark();
     window.addEventListener('resize', handleResizeReduced);
-    document.addEventListener('astro:before-swap', () => {
-      window.removeEventListener('resize', handleResizeReduced);
-      slides.forEach(destroyTypeInstance);
-    }, { once: true });
-  } else {
-    buildTimeline();
 
+    return () => {
+      window.removeEventListener('resize', handleResizeReduced);
+      clearTypingState();
+    };
+  });
+
+  media.add('(prefers-reduced-motion: no-preference)', () => {
+    buildTimeline();
+    createChapterController();
+
+    let resizeTimer = 0;
     const handleResize = () => {
-      setCleanWordmark();
-      buildTimeline();
-      ScrollTrigger.refresh();
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        setCleanWordmark();
+        buildTimeline();
+        createChapterController();
+        ScrollTrigger.refresh();
+      }, 180);
     };
 
     window.addEventListener('resize', handleResize);
-    document.addEventListener('astro:before-swap', () => {
+    window.addEventListener('keydown', handleChapterKeydown);
+    window.addEventListener('scroll', queueScrollPhaseSync, { passive: true });
+
+    return () => {
+      window.clearTimeout(resizeTimer);
+      window.clearTimeout(scrollSyncTimer);
       window.removeEventListener('resize', handleResize);
-      removeEndpointScrollListener?.();
-      removeEndpointScrollListener = null;
-      slides.forEach(destroyTypeInstance);
-      clearActiveTypeIt();
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-      tl?.kill();
-    }, { once: true });
-  }
+      window.removeEventListener('keydown', handleChapterKeydown);
+      window.removeEventListener('scroll', queueScrollPhaseSync);
+      destroyTimeline();
+      clearTypingState();
+    };
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    media.revert();
+    destroyTimeline();
+    clearTypingState();
+  }, { once: true });
 }

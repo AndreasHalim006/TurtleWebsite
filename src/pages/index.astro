@@ -6,7 +6,7 @@ const base = import.meta.env.BASE_URL;
 const phaseImage1 = `${base}assets/images/oikiskos.png`;
 const phaseImage2 = `${base}assets/images/team.png`;
 const phaseImage3 = `${base}assets/images/Aristurtle_photo_2-1_2.jpg`;
-const phaseImage4 = `${base}assets/images/oikiskos.png`;
+const phaseImage4 = `${base}assets/images/Aristurtle_photo_1-1_2.jpg`;
 ---
 
 <BaseLayout title="ARISTURTLE | Formula Student Electric & Driverless">
@@ -36,8 +36,8 @@ const phaseImage4 = `${base}assets/images/oikiskos.png`;
       <img src={carImage.src} alt="Aristurtle Car Rhea" class="h-full w-full object-cover object-center" />
     </section>
 
-    <section class="relative min-h-[1200svh] bg-[#081024]" data-cinematic-scroll>
-      <div class="sticky top-0 h-svh min-h-[32rem] w-full overflow-hidden">
+    <section class="relative min-h-svh bg-[#081024]" data-cinematic-scroll>
+      <div class="h-svh min-h-[32rem] w-full overflow-hidden">
 
         <svg
           class="tour-image-mask-stage pointer-events-none absolute inset-0 z-0 h-full w-full"
@@ -101,7 +101,7 @@ const phaseImage4 = `${base}assets/images/oikiskos.png`;
             <a class="tour-cta" href="/sponsors/">Sponsors</a>
           </article>
 
-          <article class="tour-slide opacity-0" data-slide="4" data-copy-side="right">
+          <article class="tour-slide opacity-0" data-slide="4" data-copy-side="left">
             <span class="sr-only">BACK THE TEAM. Partners, alumni, and new members keep Aristurtle moving from concept to competition.</span>
             <div class="typeit-copy" aria-hidden="true" data-typeit-copy data-typeit-title="BACK THE TEAM" data-typeit-body="Partners, alumni, and new members keep Aristurtle moving from concept to competition."></div>
             <a class="tour-cta" href="/contact/">Contact</a>
@@ -128,7 +128,16 @@ const phaseImage4 = `${base}assets/images/oikiskos.png`;
 </BaseLayout>
 
 <style>
-  :global(html), :global(body) { margin: 0; padding: 0; background: #081024; }
+  :global(html), :global(body) {
+    margin: 0;
+    padding: 0;
+    background: #081024;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  :global(html::-webkit-scrollbar), :global(body::-webkit-scrollbar) {
+    display: none;
+  }
 
   .tour-image-mask-stage { overflow: visible; }
   .tour-copy-stage { left: 0; top: 0; }
