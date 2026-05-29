@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1267 543" width="1267" height="543">
+  <title>Simplified formula-style race car side illustration</title>
+  <desc>Simplified SVG line drawing based on the supplied car illustration.</desc>
+  <style>
+    .line{fill:none;stroke:#111;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+    .thin{fill:none;stroke:#111;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+    .fill{fill:#fff;stroke:#111;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+    .small{fill:#111;stroke:none}
+  </style>
+
+  <!-- ground / splitter line -->
+  <path class="thin" d="M58 516 H1210"/>
+
+  <!-- rear wing simplified -->
+  <path class="fill" d="M15 23 H256 C276 27 294 34 309 43 V289 C242 298 142 297 70 274 C31 262 15 241 15 210 Z"/>
+  <path class="line" d="M30 74 C94 141 181 167 302 171"/>
+  <path class="line" d="M28 151 C97 220 188 245 304 247"/>
+  <path class="line" d="M182 294 V355"/>
+  <path class="line" d="M286 295 V357"/>
+
+  <!-- rear crash structure / undertray -->
+  <path class="fill" d="M57 486 C95 503 128 511 184 512 L740 514 C760 501 776 479 792 452 L987 451 L1040 496 L1206 496 V516 H57 Z"/>
+
+  <!-- chassis floor and cockpit side -->
+  <path class="fill" d="M258 331 H418 C451 331 473 344 483 366 C506 416 555 446 658 447 H732 C742 393 744 340 761 309 C778 278 814 268 875 276 C946 285 1037 301 1112 332 C1157 350 1198 382 1223 412 H1080 C1031 392 962 380 875 374 C812 370 773 380 761 411 L747 515 H318 Z"/>
+  <path class="thin" d="M486 363 C553 389 620 413 733 425"/>
+  <path class="thin" d="M758 315 C812 319 873 325 934 339"/>
+
+  <!-- nose and front wing -->
+  <path class="fill" d="M865 287 C936 285 1043 296 1114 326 C1173 352 1214 378 1235 407 C1189 421 1124 433 1046 430 C962 426 908 401 858 378 Z"/>
+  <path class="fill" d="M963 405 H1256 V496 H1015 C1002 481 1000 459 1012 444 H963 Z"/>
+  <path class="line" d="M1049 431 C1074 464 1116 472 1230 469"/>
+  <path class="thin" d="M1077 405 C1116 434 1164 448 1255 449"/>
+  <path class="thin" d="M867 329 C915 334 963 337 1025 344"/>
+
+  <!-- cockpit / roll hoop -->
+  <path class="fill" d="M349 290 L410 166 L421 33 C422 25 433 25 435 33 L461 294"/>
+  <path class="line" d="M313 285 L374 172 L401 103"/>
+  <path class="thin" d="M419 65 L445 78 L437 97 L417 91"/>
+  <path class="thin" d="M314 96 H409"/>
+  <path class="thin" d="M315 96 L346 122 L380 96 L407 119"/>
+  <circle class="small" cx="417" cy="138" r="9"/>
+  <path class="thin" d="M371 129 H393 V225 H371 Z"/>
+  <path class="thin" d="M389 160 H427"/>
+  <path class="thin" d="M377 192 H429"/>
+
+  <!-- front cockpit / steering area -->
+  <path class="fill" d="M745 277 L756 253 L767 256 L762 304"/>
+  <path class="thin" d="M760 269 H824"/>
+  <path class="thin" d="M801 267 L809 353"/>
+  <circle class="thin" cx="807" cy="318" r="12"/>
+  <path class="thin" d="M824 284 H871 V365"/>
+
+  <!-- side panel details simplified -->
+  <path class="thin" d="M118 329 H260"/>
+  <path class="thin" d="M258 331 V515"/>
+  <path class="thin" d="M725 321 V515"/>
+  <path class="thin" d="M748 338 H807 V515 H748"/>
+  <path class="thin" d="M342 292 H421"/>
+  <circle class="small" cx="286" cy="329" r="5"/><circle class="small" cx="307" cy="330" r="5"/><circle class="small" cx="330" cy="330" r="5"/><circle class="small" cx="352" cy="330" r="5"/>
+  <circle class="thin" cx="318" cy="321" r="10"/><circle class="thin" cx="347" cy="321" r="10"/><circle class="thin" cx="376" cy="321" r="10"/>
+
+  <!-- suspension simplified -->
+  <path class="line" d="M205 377 L350 322"/>
+  <path class="line" d="M206 472 L370 435"/>
+  <path class="line" d="M827 379 L748 338"/>
+  <path class="line" d="M825 473 L742 426"/>
+  <path class="thin" d="M547 365 L738 365"/>
+
+  <!-- wheels simplified -->
+  <g id="rear-wheel">
+    <circle class="fill" cx="186" cy="443" r="90"/>
+    <circle class="thin" cx="186" cy="443" r="73"/>
+    <circle class="thin" cx="186" cy="443" r="48"/>
+    <circle class="thin" cx="186" cy="443" r="18"/>
+    <circle class="small" cx="186" cy="443" r="7"/>
+    <path class="thin" d="M186 394 V492 M137 443 H235 M151 408 L221 478 M221 408 L151 478"/>
+  </g>
+  <g id="front-wheel">
+    <circle class="fill" cx="842" cy="443" r="90"/>
+    <circle class="thin" cx="842" cy="443" r="73"/>
+    <circle class="thin" cx="842" cy="443" r="48"/>
+    <circle class="thin" cx="842" cy="443" r="18"/>
+    <circle class="small" cx="842" cy="443" r="7"/>
+    <path class="thin" d="M842 394 V492 M793 443 H891 M807 408 L877 478 M877 408 L807 478"/>
+  </g>
+
+  <!-- small structural marks -->
+  <circle class="small" cx="453" cy="365" r="6"/><circle class="small" cx="474" cy="363" r="6"/>
+  <circle class="small" cx="765" cy="365" r="5"/><circle class="small" cx="785" cy="363" r="5"/>
+  <path class="thin" d="M528 425 Q545 419 560 430"/>
+  <path class="thin" d="M642 436 Q660 430 674 441"/>
+  <path class="thin" d="M703 440 Q716 435 730 444"/>
+</svg>

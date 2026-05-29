@@ -1,35 +1,139 @@
 ---
 import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
 
 interface Props {
-  title?: string;
+	title?: string;
+	description?: string;
 }
 
-const { title = 'ARISTURTLE | Formula Student Electric & Driverless' } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const { 
+	title = "ARISTURTLE | Formula Student Team",
+	description = "Official website of ARISTURTLE, the high-performance Formula Student racing team from Aristotle University of Thessaloniki."
+} = Astro.props;
+
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
-    <link rel="icon" type="image/x-icon" href={`${base}favicon.ico`} />
-    <meta name="generator" content={Astro.generator} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <title>{title}</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="selection:bg-secondary selection:text-on-secondary bg-background text-on-background font-body">
-    <slot />
-  </body>
+<html lang="en" class="bg-[#050505] text-[#f6f7fb] antialiased">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap" rel="stylesheet">
+	</head>
+	<body class="antialiased">
+		
+		<Navbar />
+		<main id="main-content">
+			<slot />
+		</main>
+
+		<script>
+			import Lenis from 'lenis';
+			import { gsap } from 'gsap';
+			import { ScrollTrigger } from 'gsap/ScrollTrigger';
+			import { CustomEase } from 'gsap/CustomEase';
+
+			gsap.registerPlugin(ScrollTrigger, CustomEase);
+
+			// Define mandated LUXE_EASE globally
+			CustomEase.create("luxe", "0.16, 1, 0.3, 1");
+
+			// Set global defaults for consistent "Aristurtle" motion
+			gsap.defaults({
+				ease: "luxe",
+				duration: 0.6
+			});
+
+			// Initialize Lenis smooth scrolling
+			const lenis = new Lenis({
+				duration: 1.5,
+				easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+				touchMultiplier: 2,
+			});
+
+			// Sync ScrollTrigger with Lenis
+			lenis.on('scroll', ScrollTrigger.update);
+
+			gsap.ticker.add((time) => {
+				lenis.raf(time * 1000);
+			});
+
+			gsap.ticker.lagSmoothing(0);
+
+			// Refresh ScrollTrigger on page load to ensure correct positions
+			window.addEventListener('load', () => {
+				ScrollTrigger.refresh();
+			});
+
+			// Global access for other components if needed
+			(window as any).lenis = lenis;
+		</script>
+	</body>
 </html>
+
+<style is:global>
+	:root {
+		--brand-orange: #ff8900;
+		--brand-emerald: #0A0A0A;
+		--brand-midnight: #141414;
+		--off-white: #F9F8F6;
+		--void: #050505;
+		--foreground: #f6f7fb;
+		
+		--font-serif: 'Jura', sans-serif;
+		--font-sans: 'Jura', sans-serif;
+		--font-accent: 'Jura', sans-serif;
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	html {
+		background-color: var(--void);
+	}
+
+	html.lenis,
+	html.lenis body {
+		height: auto;
+	}
+
+	.lenis.lenis-smooth {
+		scroll-behavior: auto !important;
+	}
+
+	.lenis.lenis-smooth [data-lenis-prevent] {
+		overscroll-behavior: contain;
+	}
+
+	.lenis.lenis-stopped {
+		overflow: hidden;
+	}
+
+	.lenis.lenis-scrolling iframe {
+		pointer-events: none;
+	}
+
+	body {
+		background-color: transparent;
+		color: var(--foreground);
+		font-family: var(--font-sans);
+		margin: 0;
+		width: 100%;
+		min-height: 100vh;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-family: var(--font-serif);
+	}
+</style>

@@ -20,9 +20,9 @@ const sponsors = defineCollection({
       name: z.string(),
       category: z.string(),
       order: z.number(),
-      logo: image(),
+      logo: z.string(),
       website: z.string().url().optional(),
-      alt: z.string(),
+      alt: z.string().optional(),
       active: z.boolean().default(true),
     }),
 });

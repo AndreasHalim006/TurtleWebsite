@@ -35,3 +35,23 @@ Thumbs.db
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Large Assets
+*.mp4
+*.webm
+*.mov
+*.avi
+*.zip
+*.tar.gz
+*.dll
+*.exe
+
+# Screenshots and root design files
+Screenshot*.png
+Screenshot_*.png
+about-*.png
+hyperspeed-*.png
+alignment-test.png
+video-debug.png
+*.psd
+*.ai

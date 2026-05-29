@@ -1,0 +1,107 @@
+---
+import logoSvg from '../assets/images/Turtle_logo_svg.svg';
+import { StaggeredMenu } from './reactbits/StaggeredMenu';
+
+const menuItems = [
+  { label: 'Subteams', ariaLabel: 'Go to Subteams', link: '#subteams' },
+  { label: 'History', ariaLabel: 'Go to History', link: '#history' },
+  { label: 'Sponsors', ariaLabel: 'Go to Sponsors', link: '#sponsors' },
+  { label: 'Contact', ariaLabel: 'Go to Contact', link: '#contact' },
+  { label: 'Recruitment', ariaLabel: 'Join the team', link: '#recruitment' }
+];
+
+const socialItems = [
+  { label: 'Instagram', link: '#' },
+  { label: 'LinkedIn', link: '#' }
+];
+---
+
+<header id="main-nav" class="fixed top-0 left-0 w-full z-[1000] pointer-events-none">
+  <div class="w-full flex justify-between items-start">
+    <div class="flex items-start pointer-events-auto">
+      <a href="/" class="logo-wrapper group block">
+        <img 
+          src={logoSvg.src} 
+          alt="Aristurtle Logo" 
+          id="nav-logo"
+          class="w-[400px] md:w-[550px] lg:w-[700px] h-auto transition-all duration-1000 brightness-0 invert" 
+        />
+      </a>
+    </div>
+
+    <div class="pointer-events-auto mt-[8px]">
+      <StaggeredMenu
+        client:load
+        position="right"
+        items={menuItems}
+        socialItems={socialItems}
+        displaySocials={true}
+        displayItemNumbering={true}
+        menuButtonColor="#fff"
+        openMenuButtonColor="#000"
+        changeMenuColorOnOpen={true}
+        colors={['#ff5600', '#ff2300']}
+        accentColor="#ff8900"
+        isFixed={true}
+      />
+    </div>
+  </div>
+</header>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { CustomEase } from 'gsap/CustomEase';
+
+  gsap.registerPlugin(ScrollTrigger, CustomEase);
+
+  // Define mandated LUXE_EASE
+  CustomEase.create("luxe", "0.16, 1, 0.3, 1");
+
+  const logo = document.getElementById('nav-logo');
+
+  const mm = gsap.matchMedia();
+
+  mm.add({
+    // Accessibility: respects reduced motion preference
+    reduceMotion: "(prefers-reduced-motion: reduce)",
+    noPreference: "(prefers-reduced-motion: no-preference)"
+  }, (context) => {
+    const { reduceMotion } = context.conditions;
+
+    // LOGO DISCRETE SWITCH (Snaps when exiting Hero)
+    ScrollTrigger.create({
+      trigger: "#hero",
+      start: "bottom 50%", 
+      onEnter: () => {
+        gsap.to(logo, { 
+          width: "200px", 
+          duration: reduceMotion ? 0 : 0.6, 
+          ease: "luxe" 
+        });
+      },
+      onLeaveBack: () => {
+        gsap.to(logo, { 
+          width: "", 
+          duration: reduceMotion ? 0 : 0.8, 
+          ease: "luxe", 
+          clearProps: "width" 
+        });
+      }
+    });
+
+    return () => context.revert();
+  });
+</script>
+
+<style>
+  #main-nav {
+    padding-top: 2vh;
+    padding-left: 2vw;
+    padding-right: 1vw;
+  }
+
+  .ease-expo {
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>
