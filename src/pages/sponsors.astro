@@ -2,9 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
+import Grainient from '../components/reactbits/Grainient';
+import TargetCursor from '../components/reactbits/TargetCursor';
 
 // Hero Image
-import heroImage from '../assets/images/Aristurtle_photo_1-1_2.jpg';
+import heroImage from '../assets/images/Aristurtle_photo_2-1_2.jpg';
 
 // Fetch all active sponsors
 const allSponsors = await getCollection('sponsors', ({ data }) => {
@@ -22,25 +24,36 @@ const getSponsorsByCategory = (categoryKey: string) => {
         .sort((a, b) => a.data.order - b.data.order);
 };
 
-const hasData = allCategories.length > 0 && allSponsors.length > 0;
+// Filter categories that have sponsors
+const categoriesWithSponsors = sortedCategories.filter(cat => getSponsorsByCategory(cat.data.key).length > 0);
+
+// Flatten data for the client-side script
+const serializedSponsors = categoriesWithSponsors.map(cat => ({
+    title: cat.data.title,
+    sponsors: getSponsorsByCategory(cat.data.key).map(s => ({
+        name: s.data.name,
+        logo: s.data.logo,
+        website: s.data.website || ''
+    }))
+}));
 ---
 
-<BaseLayout title="ARISTURTLE | Our Partners & Sponsors">
+<BaseLayout title="ARISTURTLE | Our Strategic Partners">
     <div class="bg-void min-h-screen w-full relative text-foreground selection:bg-brand-orange selection:text-brand-emerald">
         
-        <!-- PURE BACKGROUND GRID -->
-        <div class="fixed inset-0 z-0 micro-grid opacity-10 pointer-events-none"></div>
+        <!-- TARGET CURSOR HUD -->
+        <TargetCursor client:load targetSelector=".grid-link" />
 
         <!-- HERO SECTION -->
-        <section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-10 overflow-hidden bg-brand-midnight">
+        <section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-30 overflow-hidden bg-brand-midnight border-b border-white/10">
             <div class="absolute inset-0 z-0 overflow-hidden">
                 <Image 
                     src={heroImage} 
                     alt="Aristurtle Team" 
-                    class="w-full h-full object-cover opacity-40 scale-105"
+                    class="w-full h-full object-cover opacity-30 scale-105"
                     id="hero-image"
                 />
-                <div class="absolute inset-0 bg-gradient-to-b from-void/40 via-transparent to-void"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-void/60 via-transparent to-void"></div>
             </div>
 
             <div class="relative max-w-[1800px] mx-auto w-full text-center flex flex-col items-center gap-6 z-20 px-[5vw]">
@@ -50,158 +63,117 @@ const hasData = allCategories.length > 0 && allSponsors.length > 0;
                 <h1 class="font-sans text-6xl md:text-8xl lg:text-9xl leading-[0.85] text-white font-light hero-reveal opacity-0 translate-y-8">
                     OUR <span class="font-bold">PARTNERS</span>
                 </h1>
-                <div class="w-32 h-[1px] bg-brand-orange/40 mt-6 hero-reveal opacity-0 scale-x-0"></div>
-                <p class="font-sans text-sm md:text-base opacity-60 max-w-xl tracking-widest mt-6 hero-reveal opacity-0 translate-y-8 leading-relaxed">
-                    ENGINEERING THE FUTURE OF MOBILITY THROUGH STRATEGIC COLLABORATION AND TECHNICAL EXCELLENCE.
+                <div class="w-32 h-[1px] bg-brand-orange/40 mt-8 hero-reveal opacity-0 scale-x-0"></div>
+                <p class="font-sans text-xs md:text-sm opacity-50 max-w-xl tracking-[0.3em] mt-8 hero-reveal opacity-0 translate-y-8 leading-relaxed uppercase">
+                    A geometric ecosystem of technical excellence.
                 </p>
             </div>
 
             <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30 hero-reveal translate-y-8">
-                <span class="text-[10px] uppercase tracking-[0.5em]">Scroll to Explore</span>
+                <span class="text-[10px] uppercase tracking-[0.5em] text-white">Scroll to Analyze Ecosystem</span>
                 <div class="w-[1px] h-12 bg-white/40"></div>
             </div>
         </section>
 
-        <!-- HORIZONTAL SCROLL SECTION -->
-        <div id="horizontal-wrapper" class="relative w-full overflow-hidden bg-void z-20">
-            <div id="horizontal-content" class="flex flex-row items-center h-screen w-max">
+        <!-- MASTER GRID SPATIAL NAVIGATION -->
+        <div id="spatial-system" class="relative w-full z-10">
+            
+            <!-- THE VIEWPORT (Pinned) -->
+            <div id="grid-viewport" class="fixed inset-0 w-full h-screen overflow-hidden pointer-events-auto opacity-0 transition-opacity duration-700 z-20">
                 
-                {hasData ? (
-                    sortedCategories.map((category, idx) => {
-                        const categorySponsors = getSponsorsByCategory(category.data.key);
-                        if (categorySponsors.length === 0) return null;
+                <div id="fixed-container" class="absolute inset-0 w-full h-full pointer-events-none">
+                    <!-- BACKGROUND (Grainient) -->
+                    <div id="fixed-bg" class="absolute inset-0 z-0">
+                        <Grainient 
+                            client:load
+                            color1="#cc6a00"
+                            color2="#994f00"
+                            color3="#020202"
+                            timeSpeed={0.12}
+                            colorBalance={-0.3}
+                            warpStrength={0.5}
+                            warpFrequency={2.5}
+                            warpSpeed={0.8}
+                            warpAmplitude={25.0}
+                            blendSoftness={0.03}
+                            noiseScale={1.8}
+                            grainAmount={0.35}
+                            contrast={2.0}
+                            saturation={0.9}
+                            zoom={1.1}
+                        />
+                        <div class="absolute inset-0 bg-void/20"></div>
+                    </div>
 
-                        return (
-                            <section class="tier-section flex-shrink-0 min-w-screen h-full flex flex-col justify-center px-[8vw] py-24 relative border-r border-white/5 bg-void">
-                                <!-- Background Index -->
-                                <span class="absolute top-12 left-12 font-sans text-[150px] font-bold opacity-[0.05] pointer-events-none select-none z-0">
-                                    0{idx + 1}
-                                </span>
+                    <!-- HUD LABEL -->
+                    <div id="hud-label" class="absolute top-[10vh] left-1/2 -translate-x-1/2 text-center z-30 opacity-100">
+                        <span class="font-sans text-[10px] font-bold uppercase tracking-[1.5em] text-brand-orange block mb-4">
+                            // DYNAMIC_ASSEMBLY
+                        </span>
+                        <h2 id="tier-title" class="font-sans text-4xl md:text-7xl font-bold uppercase text-white tracking-tighter leading-none">
+                            ALL PARTNERS
+                        </h2>
+                        <div class="w-16 h-[2px] bg-brand-orange mx-auto mt-6"></div>
+                    </div>
 
-                                <div class="flex flex-col gap-12 max-w-[1600px] w-full mx-auto z-10">
-                                    <div class="flex flex-col gap-4">
-                                        <h2 class="font-sans font-bold uppercase text-4xl md:text-6xl tracking-tight text-white tier-title">
-                                            {category.data.title}
-                                        </h2>
-                                        <div class="w-16 h-[4px] bg-brand-orange"></div>
-                                        {category.data.description && (
-                                            <p class="font-sans text-xs md:text-sm opacity-50 tracking-widest max-w-2xl leading-relaxed tier-desc">
-                                                {category.data.description}
-                                            </p>
-                                        )}
-                                    </div>
+                    <!-- THE PERFECT MASTER GRID -->
+                    <div id="master-grid" class="absolute inset-0 z-10 flex items-center justify-center pointer-events-auto">
+                        <!-- Global SVG Filter for Inset Shadow -->
+                        <svg width="0" height="0" class="absolute">
+                            <defs>
+                                <filter id="inset-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feComponentTransfer in="SourceAlpha">
+                                      <feFuncA type="table" tableValues="1 0" />
+                                    </feComponentTransfer>
+                                    <feGaussianBlur stdDeviation="12"/>
+                                    <feOffset dx="0" dy="0" result="offsetblur"/>
+                                    <feFlood flood-color="black" result="color"/>
+                                    <feComposite in="color" in2="offsetblur" operator="in" result="shadow"/>
+                                    <feComposite in="shadow" in2="SourceAlpha" operator="in" result="innerShadow"/>
+                                    <feMerge>
+                                      <feMergeNode in="SourceGraphic" />
+                                      <feMergeNode in="innerShadow" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </div>
 
-                                    <!-- PERFECTLY SPACED 3-2 ALTERNATING HONEYCOMB GRID -->
-                                    <div class="honeycomb-container flex flex-row mt-4 pb-48">
-                                        {(() => {
-                                            const columns = [];
-                                            let i = 0;
-                                            let colCounter = 0;
-                                            while (i < categorySponsors.length) {
-                                                const size = colCounter % 2 === 0 ? 3 : 2;
-                                                columns.push(categorySponsors.slice(i, i + size));
-                                                i += size;
-                                                colCounter++;
-                                            }
-                                            
-                                            // SCALED GEOMETRIC CONSTANTS
-                                            const HEX_W = 190;
-                                            const HEX_H = 165;
-                                            const GAP = 12; 
-                                            
-                                            const colOffsetY = (HEX_H + GAP) / 2;
-                                            const colMarginX = (HEX_W * 0.25) - GAP;
-                                            
-                                            return columns.map((column, colIdx) => (
-                                                <div 
-                                                    class="flex flex-col"
-                                                    style={`
-                                                        gap: ${GAP}px;
-                                                        transform: translateY(${colIdx % 2 === 1 ? colOffsetY : 0}px);
-                                                        margin-left: ${colIdx > 0 ? -colMarginX : 0}px;
-                                                    `}
-                                                >
-                                                    {column.map((sponsor) => {
-                                                        const isLink = !!sponsor.data.website;
-                                                        const Tag = isLink ? 'a' : 'div';
-                                                        const linkProps = isLink ? {
-                                                            href: sponsor.data.website,
-                                                            target: "_blank",
-                                                            rel: "noopener noreferrer"
-                                                        } : {};
-
-                                                        return (
-                                                            <div class="sponsor-item relative" style={`width: ${HEX_W}px; height: ${HEX_H}px;`}>
-                                                                <Tag {...linkProps} class={`group relative w-full h-full flex items-center justify-center ${isLink ? 'cursor-pointer' : 'cursor-default'}`}>
-                                                                    <svg viewBox="0 0 116 100" class="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                                                                        <!-- Outer Border (Turns Orange on Hover) -->
-                                                                        <polygon 
-                                                                            points="29 0, 87 0, 116 50, 87 100, 29 100, 0 50" 
-                                                                            fill="#f0f0f0" 
-                                                                            class="transition-all duration-500 group-hover:fill-[#ff8900] origin-center"
-                                                                        />
-                                                                        <!-- Inner Core (WHITE) -->
-                                                                        <polygon 
-                                                                            points="31 4, 85 4, 112 50, 85 96, 31 96, 4 50" 
-                                                                            fill="#ffffff" 
-                                                                            class="transition-all duration-500 origin-center"
-                                                                        />
-                                                                    </svg>
-                                                                    
-                                                                    <div class="relative z-10 w-full h-full flex items-center justify-center">
-                                                                        <img 
-                                                                            src={sponsor.data.logo} 
-                                                                            alt={sponsor.data.alt || sponsor.data.name} 
-                                                                            loading="lazy"
-                                                                            class="max-w-[70%] max-h-[60%] object-contain opacity-100 transition-all duration-700 group-hover:scale-110"
-                                                                        />
-                                                                    </div>
-                                                                </Tag>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            ));
-                                        })()}
-                                    </div>
-                                </div>
-                            </section>
-                        );
-                    })
-                ) : (
-                    <section class="min-w-screen h-full flex items-center justify-center bg-void">
-                        <p class="text-white opacity-20 text-3xl tracking-widest uppercase font-bold">// Awaiting Sponsor Data</p>
-                    </section>
-                )}
-
+            <!-- SCROLL TRACK -->
+            <div id="scroll-track" class="relative w-full z-10 pointer-events-none">
+                {categoriesWithSponsors.map((category) => (
+                    <div class="step h-[300vh] w-full" data-title={category.data.title} data-category={category.data.key}></div>
+                ))}
+                
                 <!-- FINAL CTA -->
-                <section class="flex-shrink-0 min-w-[80vw] h-full flex flex-col items-center justify-center px-[10vw] bg-brand-midnight/50 border-l border-white/10">
-                    <div class="max-w-[1000px] mx-auto text-center flex flex-col items-center gap-10">
-                        <h2 class="font-sans text-5xl md:text-8xl text-white font-light uppercase tracking-tighter">
+                <div class="h-screen w-full relative flex items-center justify-center z-40 bg-void/95 backdrop-blur-2xl pointer-events-auto">
+                    <div class="text-center flex flex-col items-center gap-10 px-[5vw]">
+                        <h2 class="font-sans text-5xl md:text-8xl text-white font-light uppercase tracking-tighter leading-tight">
                             JOIN THE <span class="font-bold text-brand-orange italic">LEGACY</span>
                         </h2>
-                        <div class="w-32 h-[1px] bg-brand-orange"></div>
-                        <p class="font-sans text-sm md:text-base opacity-50 tracking-[0.2em] max-w-2xl leading-loose">
-                            BY PARTNERING WITH ARISTURTLE, YOU DIRECTLY SUPPORT THE INNOVATION AND DEVELOPMENT OF FUTURE ENGINEERS.
-                        </p>
-                        <a href="mailto:contact@aristurtle.gr" class="relative group inline-flex items-center justify-center px-16 py-6 border-2 border-brand-orange text-brand-orange font-sans font-bold uppercase text-xs tracking-[0.5em] overflow-hidden transition-all duration-700 hover:text-white">
+                        <a href="mailto:contact@aristurtle.gr" class="relative group inline-flex items-center justify-center px-16 py-6 border border-brand-orange text-brand-orange font-sans font-bold uppercase text-[10px] tracking-[0.5em] overflow-hidden transition-all duration-700 hover:text-white">
                             <span class="relative z-10">Become a Partner</span>
-                            <div class="absolute inset-0 bg-brand-orange scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-700 ease-expo z-0"></div>
+                            <div class="absolute inset-0 bg-brand-orange scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-0"></div>
                         </a>
                     </div>
-                </section>
+                </div>
             </div>
         </div>
 
     </div>
 </BaseLayout>
 
+<script is:inline define:vars={{ serializedSponsors }}>
+    window.PARTNER_DATA = serializedSponsors;
+</script>
+
 <script>
     import { gsap } from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
-    import { SplitText } from 'gsap/SplitText';
 
-    gsap.registerPlugin(ScrollTrigger, SplitText);
+    gsap.registerPlugin(ScrollTrigger);
 
     const LUXE_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 
@@ -210,74 +182,228 @@ const hasData = allCategories.length > 0 && allSponsors.length > 0;
 
         mm.add("(prefers-reduced-motion: no-preference)", (context) => {
             
-            // Hero Title Reveal
-            const heroTitle = document.querySelector('h1');
-            if (heroTitle) {
-                const split = new SplitText(heroTitle, { type: "lines", linesClass: "overflow-hidden" });
-                const splitInner = new SplitText(heroTitle, { type: "lines" });
-                
-                gsap.from(splitInner.lines, {
-                    yPercent: 100,
-                    duration: 1.5,
-                    stagger: 0.1,
-                    ease: "power4.out",
-                    delay: 0.4
-                });
-            }
+            // 1. HERO ENTRANCE
+            gsap.to(".hero-reveal", { y: 0, scaleX: 1, opacity: 1, duration: 1.5, stagger: 0.1, ease: LUXE_EASE, delay: 0.2 });
+            gsap.to("#hero-image", { scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }, y: 150, scale: 1.15, ease: "none" });
 
-            // Hero Image Parallax
-            gsap.to("#hero-image", {
+            // 2. PIN AND FADE THE GRID SYSTEM
+            const systemFade = gsap.timeline({
                 scrollTrigger: {
-                    trigger: "#hero",
-                    start: "top top",
-                    end: "bottom top",
+                    trigger: "#spatial-system",
+                    start: "top bottom", // Start fading as soon as system enters viewport
+                    end: "top top",      // Fully visible when system reaches top
                     scrub: true
-                },
-                y: 100,
-                scale: 1.15,
-                ease: "none"
+                }
+            });
+            systemFade.to("#grid-viewport", { opacity: 1, ease: "none" });
+
+            ScrollTrigger.create({
+                trigger: "#spatial-system",
+                start: "top top",
+                end: "bottom bottom",
+                pin: false, // Already fixed in CSS, but we use this for state
+                onLeave: () => gsap.to("#grid-viewport", { opacity: 0, duration: 0.5 }),
+                onEnterBack: () => gsap.to("#grid-viewport", { opacity: 1, duration: 0.8 })
             });
 
-            // Hero Reveal
-            gsap.to(".hero-reveal:not(h1)", {
-                y: 0,
-                scaleX: 1,
-                opacity: 1,
-                duration: 2,
-                stagger: 0.15,
-                ease: LUXE_EASE,
-                delay: 0.2
-            });
-
-            // HORIZONTAL SCROLL
-            const wrapper = document.querySelector("#horizontal-wrapper");
-            const content = document.querySelector("#horizontal-content");
-
-            if (wrapper && content) {
-                const totalWidth = (content as HTMLElement).scrollWidth - window.innerWidth;
-
-                gsap.to(content, {
-                    x: -totalWidth,
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: wrapper,
-                        pin: true,
-                        scrub: 1,
-                        start: "top top",
-                        end: () => `+=${totalWidth}`,
-                        invalidateOnRefresh: true,
-                        anticipatePin: 1
+            // 3. MATHEMATICAL GRID GENERATION
+            const gridContainer = document.querySelector('#master-grid');
+            const HEX_W = 180;
+            const HEX_H = 156; 
+            const GAP = 20;   
+            const COLS = 11;
+            const ROWS = 8;
+            
+            const allLinks: any[] = [];
+            
+            if (gridContainer) {
+                const colMarginX = (HEX_W * 0.25) - GAP;
+                const colOffsetY = (HEX_H + GAP) / 2;
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = "master-grid-wrapper flex flex-row items-center justify-center pointer-events-auto transition-transform duration-700";
+                
+                for (let c = 0; c < COLS; c++) {
+                    const colDiv = document.createElement('div');
+                    colDiv.style.cssText = `display: flex; flex-direction: column; gap: ${GAP}px; margin-left: ${c > 0 ? -colMarginX : 0}px; transform: translateY(${c % 2 === 1 ? colOffsetY : 0}px);`;
+                    
+                    for (let r = 0; r < ROWS; r++) {
+                        const link = document.createElement('a');
+                        link.className = "grid-link group relative flex items-center justify-center cursor-default";
+                        link.style.width = `${HEX_W}px`;
+                        link.style.height = `${HEX_H}px`;
+                        link.style.pointerEvents = "none";
+                        
+                        link.innerHTML = `
+                            <svg viewBox="0 0 116 100" class="absolute inset-0 w-full h-full transform transition-all duration-700 hex-svg scale-[0.05]">
+                                <polygon points="29 0, 87 0, 116 50, 87 100, 29 100, 0 50" fill="white" class="hex-fill" />
+                                <path d="M29,1 L87,1 L115,50 L87,99 L29,99 L1,50 Z" fill="none" stroke="#ff8900" stroke-width="2" class="hex-border opacity-0" stroke-dasharray="400" stroke-dashoffset="400" />
+                            </svg>
+                            <div class="hex-content relative z-10 w-full h-full flex items-center justify-center p-12 opacity-0 transition-all duration-700 scale-75">
+                                <img src="" class="max-w-[75%] max-h-[60%] object-contain" />
+                            </div>
+                        `;
+                        
+                        colDiv.appendChild(link);
+                        allLinks.push(link);
                     }
-                });
+                    wrapper.appendChild(colDiv);
+                }
+                gridContainer.appendChild(wrapper);
             }
 
-            // Force visible opacity on load to ensure hexagons aren't hidden by buggy animations
-            gsap.set(".sponsor-item", { opacity: 1 });
-
-            // Refresh ScrollTrigger
-            window.addEventListener('load', () => {
+            // RE-CENTER ON RESIZE (Hardening Case #3)
+            window.addEventListener('resize', () => {
                 ScrollTrigger.refresh();
             });
+
+            // 4. ACTIVE SLOT MAPPING
+            const cc = Math.floor(COLS / 2);
+            const rc = Math.floor(ROWS / 2);
+            
+            const sortedLinks = [...allLinks].sort((a, b) => {
+                const aIdx = allLinks.indexOf(a);
+                const bIdx = allLinks.indexOf(b);
+                const dist = (idx: number) => {
+                    const col = Math.floor(idx / ROWS);
+                    const row = idx % ROWS;
+                    return Math.sqrt(Math.pow(col - cc, 2) + Math.pow(row - rc, 2));
+                };
+                return dist(aIdx) - dist(bIdx);
+            });
+
+            // 5. MORPHING LOGIC (Cinematic Cutscenes)
+            const steps = gsap.utils.toArray('.step');
+            const tierTitle = document.querySelector('#tier-title');
+            const masterGrid = document.querySelector('#master-grid');
+            const partnerData = (window as any).PARTNER_DATA || [];
+            let activeTimeline: gsap.core.Timeline | null = null;
+
+            steps.forEach((step: any, idx: number) => {
+                const data = partnerData[idx];
+                if (!data) return;
+
+                ScrollTrigger.create({
+                    trigger: step,
+                    start: "top center",
+                    end: "bottom center",
+                    toggleActions: "play reverse play reverse",
+                    onEnter: () => cinematicTransition(data, true),
+                    onEnterBack: () => cinematicTransition(data, true),
+                    onLeave: () => cinematicTransition(data, false),
+                    onLeaveBack: () => cinematicTransition(data, false)
+                });
+            });
+
+            function cinematicTransition(data: any, assemble: boolean) {
+                // KILL previous timeline to prevent race conditions during rapid scroll
+                if (activeTimeline) activeTimeline.kill();
+                activeTimeline = gsap.timeline();
+
+                if (assemble) {
+                    // PHASE 1: INITIALIZE
+                    if (tierTitle) {
+                        gsap.to(tierTitle, { 
+                            innerHTML: "INITIALIZING ASSEMBLY...", 
+                            duration: 0.1, 
+                            overwrite: true,
+                            onComplete: () => {
+                                tierTitle.innerHTML = data.title;
+                                gsap.to(tierTitle, { opacity: 1, duration: 0.5, overwrite: true });
+                            }
+                        });
+                    }
+
+                    // Grid "Scanning" Move
+                    activeTimeline.to(masterGrid, { 
+                        scale: 0.95, 
+                        rotation: 1, 
+                        duration: 0.8, 
+                        ease: "power2.inOut",
+                        overwrite: "auto"
+                    }, 0);
+
+                    activeTimeline.add(() => updateGrid(data), 0.3);
+
+                    activeTimeline.to(masterGrid, { 
+                        scale: 1, 
+                        rotation: 0, 
+                        duration: 1, 
+                        ease: "back.out(1.2)",
+                        overwrite: "auto"
+                    }, 0.8);
+
+                } else {
+                    // PHASE 2: DE-ASSEMBLE
+                    if (tierTitle) {
+                        gsap.to(tierTitle, { 
+                            innerHTML: "SCANNING FIELD...", 
+                            duration: 0.2,
+                            opacity: 0.3,
+                            overwrite: true
+                        });
+                    }
+
+                    activeTimeline.to(masterGrid, { 
+                        scale: 1.05, 
+                        rotation: -1, 
+                        duration: 0.8, 
+                        ease: "power2.inOut",
+                        overwrite: "auto"
+                    }, 0);
+
+                    activeTimeline.add(() => resetGrid(), 0.1);
+                }
+            }
+
+            function updateGrid(data: any) {
+                data.sponsors.forEach((sponsor: any, i: number) => {
+                    const link = sortedLinks[i];
+                    if (!link) return;
+                    
+                    const svg = link.querySelector('.hex-svg');
+                    const border = link.querySelector('.hex-border');
+                    const content = link.querySelector('.hex-content');
+                    const img = link.querySelector('img');
+                    
+                    link.href = sponsor.website;
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+                    link.style.pointerEvents = "auto";
+                    link.classList.remove('cursor-default');
+                    link.classList.add('cursor-pointer');
+                    if (img) img.src = sponsor.logo;
+                    
+                    // Use overwrite: "auto" to prevent flicker on rapid scroll
+                    gsap.to(svg, { scale: 1, duration: 1, ease: "back.out(1.7)", delay: i * 0.015, overwrite: "auto" });
+                    gsap.to(border, { opacity: 0.4, strokeDashoffset: 0, duration: 0.8, delay: 0.4 + (i * 0.015), overwrite: "auto" });
+                    gsap.to(content, { opacity: 1, scale: 1, duration: 0.6, delay: 0.3 + (i * 0.015), overwrite: "auto" });
+                });
+
+                // Surrounding dots
+                const paddingCount = Math.min(data.sponsors.length, 12);
+                for (let j = data.sponsors.length; j < data.sponsors.length + paddingCount; j++) {
+                    if (sortedLinks[j]) {
+                        gsap.to(sortedLinks[j].querySelector('.hex-svg'), { scale: 0.35, duration: 1, ease: "power2.out", overwrite: "auto" });
+                    }
+                }
+            }
+
+            function resetGrid() {
+                sortedLinks.forEach((link) => {
+                    link.style.pointerEvents = "none";
+                    link.classList.add('cursor-default');
+                    link.classList.remove('cursor-pointer');
+                    
+                    const svg = link.querySelector('.hex-svg');
+                    const border = link.querySelector('.hex-border');
+                    const content = link.querySelector('.hex-content');
+                    
+                    gsap.to(svg, { scale: 0.05, duration: 0.6, ease: "power2.in", overwrite: "auto" });
+                    gsap.to(border, { opacity: 0, strokeDashoffset: 400, duration: 0.3, overwrite: "auto" });
+                    gsap.to(content, { opacity: 0, scale: 0.8, duration: 0.4, overwrite: "auto" });
+                });
+            }
 
             return () => context.revert();
         });
@@ -285,13 +411,28 @@ const hasData = allCategories.length > 0 && allSponsors.length > 0;
 </script>
 
 <style>
-    .min-w-screen {
-        min-width: 100vw;
+    .grid-link {
+        will-change: transform;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 1;
     }
-    .w-max {
-        width: max-content;
+    
+    .grid-link:hover {
+        transform: scale(1.1) !important;
+        z-index: 100 !important;
     }
-    .ease-expo {
-        transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+
+    .grid-link:hover .hex-fill {
+        filter: url(#inset-shadow) !important;
+        fill: #ffffff !important;
+    }
+
+    .grid-link:hover .hex-border {
+        opacity: 1 !important;
+        stroke-width: 4 !important;
+    }
+
+    .hex-fill, .hex-border {
+        transition: all 0.5s ease !important;
     }
 </style>

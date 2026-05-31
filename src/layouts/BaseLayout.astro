@@ -5,11 +5,13 @@ import Navbar from '../components/Navbar.astro';
 interface Props {
 	title?: string;
 	description?: string;
+	forceCompact?: boolean;
 }
 
 const { 
 	title = "ARISTURTLE | Formula Student Team",
-	description = "Official website of ARISTURTLE, the high-performance Formula Student racing team from Aristotle University of Thessaloniki."
+	description = "Official website of ARISTURTLE, the high-performance Formula Student racing team from Aristotle University of Thessaloniki.",
+	forceCompact = false
 } = Astro.props;
 
 const baseUrl = import.meta.env.BASE_URL;
@@ -30,7 +32,7 @@ const baseUrl = import.meta.env.BASE_URL;
 	</head>
 	<body class="antialiased">
 		
-		<Navbar />
+		<Navbar forceCompact={forceCompact} />
 		<main id="main-content">
 			<slot />
 		</main>

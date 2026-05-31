@@ -1,0 +1,303 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HUDWindow from '../components/HUDWindow.astro';
+import JourneySVG from '../components/JourneySVG.astro';
+
+const INITIAL_CONFIG = [
+  { id: "about", p: 0.15, windows: [] },
+  { id: "mission", p: 0.412, windows: [] },
+  { id: "subsystems", p: 0.60, windows: [] },
+  { id: "history", p: 0.75, windows: [] },
+  { id: "sponsors", p: 0.90, windows: [] }
+];
+---
+
+<BaseLayout title="HUD Window Editor | Aristurtle" forceCompact={true}>
+    <div id="editor-scroll-track" class="h-[1200vh] w-full"></div>
+
+    <div class="fixed inset-0 bg-transparent overflow-hidden pointer-events-none flex isolate">
+        
+        <div id="control-panel" class="fixed top-24 left-8 w-[350px] bg-[#0A0A0A]/95 backdrop-blur-xl border border-white/10 p-8 flex flex-col gap-6 z-[100] rounded-2xl shadow-2xl transition-all duration-500 ease-luxe translate-x-0 pointer-events-auto">
+            <button id="panel-toggle" class="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-24 bg-brand-orange text-black flex items-center justify-center rounded-r-xl shadow-xl hover:scale-x-110 origin-left transition-transform">
+                <span class="rotate-90 font-bold tracking-widest text-[10px]" id="toggle-text">MINIMIZE</span>
+            </button>
+
+            <div class="panel-content flex flex-col gap-6 overflow-y-auto max-h-[70vh] custom-scrollbar pr-2">
+                <div class="flex flex-col gap-2">
+                    <h1 class="text-brand-orange font-bold uppercase tracking-widest text-xl italic">Station_Editor</h1>
+                    <p class="text-white/40 text-xs uppercase tracking-tighter">Live Scroll Sync Engine v2.7</p>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <label class="text-[10px] text-white/60 uppercase tracking-widest">Select Station</label>
+                    <div class="grid grid-cols-2 gap-2" id="station-selector">
+                        {INITIAL_CONFIG.map(s => (
+                            <button 
+                                class="station-btn px-4 py-3 bg-white/5 border border-white/10 text-[10px] font-bold text-white hover:bg-brand-orange hover:text-black transition-all uppercase rounded-lg"
+                                data-id={s.id}
+                            >
+                                {s.id}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div class="h-[1px] bg-white/5"></div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-[10px] text-white/60 uppercase tracking-widest">Global Progress (p)</label>
+                    <div class="flex justify-between font-mono text-3xl text-white">
+                        <span id="p-display">0.000</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 pt-2">
+                    <button id="capture-p" class="w-full py-3 bg-white text-black text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-brand-orange transition-colors">
+                        Capture current progress
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="add-window" class="py-3 bg-brand-orange text-black text-[10px] font-bold uppercase tracking-widest rounded-lg hover:scale-[1.02] active:scale-95 transition-transform leading-tight">
+                            + Tech Window<br/><span class="opacity-60">(Border)</span>
+                        </button>
+                        <button id="add-text-window" class="py-3 bg-white/10 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/20 active:scale-95 transition-all leading-tight">
+                            + Text Window<br/><span class="opacity-60">(No Border)</span>
+                        </button>
+                    </div>
+                    <button id="copy-config" class="w-full py-3 border border-white/20 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-white/10 transition-colors">
+                        Copy JSON Config
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute inset-0 bg-void -z-10 overflow-hidden pointer-events-none" id="canvas-root">
+            <div id="mock-viewport" class="absolute inset-0 overflow-visible">
+                <div id="mock-stage" class="absolute top-0 left-0 will-change-transform origin-top-left overflow-visible opacity-100 visible">
+                     <JourneySVG />
+                </div>
+            </div>
+            <!-- Center Focus Reticle -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 pointer-events-none z-50 opacity-40">
+                <div class="absolute top-1/2 left-0 w-full h-[1px] bg-brand-orange"></div>
+                <div class="absolute top-0 left-1/2 w-[1px] h-full bg-brand-orange"></div>
+            </div>
+            <div id="windows-container" class="absolute inset-0 z-40 pointer-events-none"></div>
+        </div>
+
+    </div>
+</BaseLayout>
+
+<script>
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+    gsap.registerPlugin(ScrollTrigger, DrawSVGPlugin);
+
+    // STATE
+    let currentStationId = "about";
+    let activeElement: HTMLElement | null = null;
+    let activeWinData: any = null;
+    let interactionMode: 'drag' | 'resize' | null = null;
+    let startX = 0, startY = 0, initialX = 0, initialY = 0, initialW = 0, initialH = 0;
+    let globalP = 0;
+
+    let config = [
+        { id: "about", p: 0.150, windows: [
+            { id: "w1", x: "29.9%", y: "10.2%", w: "65.2vw", h: "31.3vh", content: "TEAM_DESCRIPTION", noBorder: true },
+            { id: "w-dui4", x: "13.0%", y: "56.6%", w: "34.9vw", h: "35.5vh", content: "VISION_STATEMENT", noBorder: true },
+            { id: "w-56o2", x: "53.6%", y: "48.0%", w: "40.9vw", h: "44.0vh", content: "HYPERSPEED" }
+        ]},
+        { id: "mission", p: 0.412, windows: [
+            { id: "w-kjzy", x: "53.3%", y: "8.6%", w: "44.8vw", h: "87.6vh", content: "MISSION_STATEMENT", noBorder: true },
+            { id: "w-9501", x: "3.4%", y: "56.0%", w: "45.3vw", h: "33.7vh", content: "INNOVATION_DRIVEN", noBorder: true },
+            { id: "w-vlrq", x: "20.7%", y: "10.5%", w: "28.7vw", h: "31.1vh", content: "VISION_NODE", noBorder: true }
+        ]},
+        { id: "subsystems", p: 0.60, windows: [] },
+        { id: "history", p: 0.75, windows: [] },
+        { id: "sponsors", p: 0.90, windows: [] }
+    ];
+
+    const container = document.getElementById('windows-container');
+    const pDisplay = document.getElementById('p-display');
+    const stage = document.getElementById('mock-stage');
+    
+    // SYNC CONSTANTS
+    const scaleFactor = 6;
+    const stageWidth = 1774 * scaleFactor;
+    const stageHeight = 887 * scaleFactor;
+
+    // INITIALIZE STAGE
+    if (stage) {
+        gsap.set(stage, { 
+            width: stageWidth, 
+            height: stageHeight,
+            opacity: 1,
+            visibility: "visible",
+            transformOrigin: "0 0"
+        });
+    }
+
+    // SYNC VIEW
+    const updateCarView = (progress: number) => {
+        const pathMain = document.querySelector('#journey-path-main') as SVGPathElement;
+        const otherPaths = document.querySelectorAll('.other-car-paths path');
+        
+        if (!pathMain || !stage) return;
+
+        // 1. Calculate length and camera point
+        const length = pathMain.getTotalLength() || 1; 
+        const pt = pathMain.getPointAtLength(progress * length);
+        
+        // 2. Technical coordinate transform (matches index.astro)
+        const tx = (pt.x * 0.1) * scaleFactor;
+        const ty = (887 - (pt.y * 0.1)) * scaleFactor;
+
+        // 3. Move Stage
+        gsap.set(stage, { 
+            x: -tx + window.innerWidth / 2, 
+            y: -ty + window.innerHeight / 2 
+        });
+
+        // 4. Draw Lines
+        gsap.set(pathMain, { drawSVG: `${progress * 100}%` });
+        gsap.set(otherPaths, { drawSVG: `${Math.min(progress / 0.85, 1) * 100}%` });
+        
+        if (pDisplay) pDisplay.textContent = progress.toFixed(3);
+        globalP = progress;
+    };
+
+    // SCROLL ENGINE
+    ScrollTrigger.create({
+        trigger: "#editor-scroll-track",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1,
+        onUpdate: (self) => { 
+            if (!activeElement) updateCarView(self.progress); 
+        }
+    });
+
+    // RENDER SYSTEM
+    function render() {
+        if (!container) return;
+        container.innerHTML = '';
+        const station = config.find(s => s.id === currentStationId);
+        if (!station) return;
+
+        station.windows.forEach(win => {
+            const el = document.createElement('div');
+            const borderClasses = win.noBorder 
+                ? "border-2 border-white/20 bg-black/40 hover:border-white/60" 
+                : "border-4 border-brand-orange bg-black/80 shadow-[0_0_30px_rgba(255,137,0,0.2)]";
+            
+            el.className = `absolute ${borderClasses} rounded-[40px] pointer-events-auto cursor-move flex flex-col justify-center text-center p-4 group isolate transition-all`;
+            el.style.width = win.w; el.style.height = win.h; el.style.left = win.x; el.style.top = win.y;
+            
+            el.innerHTML = `
+                <span class="${win.noBorder ? 'text-white/80' : 'text-brand-orange'} font-bold text-xs tracking-widest uppercase pointer-events-none italic">${win.content}</span>
+                ${win.noBorder ? '<span class="text-[8px] text-white/20 uppercase mt-1 tracking-tighter">[ BORDERLESS_TYPOGRAPHY ]</span>' : ''}
+                <div class="resizer absolute bottom-0 right-0 w-12 h-12 cursor-nwse-resize ${win.noBorder ? 'bg-white/20 hover:bg-white/40' : 'bg-brand-orange'} rounded-tl-2xl rounded-br-[40px] z-50 flex items-center justify-center shadow-lg transition-colors">
+                    <div class="w-4 h-4 border-b-2 border-r-2 ${win.noBorder ? 'border-white' : 'border-black'}"></div>
+                </div>
+                <button class="delete-btn absolute -top-4 -right-4 w-10 h-10 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity font-bold z-50 shadow-2xl border-2 border-white">X</button>
+            `;
+
+            el.addEventListener('pointerdown', (e) => {
+                const target = e.target as HTMLElement;
+                if (target.classList.contains('delete-btn')) {
+                    station.windows = station.windows.filter(w => w.id !== win.id);
+                    render(); return;
+                }
+                activeElement = el; activeWinData = win;
+                startX = e.clientX; startY = e.clientY;
+                initialX = el.offsetLeft; initialY = el.offsetTop;
+                initialW = el.offsetWidth; initialH = el.offsetHeight;
+                interactionMode = target.closest('.resizer') ? 'resize' : 'drag';
+                el.style.zIndex = "1000";
+                e.stopPropagation();
+            });
+            container.appendChild(el);
+        });
+    }
+
+    // GLOBAL INTERACTION
+    window.addEventListener('pointermove', (e) => {
+        if (!activeElement || !activeWinData) return;
+        const dx = e.clientX - startX; const dy = e.clientY - startY;
+
+        if (interactionMode === 'drag') {
+            const nx = initialX + dx; const ny = initialY + dy;
+            activeWinData.x = (nx / window.innerWidth * 100).toFixed(1) + "%";
+            activeWinData.y = (ny / window.innerHeight * 100).toFixed(1) + "%";
+            activeElement.style.left = activeWinData.x; activeElement.style.top = activeWinData.y;
+        } else if (interactionMode === 'resize') {
+            const nw = initialW + dx; const nh = initialH + dy;
+            activeWinData.w = (nw / window.innerWidth * 100).toFixed(1) + "vw";
+            activeWinData.h = (nh / window.innerHeight * 100).toFixed(1) + "vh";
+            activeElement.style.width = activeWinData.w; activeElement.style.height = activeWinData.h;
+        }
+    });
+
+    window.addEventListener('pointerup', () => { 
+        if (activeElement) activeElement.style.zIndex = "40"; 
+        activeElement = null; activeWinData = null; interactionMode = null; 
+    });
+
+    // UI CONTROLS
+    document.querySelectorAll('.station-btn').forEach(btn => btn.addEventListener('click', () => {
+        document.querySelectorAll('.station-btn').forEach(b => b.classList.remove('bg-brand-orange', 'text-black'));
+        btn.classList.add('bg-brand-orange', 'text-black');
+        currentStationId = (btn as HTMLElement).dataset.id!;
+        const s = config.find(st => st.id === currentStationId);
+        if (s && (window as any).lenis) {
+            const scrollPos = s.p * (document.body.scrollHeight - window.innerHeight);
+            (window as any).lenis.scrollTo(scrollPos, { duration: 1.2, ease: (t: number) => 1 - Math.pow(1 - t, 4) });
+        }
+        render();
+    }));
+
+    document.getElementById('capture-p')?.addEventListener('click', () => {
+        const s = config.find(st => st.id === currentStationId);
+        if (s) { s.p = globalP; alert(`Station ${currentStationId} locked to progress: ${globalP.toFixed(3)}`); }
+    });
+
+    const addWin = (noBorder = false) => {
+        const s = config.find(st => st.id === currentStationId);
+        if (s) {
+            s.windows.push({ 
+                id: `w-${Math.random().toString(36).substr(2,4)}`, 
+                w: "25vw", h: "20vh", x: "37.5%", y: "40%", 
+                content: noBorder ? "TEXT_BLOCK" : "TECH_DATA",
+                noBorder 
+            }); 
+            render();
+        }
+    };
+
+    document.getElementById('add-window')?.addEventListener('click', () => addWin(false));
+    document.getElementById('add-text-window')?.addEventListener('click', () => addWin(true));
+
+    document.getElementById('copy-config')?.addEventListener('click', () => {
+        navigator.clipboard.writeText(JSON.stringify(config, null, 2)); alert("JSON Layout Config Copied!");
+    });
+
+    document.getElementById('panel-toggle')?.addEventListener('click', () => {
+        isMinimized = !isMinimized;
+        gsap.to('#control-panel', { x: isMinimized ? -350 : 0, duration: 0.6, ease: "power3.inOut" });
+        document.getElementById('toggle-text')!.textContent = isMinimized ? "MAXIMIZE" : "MINIMIZE";
+    });
+    let isMinimized = false;
+
+    // BOOTSTRAP: Delay ensures SVG and Lenis are ready
+    window.addEventListener('load', () => {
+        setTimeout(() => { 
+            updateCarView(config[0].p); 
+            render(); 
+        }, 300);
+    });
+</script>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 137, 0, 0.5); border-radius: 10px; }
+</style>
