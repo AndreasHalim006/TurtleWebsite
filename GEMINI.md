@@ -29,7 +29,7 @@ This is the official website for **ARISTURTLE**, the Formula Student racing team
 1. **Motion Design:** Always use the `LUXE_EASE` curve (`cubic-bezier(0.16, 1, 0.3, 1)`) for GSAP animations to maintain smooth, high-end motion.
 2. **Typography:** Avoid italics and serif fonts. Use Jura exclusively with clean, standard tracking.
 3. **Visuals:** Maintain perfectly flat, clean backgrounds. Avoid gradients, film grain, or complex textures.
-4. **Assets:** Large video assets should be placed in `src/assets/images/` and imported via Astro's asset system for optimization.
+4. **Assets:** Large video assets should be placed in `src/images/` and imported via Astro's asset system for optimization.
 5. **Interactive UI:** The NavBar uses a "Discrete Switch" logic—staying large during hero sections and snapping to compact once content begins.
 
 ## Key Files

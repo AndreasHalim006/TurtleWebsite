@@ -1,0 +1,65 @@
+<section class="Horizontal">
+  <div class="container">
+    <h3 class="Horizontal__text heading-xl">
+      The containerAnimation property allows us to create ScrollTriggered animations within a container that's animated horizontally. It's like having nested ScrollTriggers!
+    </h3>
+  </div>
+</section>
+
+
+
+.Horizontal {
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.Horizontal__text {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  gap: 4vw;
+  padding-left: 100vw;
+}
+
+.heading-xl {
+  font-size: clamp(2rem, 10vw, 12rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+
+
+
+gsap.registerPlugin(SplitText, ScrollTrigger);
+
+let wrapper = document.querySelector(".Horizontal");
+let text = document.querySelector(".Horizontal__text");
+let split = SplitText.create(".Horizontal__text", { type: "chars, words" });
+
+const scrollTween = gsap.to(text, {
+  xPercent: -100,
+  ease: "none",
+  scrollTrigger: {
+    trigger: wrapper,
+    pin: true,
+    end: "+=5000px",
+    scrub: true
+  }
+});
+
+split.chars.forEach((char) => {
+  gsap.from(char, {
+    yPercent: "random(-200, 200)",
+    rotation: "random(-20, 20)",
+    ease: "back.out(1.2)",
+    scrollTrigger: {
+      trigger: char,
+      containerAnimation: scrollTween,
+      start: "left 100%",
+      end: "left 30%",
+      scrub: 1
+    }
+  });
+});

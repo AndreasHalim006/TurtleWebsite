@@ -5,76 +5,91 @@ import Hyperspeed from '../components/reactbits/Hyperspeed.jsx';
 import JourneySVG from '../components/JourneySVG.astro';
 import HUDWindow from '../components/HUDWindow.astro';
 import RotatingText from '../components/reactbits/RotatingText.jsx';
+import FlowingMenu from '../components/reactbits/FlowingMenu.jsx';
+import FuzzyText from '../components/reactbits/FuzzyText.jsx';
 
 // Local assets
-import heroVideo from '../assets/images/We_Are_Aristurtle_Sept2025_ForzaEnding.mp4';
-import protergiaLogo from '../assets/images/powered_by_protergia.png';
+import heroVideo from '../images/We_Are_Aristurtle_Sept2025_ForzaEnding.mp4';
+import protergiaLogo from '../images/powered_by_protergia.png';
+
+import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
+import teamPhoto2 from '../images/Aristurtle_photo_2-1_2.jpg';
+import teamPhoto3 from '../images/Aristurtle_photo_3-1_2.jpg';
+import teamPhoto4 from '../images/Untitled-7 1.jpg';
+import teamPhoto5 from '../images/Untitled-12 3.jpg';
+import teamPhoto6 from '../images/team.png';
+import teamPhoto7 from '../images/IMG_8908.jpg';
+
+const subteams = [
+    { id: 'st1', text: 'Chassis & Composites', image: teamPhoto1.src, desc: 'Designing the structural skeleton and optimizing carbon fiber layups for maximum rigidity and minimum weight.' },
+    { id: 'st2', text: 'Suspension', image: teamPhoto2.src, desc: "Engineering vehicle dynamics through advanced geometry, shock absorber tuning, and tire interface optimization." },
+    { id: 'st3', text: 'Aerodynamics', image: teamPhoto3.src, desc: "Utilizing CFD and wind tunnel testing to maximize downforce across the technical car outline." },
+    { id: 'st4', text: 'Drivetrain', image: teamPhoto4.src, desc: "Developing high-efficiency power transmission systems to deliver torque precisely to the wheels." },
+    { id: 'st5', text: 'Powertrain - HV', image: teamPhoto5.src, desc: "Engineering the battery pack and power distribution systems with safety and efficiency at the core." },
+    { id: 'st6', text: 'Vehicle Dynamics', image: teamPhoto6.src, desc: "Implementing control algorithms and simulating behavior to push the limits of track performance." },
+    { id: 'st7', text: 'Electronics', image: teamPhoto7.src, desc: "Designing custom PCBs and real-time firmware for low-latency system communication." },
+    { id: 'st8', text: 'Driverless', image: teamPhoto1.src, desc: "Developing the autonomous stack including perception, SLAM, and path planning for robotic racing." },
+    { id: 'st9', text: 'IT & Software', image: teamPhoto2.src, desc: "Building digital infrastructure and telemetry systems to support real-time engineering decisions." },
+    { id: 'st10', text: 'Operations', image: teamPhoto3.src, desc: "Managing logistics, sponsorships, and team coordination to ensure seamless racing program execution." }
+];
 
 /**
  * JOURNEY TUNING SYSTEM
  * ----------------------------------------------------------------------------
- * 1. Find your stop point (p) using the "DEBUG HUD" in the corner of the screen.
- * 2. Add or remove "windows" in any station.
- * 3. Use intuitive slots: "top-left", "top-right", "bottom", etc.
  */
 const JOURNEY_CONFIG = [
   {
     id: "about",
     p: 0.150, 
     windows: [
-      { id: "w1", x: "27.3%", y: "6.1%", w: "66.9vw", h: "39.0vh", content: "team-description", noBorder: true },
-      { id: "w-dui4", x: "12.3%", y: "55.4%", w: "35.4vw", h: "36.5vh", content: "vision-statement", noBorder: true },
-      { id: "w-56o2", x: "53.6%", y: "48.0%", w: "40.9vw", h: "44.0vh", content: "hyperspeed", noPadding: true }
+      { id: "w1", x: "29.9%", y: "10.2%", w: "65.2vw", h: "31.3vh", content: "team-description", noBorder: true },
+      { id: "w-dui4", x: "13.0%", y: "56.6%", w: "34.9vw", h: "35.5vh", content: "vision-statement", noBorder: true },
+      { id: "w-56o2", x: "53.6%", y: "48.0%", w: "40.9vw", h: "44.0vh", content: "hyperspeed" }
     ]
   },
   {
     id: "mission",
     p: 0.412,
     windows: [
-      { id: "w-kjzy", x: "53.3%", y: "8.6%", w: "44.8vw", h: "87.6vh", content: "mission-statement", noBorder: true },
-      { id: "w-9501", x: "3.4%", y: "56.0%", w: "45.3vw", h: "33.7vh", content: "innovation-driven", noBorder: true },
+      { id: "w-kjzy", x: "53.3%", y: "8.6%", w: "44.8vw", h: "87.6vh", content: "mission-pillars-interactive", noBorder: true },
+      { id: "w-9501", x: "3.4%", y: "56.0%", w: "45.3vw", h: "33.7vh", content: "mission-description-target", noBorder: true },
       { id: "w-vlrq", x: "20.7%", y: "10.5%", w: "28.7vw", h: "31.1vh", content: "vision-node", noBorder: true }
     ]
   },
   {
     id: "subsystems",
-    p: 0.60,
+    p: 0.6388404733510687,
     windows: [
-      { id: "w5", slot: "top-left", w: "22vw", h: "35vh", content: "sys-aero" },
-      { id: "w6", slot: "top-right", w: "22vw", h: "35vh", content: "sys-chassis" },
-      { id: "w7", slot: "bottom-left", w: "22vw", h: "35vh", content: "sys-powertrain" },
-      { id: "w8", slot: "bottom-right", w: "22vw", h: "35vh", content: "sys-electronics" }
+      { id: "w-gggp", w: "40.9vw", h: "86.3vh", x: "4.7%", y: "9.1%", content: "text-block", noBorder: true },
+      { id: "w-acrostic-expl", w: "45vw", h: "35vh", x: "52%", y: "60%", content: "acrostic-explanation", noBorder: true },
+      { id: "w-fuzzy-title", w: "45vw", h: "45vh", x: "52%", y: "12%", content: "fuzzy-title", noBorder: true }
     ]
   },
   {
     id: "history",
     p: 0.75,
-    windows: [
-      { id: "w9", slot: "left", w: "30vw", h: "25vh", content: "history-header" },
-      { id: "w10", slot: "right", w: "45vw", h: "60vh", content: "history-archive" }
-    ]
+    windows: []
   },
   {
     id: "sponsors",
     p: 0.90,
-    windows: [
-      { id: "w11", slot: "center", w: "80vw", h: "75vh", content: "sponsors-grid" }
-    ]
+    windows: []
   }
 ];
 
 const aboutHyperspeedOptions = {
     distortion: 'turbulentDistortion',
-    length: 320,
-    roadWidth: 7,
-    islandWidth: 1.4,
+    length: 400,
+    roadWidth: 10,
+    islandWidth: 2,
     lanesPerRoad: 3,
-    fov: 95,
-    fovSpeedUp: 140,
-    speedUp: 1.8,
-    carLightsFade: 0.6,
-    totalSideLightSticks: 14,
-    lightPairsPerRoadWay: 28,
+    fov: 90,
+    fovSpeedUp: 150,
+    speedUp: 2.0,
+    carLightsFade: 0.4,
+    totalSideLightSticks: 20,
+    lightPairsPerRoadWay: 40,
+    carLightsLength: [400 * 0.05, 400 * 0.3],
     colors: {
         roadColor: 0x000000,
         islandColor: 0x020202,
@@ -87,7 +102,6 @@ const aboutHyperspeedOptions = {
     },
 };
 
-// Map intuitive slots to Tailwind classes
 const getSlotClasses = (slot: string) => {
   const map: Record<string, string> = {
     "top-left": "top-8 left-8",
@@ -139,7 +153,6 @@ const getSlotClasses = (slot: string) => {
                     
                     <JourneySVG />
 
-                    <!-- STATIONS GENERATOR -->
                     {JOURNEY_CONFIG.map((station) => (
                       <div id={`station-${station.id}`} class="absolute w-screen h-screen pointer-events-none">
                         {station.windows.map((win) => (
@@ -148,6 +161,7 @@ const getSlotClasses = (slot: string) => {
                             class:list={["pointer-events-auto", win.slot ? getSlotClasses(win.slot) : ""]}
                             noPadding={win.noPadding}
                             noBorder={win.noBorder}
+                            noRounding={win.noRounding}
                             style={{ 
                                 width: win.w, 
                                 height: win.h,
@@ -157,7 +171,12 @@ const getSlotClasses = (slot: string) => {
                           >
                             <div class="h-full flex flex-col justify-center text-center p-[6%] overflow-visible">
                               {(win.content.toLowerCase() === 'hyperspeed') && (
-                                <div class="w-full h-full scale-110">
+                                <div class="w-full h-full scale-110 relative isolate">
+                                  <div class="absolute top-[8%] left-1/2 -translate-x-1/2 z-20 whitespace-nowrap pointer-events-none opacity-60">
+                                    <p class="font-sans text-white text-[min(1.4cqw,4cqh)] uppercase font-bold tracking-[0.25em]">
+                                        Click & hold to #feelth<span class="text-brand-orange">epower</span>
+                                    </p>
+                                  </div>
                                   <Hyperspeed client:load effectOptions={aboutHyperspeedOptions as any} />
                                 </div>
                               )}
@@ -176,6 +195,7 @@ const getSlotClasses = (slot: string) => {
                                     staggerDuration={0.025}
                                     rotationInterval={2500}
                                     transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                                    elementLevelClassName="font-sans font-bold uppercase tracking-tight"
                                   /> electric race cars.
                                 </p>
                               )}
@@ -204,21 +224,101 @@ const getSlotClasses = (slot: string) => {
                                 </p>
                               )}
                               
-                              {['hyperspeed', 'team-description', 'vision-statement', 'mission-statement', 'innovation-driven', 'vision-node'].indexOf(win.content.toLowerCase()) === -1 && (
-                                <p class="font-sans text-white/40 uppercase text-[min(4cqw,10cqh)] leading-none tracking-widest font-light">
-                                  DATA_NODE_STREAM: {win.content.toUpperCase()}
-                                </p>
+                              {(win.content.toLowerCase() === 'mission-pillars-interactive') && (
+                                <div class="h-full">
+                                    <FlowingMenu 
+                                        client:load 
+                                        items={subteams.map(s => ({ ...s, link: '#' }))}
+                                        speed={20}
+                                        marqueeBgColor="var(--brand-orange)"
+                                        marqueeTextColor="#000"
+                                        borderColor="var(--brand-orange)"
+                                        bgColor="var(--void)"
+                                        onHover={(id) => {
+                                            if (typeof window !== 'undefined' && (window as any).onSubteamHover) {
+                                                (window as any).onSubteamHover(id);
+                                            }
+                                        }}
+                                    />
+                                </div>
                               )}
+
+                              {(win.content.toLowerCase() === 'mission-description-target') && (
+                                <div id="pillar-description-container" class="relative z-10 transition-all duration-500">
+                                    <p id="pillar-description-text" class="font-sans text-white text-[min(4.8cqw,12cqh)] leading-[1.15] uppercase tracking-tight font-bold" style="text-wrap: balance;">
+                                        Explore our subdivisions: Engineering the future requires every area of expertise.
+                                    </p>
+                                </div>
+                              )}
+
+                              {(win.content.toLowerCase() === 'text-block') && (
+                                <div class="flex flex-col items-start justify-center h-full text-left font-sans uppercase">
+                                  <div class="flex flex-col gap-[0.5cqh] w-full">
+                                    {[
+                                      { id: 'A', letter: 'A', rest: 'utonomous' },
+                                      { id: 'R1', letter: 'R', rest: 'esearch' },
+                                      { id: 'I', letter: 'I', rest: 'nitiative' },
+                                      { id: 'S', letter: 'S', rest: 'ustainability' },
+                                      { id: 'T1', letter: 'T', rest: 'rack record' },
+                                      { id: 'U', letter: 'U', rest: 'nity' },
+                                      { id: 'R2', letter: 'R', rest: 'eturn' },
+                                      { id: 'T2', letter: 'T', rest: 'alent' },
+                                      { id: 'L', letter: 'L', rest: 'earning' },
+                                      { id: 'E', letter: 'E', rest: 'xcellence' }
+                                    ].map((item) => (
+                                      <div 
+                                        class="flex items-baseline leading-none w-full cursor-pointer group hover:bg-white/5 transition-colors duration-200 pr-4 rounded-r-lg"
+                                        onmouseenter={`if(window.onAcrosticHover) window.onAcrosticHover('${item.id}')`}
+                                      >
+                                        <span class="text-brand-orange text-[min(16cqw,8.2cqh)] font-black mr-[0.1em] group-hover:scale-110 transition-transform duration-300 origin-left">{item.letter}</span>
+                                        <span class="text-white text-[min(5.5cqw,3.8cqh)] font-bold tracking-tighter whitespace-nowrap group-hover:text-brand-orange transition-colors duration-300">{item.rest}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              {(win.content.toLowerCase() === 'acrostic-explanation') && (
+                                <div id="acrostic-expl-container" class="h-full flex items-center justify-start pointer-events-none opacity-0" style="clip-path: inset(-100% -100% -100% 0%);">
+                                    <div id="acrostic-marquee-wrapper" class="flex whitespace-nowrap">
+                                        <p id="acrostic-expl-text" class="font-sans text-white text-[min(10cqw,12cqh)] leading-none uppercase font-black tracking-tighter italic inline-block">
+                                        </p>
+                                    </div>
+                                </div>
+                              )}
+
+                              {(win.content.toLowerCase() === 'fuzzy-title') && (
+                                <div class="h-full flex items-center justify-center pointer-events-auto">
+                                    <FuzzyText 
+                                        client:load
+                                        text="ARISTURTLE"
+                                        baseIntensity={0.25}
+                                        hoverIntensity={0.6}
+                                        enableHover={true}
+                                        color="#ffffff"
+                                        fontSize="clamp(2rem, 8vw, 5.5rem)"
+                                        fontWeight={900}
+                                        fontFamily="Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace"
+                                        glitchMode={true}
+                                        glitchInterval={3000}
+                                        gradient={null}
+                                    />
+                                </div>
+                              )}
+
+                              {/* 
+                                Default fallback removed as requested. 
+                                Windows without explicit content will remain empty 
+                                but maintain their structural frame.
+                              */}
                             </div>
                           </HUDWindow>
                         ))}
                       </div>
                     ))}
-
                 </div>
             </div>
 		</div>
-
 	</div>
 </BaseLayout>
 
@@ -227,8 +327,9 @@ const getSlotClasses = (slot: string) => {
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 	import { CustomEase } from 'gsap/CustomEase';
+    import { SplitText } from 'gsap/SplitText';
 
-	gsap.registerPlugin(ScrollTrigger, DrawSVGPlugin, CustomEase);
+	gsap.registerPlugin(ScrollTrigger, DrawSVGPlugin, CustomEase, SplitText);
 
 	CustomEase.create("luxe", "0.16, 1, 0.3, 1");
 
@@ -244,7 +345,6 @@ const getSlotClasses = (slot: string) => {
             const stage = document.querySelector('#journey-stage');
             const pathMain = document.querySelector('#journey-path-main');
             const otherPaths = document.querySelectorAll('.other-car-paths path');
-            const debugVal = document.querySelector('#debug-p-val');
 
             if (stage && pathMain) {
                 const scaleFactor = 6; 
@@ -256,7 +356,7 @@ const getSlotClasses = (slot: string) => {
                 const waypoints = [
                     { id: '#station-about',    p: 0.150 }, 
                     { id: '#station-mission',  p: 0.412 }, 
-                    { id: '#station-subsystems', p: 0.600 }, 
+                    { id: '#station-subsystems', p: 0.6388404733510687 }, 
                     { id: '#station-history',  p: 0.750 }, 
                     { id: '#station-sponsors', p: 0.900 }  
                 ];
@@ -310,10 +410,10 @@ const getSlotClasses = (slot: string) => {
                             top: pos.y,
                             xPercent: -50,
                             yPercent: -50,
-                            opacity: 0 
+                            autoAlpha: 0 
                         });
                         const allWindows = stationEl.querySelectorAll('.hud-window');
-                        gsap.set(allWindows, { opacity: 0, scale: 0.8 });
+                        gsap.set(allWindows, { autoAlpha: 0, scale: 0.8 });
                     }
                 });
 
@@ -345,7 +445,7 @@ const getSlotClasses = (slot: string) => {
                         const allWindows = stationEl.querySelectorAll('.hud-window');
                         const allFrames = stationEl.querySelectorAll('.hud-frame-path');
 
-                        journeyTimeline.to(stationEl, { opacity: 1, duration: 0.1 });
+                        journeyTimeline.to(stationEl, { autoAlpha: 1, duration: 0.1 });
 
                         if (allFrames.length > 0) {
                             journeyTimeline.fromTo(allFrames, { drawSVG: "0%" }, { 
@@ -357,7 +457,7 @@ const getSlotClasses = (slot: string) => {
                         }
 
                         journeyTimeline.to(allWindows, { 
-                            opacity: 1, 
+                            autoAlpha: 1, 
                             scale: 1, 
                             duration: 0.6, 
                             stagger: 0.15, 
@@ -366,7 +466,7 @@ const getSlotClasses = (slot: string) => {
 
                         journeyTimeline.to({}, { duration: 2 }); 
 
-                        journeyTimeline.to(allWindows, { opacity: 0, scale: 0.8, duration: 0.5, stagger: 0.05 });
+                        journeyTimeline.to(allWindows, { autoAlpha: 0, scale: 0.8, duration: 0.5, stagger: 0.05 });
                         if (allFrames.length > 0) {
                             journeyTimeline.to(allFrames, { 
                                 drawSVG: "0%", 
@@ -376,7 +476,7 @@ const getSlotClasses = (slot: string) => {
                             }, "-=0.4");
                         }
                         
-                        journeyTimeline.to(stationEl, { opacity: 0, duration: 0.2 });
+                        journeyTimeline.to(stationEl, { autoAlpha: 0, duration: 0.2 });
                     }
                     lastP = wp.p;
                 });
@@ -387,7 +487,7 @@ const getSlotClasses = (slot: string) => {
                 const finalTracker = { progress: lastP };
 
                 journeyTimeline
-                    .to(lastStation, { opacity: 0, duration: 0.5 }, "+=0.5")
+                    .to(lastStation, { autoAlpha: 0, duration: 0.5 }, "+=0.5")
                     .to(finalTracker, {
                         progress: 1,
                         ease: "none",
@@ -408,6 +508,150 @@ const getSlotClasses = (slot: string) => {
                         ease: "luxe", 
                         duration: remainingDuration * 0.5 
                     });
+            }
+
+            // INTERACTIVE SUBTEAMS SCRIPT
+            const subteamDescriptions: Record<string, string> = {
+                st1: "Designing the structural skeleton and optimizing carbon fiber layups for maximum rigidity and minimum weight.",
+                st2: "Engineering vehicle dynamics through advanced geometry, shock absorber tuning, and tire interface optimization.",
+                st3: "Utilizing CFD and wind tunnel testing to maximize downforce across the technical car outline.",
+                st4: "Developing high-efficiency power transmission systems to deliver torque precisely to the wheels.",
+                st5: "Engineering the battery pack and power distribution systems with safety and efficiency at the core.",
+                st6: "Implementing control algorithms and simulating behavior to push the limits of track performance.",
+                st7: "Designing custom PCBs and real-time firmware for low-latency system communication.",
+                st8: "Developing the autonomous stack including perception, SLAM, and path planning for robotic racing.",
+                st9: "Building digital infrastructure and telemetry systems to support real-time engineering decisions.",
+                st10: "Managing logistics, sponsorships, and team coordination to ensure seamless racing program execution."
+            };
+
+            const targetContainer = document.getElementById('pillar-description-container');
+            const targetText = document.getElementById('pillar-description-text');
+
+            (window as any).onSubteamHover = (id: string) => {
+                if (id && subteamDescriptions[id] && targetText && targetContainer) {
+                    gsap.to(targetContainer, { 
+                        autoAlpha: 0, 
+                        y: 10, 
+                        duration: 0.2, 
+                        onComplete: () => {
+                            targetText.textContent = subteamDescriptions[id];
+                            gsap.to(targetContainer, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" });
+                        }
+                    });
+                }
+            };
+
+            // ACROSTIC INTERACTIVITY
+            const acrosticDescriptions: Record<string, string> = {
+                A: "We have created the first Autonomous / Driverless Electric race car in the Balkan region.",
+                R1: "Aristurtle is a team that fosters research on cutting-edge technologies and empowers young engineers to innovate.",
+                I: "Back in 2013, we built the first electric race car in Northern Greece. Aristurtle is a pioneering team in the field of electric mobility and is driven solely by the will of its members.",
+                S: "Our commitment to safeguarding the environment is something we actively prove every day. Raising public awareness for Electric and Autonomous mobility is our main focus.",
+                T1: "Our team has had an unparalleled course in the Formula Student competitions it has participated. Our performance is improving exponentially.",
+                U: "We believe in long-lasting relationships. By supporting our work, you become part of our ever-growing family.",
+                R2: "Aristurtle’s sponsorship program offers strategic promotion solutions to all of its sponsors by creating unique, stimulative content. By leveraging our exposure on mass and social media, we are able to create value for our sponsors that exceeds the amount of their contribution.",
+                T2: "Our team members are exceptionally skilled individuals and we constantly strive to contribute to each and every one’s personal development and cultivation.",
+                L: "We provide engineering students with hands-on practical experience by bridging the gap between theory and practice.",
+                E: "Aristurtle is the Greek Electric Vehicle Formula Student team with the most participations and distinctions in international FSAE competitions."
+            };
+
+            const acrosticExplContainer = document.getElementById('acrostic-expl-container');
+            const acrosticExplText = document.getElementById('acrostic-expl-text');
+            const marqueeWrapper = document.getElementById('acrostic-marquee-wrapper');
+            let currentAcrosticId = "";
+            let marqueeTimeline: gsap.core.Timeline | null = null;
+
+            const startMarquee = (entryID: string) => {
+                const container = document.getElementById('acrostic-expl-container');
+                const wrapper = document.getElementById('acrostic-marquee-wrapper');
+                
+                if (!container || !wrapper) return;
+                
+                // 1. Kill all active timelines and specific element tweens
+                if (marqueeTimeline) {
+                    marqueeTimeline.kill();
+                    marqueeTimeline = null;
+                }
+                gsap.killTweensOf([wrapper, container]);
+                
+                const newText = acrosticDescriptions[entryID];
+                if (!newText) return;
+
+                // 2. FULL DOM RESET - This removes all SplitText artifacts (spans/divs)
+                // and ensures we are working with fresh nodes every time.
+                wrapper.innerHTML = `<p id="acrostic-expl-text" class="font-sans text-white text-[min(10cqw,12cqh)] leading-none uppercase font-black tracking-tighter italic inline-block">${newText}</p>`;
+                const textEl = document.getElementById('acrostic-expl-text');
+                if (!textEl) return;
+
+                // 3. Measure viewWidth AFTER reset
+                const viewWidth = container.offsetWidth || 0;
+                
+                // 4. Create NEW split
+                const split = new SplitText(textEl, { type: "chars" });
+                
+                // 5. Setup Wrapper and Container
+                gsap.set(wrapper, { x: viewWidth });
+                gsap.set(container, { autoAlpha: 1 });
+                
+                const textWidth = wrapper.scrollWidth;
+                const scrollDistance = viewWidth + textWidth;
+                const speed = 250; 
+                const duration = scrollDistance / speed;
+
+                marqueeTimeline = gsap.timeline({
+                    onComplete: () => {
+                        gsap.delayedCall(2, () => {
+                            if (currentAcrosticId === entryID) startMarquee(entryID);
+                        });
+                    }
+                });
+
+                // Move from viewWidth to -textWidth
+                marqueeTimeline.to(wrapper, {
+                    x: -textWidth,
+                    duration: duration,
+                    ease: "none"
+                }, 0);
+
+                // Settle characters as they move into the window
+                split.chars.forEach((char, i) => {
+                    const charOffset = char.offsetLeft; 
+                    const appearTime = charOffset / speed;
+                    const settleDistance = viewWidth * 0.3; 
+                    const settleDuration = settleDistance / speed;
+
+                    marqueeTimeline.fromTo(char, 
+                        {
+                            yPercent: gsap.utils.random(-200, 200),
+                            rotation: gsap.utils.random(-20, 20),
+                            opacity: 0
+                        },
+                        {
+                            yPercent: 0,
+                            rotation: 0,
+                            opacity: 1,
+                            duration: settleDuration,
+                            ease: "back.out(1.2)",
+                            immediateRender: false
+                        }, 
+                        appearTime
+                    );
+                });
+            };
+
+            (window as any).onAcrosticHover = (id: string) => {
+                if (id === currentAcrosticId) return;
+                currentAcrosticId = id;
+                startMarquee(id);
+            };
+
+            const acrosticList = document.querySelector('#station-subsystems .flex-col.gap-\\[0\\.5cqh\\]');
+            if (acrosticList) {
+                acrosticList.addEventListener('mouseleave', () => {
+                    currentAcrosticId = "";
+                    if (marqueeTimeline) marqueeTimeline.kill();
+                    gsap.to(acrosticExplContainer, { autoAlpha: 0, duration: 0.3 });
+                });
             }
 
 			return () => {

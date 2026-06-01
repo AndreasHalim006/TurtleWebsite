@@ -9,6 +9,7 @@ const TargetCursor = ({
   parallaxOn = true
 }) => {
   const cursorRef = useRef(null);
+  const ringRef = useRef(null);
   const cornersRef = useRef(null);
   const spinTl = useRef(null);
   const dotRef = useRef(null);
@@ -20,12 +21,14 @@ const TargetCursor = ({
 
   const isMobile = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isSmallScreen = window.innerWidth <= 768;
+    const hasCoarsePointer = window.matchMedia?.('(pointer: coarse)').matches;
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const mobileRegex = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
     const isMobileUserAgent = mobileRegex.test(userAgent.toLowerCase());
-    return (hasTouchScreen && isSmallScreen) || isMobileUserAgent;
+    return isSmallScreen || hasCoarsePointer || hasTouchScreen || isMobileUserAgent || prefersReducedMotion;
   }, []);
 
   const constants = useMemo(
@@ -76,13 +79,11 @@ const TargetCursor = ({
       y: window.innerHeight / 2
     });
 
-    const createSpinTimeline = () => {
-      if (spinTl.current) {
-        spinTl.current.kill();
-      }
-      spinTl.current = gsap
-        .timeline({ repeat: -1 })
-        .to(cursor, { rotation: '+=360', duration: spinDuration, ease: 'none' });
+    const startIdleSpin = () => {
+      if (!ringRef.current) return;
+      gsap.killTweensOf(ringRef.current);
+      gsap.set(ringRef.current, { clearProps: 'transform' });
+      ringRef.current.classList.remove('is-locked');
     };
 
     // Set initial idle positions for all 6 corners
@@ -101,7 +102,7 @@ const TargetCursor = ({
     };
 
     setIdleFormation();
-    createSpinTimeline();
+    startIdleSpin();
 
     const tickerFn = () => {
       if (!cursorRef.current || !cornersRef.current) {
@@ -202,10 +203,10 @@ const TargetCursor = ({
       const corners = Array.from(cornersRef.current);
       corners.forEach(corner => gsap.killTweensOf(corner));
       
-      // Stop and reset parent spin
-      spinTl.current?.pause();
-      gsap.killTweensOf(cursorRef.current, 'rotation');
-      gsap.to(cursorRef.current, { rotation: 0, duration: 0.2 });
+      // Stop and reset idle ring spin while locked onto a target.
+      ringRef.current?.classList.add('is-locked');
+      gsap.killTweensOf(ringRef.current, 'rotation');
+      gsap.to(ringRef.current, { rotation: 0, duration: 0.2 });
 
       const rect = target.getBoundingClientRect();
       const offset = 8; 
@@ -262,8 +263,8 @@ const TargetCursor = ({
         }
         
         resumeTimeout = setTimeout(() => {
-          if (!activeTarget && cursorRef.current && spinTl.current) {
-            spinTl.current.play();
+          if (!activeTarget && cursorRef.current && ringRef.current) {
+            startIdleSpin();
           }
           resumeTimeout = null;
         }, 50);
@@ -305,22 +306,42 @@ const TargetCursor = ({
       className="fixed top-0 left-0 w-0 h-0 pointer-events-none z-[9999]"
       style={{ willChange: 'transform' }}
     >
+      <style>{`
+        @keyframes target-cursor-idle-spin {
+          to { transform: rotate(360deg); }
+        }
+
+        .target-cursor-ring {
+          animation: target-cursor-idle-spin var(--target-cursor-spin-duration, 2s) linear infinite;
+        }
+
+        .target-cursor-ring.is-locked {
+          animation-play-state: paused;
+        }
+      `}</style>
+
       <div
         ref={dotRef}
         className="absolute top-1/2 left-1/2 w-1.5 h-1.5 bg-brand-orange rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#ff8900]"
         style={{ willChange: 'transform' }}
       />
-      
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <div
-          key={i}
-          className="target-cursor-corner absolute top-1/2 left-1/2 w-6 h-6 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
-        >
-              <svg viewBox="0 0 20 20" className="w-full h-full fill-none stroke-brand-orange stroke-[3]">
-                  <path d="M12,3.1 L8,10 L12,16.9" style={{ filter: 'drop-shadow(0 0 5px #ff8900)' }} />
-              </svg>
-        </div>
-      ))}
+
+      <div
+        ref={ringRef}
+        className="target-cursor-ring absolute top-1/2 left-1/2 w-0 h-0"
+        style={{ willChange: 'transform', '--target-cursor-spin-duration': `${spinDuration}s` }}
+      >
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <div
+            key={i}
+            className="target-cursor-corner absolute top-1/2 left-1/2 w-6 h-6 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
+          >
+                <svg viewBox="0 0 20 20" className="w-full h-full fill-none stroke-brand-orange stroke-[3]">
+                    <path d="M12,3.1 L8,10 L12,16.9" style={{ filter: 'drop-shadow(0 0 5px #ff8900)' }} />
+                </svg>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

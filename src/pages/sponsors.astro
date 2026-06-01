@@ -5,434 +5,1049 @@ import { Image } from 'astro:assets';
 import Grainient from '../components/reactbits/Grainient';
 import TargetCursor from '../components/reactbits/TargetCursor';
 
-// Hero Image
-import heroImage from '../assets/images/Aristurtle_photo_2-1_2.jpg';
+import heroImage from '../images/Aristurtle_photo_2-1_2.jpg';
 
-// Fetch all active sponsors
-const allSponsors = await getCollection('sponsors', ({ data }) => {
-    return data.active === true;
-});
-
-// Fetch all categories and sort by order
+const allSponsors = await getCollection('sponsors', ({ data }) => data.active === true);
 const allCategories = await getCollection('sponsorCategories');
 const sortedCategories = allCategories.sort((a, b) => a.data.order - b.data.order);
 
-// Helper to group sponsors by category key
-const getSponsorsByCategory = (categoryKey: string) => {
-    return allSponsors
-        .filter(sponsor => sponsor.data.category === categoryKey)
-        .sort((a, b) => a.data.order - b.data.order);
-};
+const getSponsorsByCategory = (categoryKey: string) =>
+  allSponsors
+    .filter((sponsor) => sponsor.data.category === categoryKey)
+    .sort((a, b) => a.data.order - b.data.order);
 
-// Filter categories that have sponsors
-const categoriesWithSponsors = sortedCategories.filter(cat => getSponsorsByCategory(cat.data.key).length > 0);
+const tiers = sortedCategories
+  .map((category) => ({
+    id: category.data.key,
+    title: category.data.title,
+    description: category.data.description,
+    sponsors: getSponsorsByCategory(category.data.key).map((sponsor) => ({
+      name: sponsor.data.name,
+      logo: sponsor.data.logo,
+      website: sponsor.data.website,
+      alt: sponsor.data.alt || sponsor.data.name,
+    })),
+  }))
+  .filter((tier) => tier.sponsors.length > 0);
 
-// Flatten data for the client-side script
-const serializedSponsors = categoriesWithSponsors.map(cat => ({
-    title: cat.data.title,
-    sponsors: getSponsorsByCategory(cat.data.key).map(s => ({
-        name: s.data.name,
-        logo: s.data.logo,
-        website: s.data.website || ''
-    }))
+const totalSponsors = tiers.reduce((sum, tier) => sum + tier.sponsors.length, 0);
+const tierData = tiers.map((tier) => ({
+  id: tier.id,
+  title: tier.title,
+  countLabel: `${tier.sponsors.length} partners indexed`,
+  sponsors: tier.sponsors,
 }));
+const sponsorLogoUrls = Array.from(
+  new Set(tiers.flatMap((tier) => tier.sponsors.map((sponsor) => sponsor.logo).filter(Boolean)))
+);
 ---
 
-<BaseLayout title="ARISTURTLE | Our Strategic Partners">
-    <div class="bg-void min-h-screen w-full relative text-foreground selection:bg-brand-orange selection:text-brand-emerald">
-        
-        <!-- TARGET CURSOR HUD -->
-        <TargetCursor client:load targetSelector=".grid-link" />
+<BaseLayout title="ARISTURTLE | Partners" description="The official partners and sponsors supporting Aristurtle Racing Team." forceCompact={true}>
+  <Fragment slot="head">
+    {sponsorLogoUrls.map((logo) => (
+      <link rel="preload" as="image" href={logo} fetchpriority="low" />
+    ))}
+  </Fragment>
 
-        <!-- HERO SECTION -->
-        <section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-30 overflow-hidden bg-brand-midnight border-b border-white/10">
-            <div class="absolute inset-0 z-0 overflow-hidden">
-                <Image 
-                    src={heroImage} 
-                    alt="Aristurtle Team" 
-                    class="w-full h-full object-cover opacity-30 scale-105"
-                    id="hero-image"
-                />
-                <div class="absolute inset-0 bg-gradient-to-b from-void/60 via-transparent to-void"></div>
-            </div>
+  <div class="sponsors-page bg-void text-foreground selection:bg-brand-orange selection:text-brand-emerald">
+    <TargetCursor client:only="react" targetSelector=".honeycomb-slot.is-active[href]" spinDuration={2.6} hoverDuration={0.18} />
 
-            <div class="relative max-w-[1800px] mx-auto w-full text-center flex flex-col items-center gap-6 z-20 px-[5vw]">
-                <span class="font-sans text-[12px] font-bold uppercase tracking-[1em] text-brand-orange hero-reveal opacity-0 translate-y-8">
-                    // STRATEGIC_ALLIANCE
-                </span>
-                <h1 class="font-sans text-6xl md:text-8xl lg:text-9xl leading-[0.85] text-white font-light hero-reveal opacity-0 translate-y-8">
-                    OUR <span class="font-bold">PARTNERS</span>
-                </h1>
-                <div class="w-32 h-[1px] bg-brand-orange/40 mt-8 hero-reveal opacity-0 scale-x-0"></div>
-                <p class="font-sans text-xs md:text-sm opacity-50 max-w-xl tracking-[0.3em] mt-8 hero-reveal opacity-0 translate-y-8 leading-relaxed uppercase">
-                    A geometric ecosystem of technical excellence.
-                </p>
-            </div>
+    <section id="hero" class="sponsors-hero">
+      <Image src={heroImage} alt="Aristurtle race car with partner markings" class="hero-image" priority />
+      <div class="hero-shade"></div>
+      <div class="hero-copy">
+        <p class="terminal-kicker hero-reveal">// PARTNER_NETWORK</p>
+        <h1 class="hero-title hero-reveal">Partners</h1>
+        <p class="hero-text hero-reveal">
+          The technical, industrial, academic, and media partners powering Aristurtle on and off track.
+        </p>
+        <div class="hero-actions hero-reveal">
+          <a href="mailto:contact@aristurtle.gr" class="primary-action">Become a Partner</a>
+          <a href="#sponsor-assembly" class="secondary-action">View Network</a>
+        </div>
+      </div>
+      <div class="hero-meta hero-reveal" aria-label={`${totalSponsors} active partners across ${tiers.length} tiers`}>
+        <span>{String(tiers.length).padStart(2, '0')} tiers</span>
+        <span>{String(totalSponsors).padStart(2, '0')} partners</span>
+      </div>
+    </section>
 
-            <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30 hero-reveal translate-y-8">
-                <span class="text-[10px] uppercase tracking-[0.5em] text-white">Scroll to Analyze Ecosystem</span>
-                <div class="w-[1px] h-12 bg-white/40"></div>
-            </div>
-        </section>
-
-        <!-- MASTER GRID SPATIAL NAVIGATION -->
-        <div id="spatial-system" class="relative w-full z-10">
-            
-            <!-- THE VIEWPORT (Pinned) -->
-            <div id="grid-viewport" class="fixed inset-0 w-full h-screen overflow-hidden pointer-events-auto opacity-0 transition-opacity duration-700 z-20">
-                
-                <div id="fixed-container" class="absolute inset-0 w-full h-full pointer-events-none">
-                    <!-- BACKGROUND (Grainient) -->
-                    <div id="fixed-bg" class="absolute inset-0 z-0">
-                        <Grainient 
-                            client:load
-                            color1="#cc6a00"
-                            color2="#994f00"
-                            color3="#020202"
-                            timeSpeed={0.12}
-                            colorBalance={-0.3}
-                            warpStrength={0.5}
-                            warpFrequency={2.5}
-                            warpSpeed={0.8}
-                            warpAmplitude={25.0}
-                            blendSoftness={0.03}
-                            noiseScale={1.8}
-                            grainAmount={0.35}
-                            contrast={2.0}
-                            saturation={0.9}
-                            zoom={1.1}
-                        />
-                        <div class="absolute inset-0 bg-void/20"></div>
-                    </div>
-
-                    <!-- HUD LABEL -->
-                    <div id="hud-label" class="absolute top-[10vh] left-1/2 -translate-x-1/2 text-center z-30 opacity-100">
-                        <span class="font-sans text-[10px] font-bold uppercase tracking-[1.5em] text-brand-orange block mb-4">
-                            // DYNAMIC_ASSEMBLY
-                        </span>
-                        <h2 id="tier-title" class="font-sans text-4xl md:text-7xl font-bold uppercase text-white tracking-tighter leading-none">
-                            ALL PARTNERS
-                        </h2>
-                        <div class="w-16 h-[2px] bg-brand-orange mx-auto mt-6"></div>
-                    </div>
-
-                    <!-- THE PERFECT MASTER GRID -->
-                    <div id="master-grid" class="absolute inset-0 z-10 flex items-center justify-center pointer-events-auto">
-                        <!-- Global SVG Filter for Inset Shadow -->
-                        <svg width="0" height="0" class="absolute">
-                            <defs>
-                                <filter id="inset-shadow" x="-50%" y="-50%" width="200%" height="200%">
-                                    <feComponentTransfer in="SourceAlpha">
-                                      <feFuncA type="table" tableValues="1 0" />
-                                    </feComponentTransfer>
-                                    <feGaussianBlur stdDeviation="12"/>
-                                    <feOffset dx="0" dy="0" result="offsetblur"/>
-                                    <feFlood flood-color="black" result="color"/>
-                                    <feComposite in="color" in2="offsetblur" operator="in" result="shadow"/>
-                                    <feComposite in="shadow" in2="SourceAlpha" operator="in" result="innerShadow"/>
-                                    <feMerge>
-                                      <feMergeNode in="SourceGraphic" />
-                                      <feMergeNode in="innerShadow" />
-                                    </feMerge>
-                                </filter>
-                            </defs>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SCROLL TRACK -->
-            <div id="scroll-track" class="relative w-full z-10 pointer-events-none">
-                {categoriesWithSponsors.map((category) => (
-                    <div class="step h-[300vh] w-full" data-title={category.data.title} data-category={category.data.key}></div>
-                ))}
-                
-                <!-- FINAL CTA -->
-                <div class="h-screen w-full relative flex items-center justify-center z-40 bg-void/95 backdrop-blur-2xl pointer-events-auto">
-                    <div class="text-center flex flex-col items-center gap-10 px-[5vw]">
-                        <h2 class="font-sans text-5xl md:text-8xl text-white font-light uppercase tracking-tighter leading-tight">
-                            JOIN THE <span class="font-bold text-brand-orange italic">LEGACY</span>
-                        </h2>
-                        <a href="mailto:contact@aristurtle.gr" class="relative group inline-flex items-center justify-center px-16 py-6 border border-brand-orange text-brand-orange font-sans font-bold uppercase text-[10px] tracking-[0.5em] overflow-hidden transition-all duration-700 hover:text-white">
-                            <span class="relative z-10">Become a Partner</span>
-                            <div class="absolute inset-0 bg-brand-orange scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-0"></div>
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <section id="sponsor-assembly" class="sponsor-assembly" style={`--tier-count: ${tiers.length};`}>
+      <div class="assembly-shell">
+        <div class="assembly-bg" aria-hidden="true">
+          <Grainient
+            client:load
+            color1="#171717"
+            color2="#4a2605"
+            color3="#050505"
+            timeSpeed={0.08}
+            colorBalance={0.35}
+            warpStrength={0.28}
+            warpFrequency={1.8}
+            warpSpeed={0.35}
+            warpAmplitude={42}
+            blendSoftness={0.18}
+            noiseScale={1.1}
+            grainAmount={0.08}
+            contrast={1.35}
+            saturation={0.72}
+            zoom={1.05}
+          />
+          <div class="grid-overlay"></div>
+          <div class="assembly-vignette"></div>
         </div>
 
-    </div>
+        <header class="assembly-hud" aria-live="polite">
+          <p class="terminal-kicker">// ACTIVE_TIER</p>
+          <h2 id="active-tier-title">{tiers[0]?.title}</h2>
+          <p id="active-tier-count">{tiers[0]?.sponsors.length ?? 0} partners indexed</p>
+        </header>
+
+        <nav class="tier-rail" aria-label="Sponsor tiers">
+          {tiers.map((tier, index) => (
+            <a href={`#tier-step-${tier.id}`} class:list={['tier-rail-link', index === 0 && 'is-active']} data-tier-link={index}>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <strong>{tier.title}</strong>
+            </a>
+          ))}
+        </nav>
+
+        <div id="honeycomb-field" class="honeycomb-field" aria-label="Interactive sponsor honeycomb">
+          <svg class="honeycomb-idle-layer" aria-hidden="true"></svg>
+          <div class="honeycomb-active-layer"></div>
+        </div>
+
+        <div class="fallback-stage">
+          {tiers.map((tier, index) => (
+            <section class="fallback-tier" aria-labelledby={`tier-title-${tier.id}`}>
+              <div class="mobile-tier-heading">
+                <p class="terminal-kicker">// {String(index + 1).padStart(2, '0')}</p>
+                <h2 id={`tier-title-${tier.id}`}>{tier.title}</h2>
+              </div>
+
+              <div class:list={['fallback-logo-grid', tier.sponsors.length >= 18 && 'is-dense']}>
+                {tier.sponsors.map((sponsor) => {
+                  const content = (
+                    <>
+                      <span class="fallback-cell-frame" aria-hidden="true"></span>
+                      <img src={sponsor.logo} alt={sponsor.alt} loading="lazy" decoding="async" />
+                    </>
+                  );
+
+                  return sponsor.website ? (
+                    <a
+                      class="fallback-cell"
+                      href={sponsor.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Visit ${sponsor.name}`}
+                    >
+                      {content}
+                    </a>
+                  ) : (
+                    <div class="fallback-cell" aria-label={sponsor.name}>
+                      {content}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+
+      <div class="assembly-steps" aria-hidden="true">
+        {tiers.map((tier) => (
+          <div id={`tier-step-${tier.id}`} class="tier-step"></div>
+        ))}
+      </div>
+    </section>
+
+    <section class="partner-cta">
+      <div>
+        <p class="terminal-kicker">// OPEN_CHANNEL</p>
+        <h2>Partner with Aristurtle</h2>
+      </div>
+      <p>
+        Support a student team building race-ready engineering, autonomous systems, and the next generation of motorsport talent.
+      </p>
+      <a href="mailto:contact@aristurtle.gr" class="primary-action">Become a Partner</a>
+    </section>
+  </div>
 </BaseLayout>
 
-<script is:inline define:vars={{ serializedSponsors }}>
-    window.PARTNER_DATA = serializedSponsors;
+<noscript>
+  <style>
+    .honeycomb-field,
+    .tier-rail,
+    .assembly-hud,
+    .assembly-steps {
+      display: none !important;
+    }
+
+    .fallback-stage {
+      display: grid !important;
+    }
+
+    .sponsor-assembly,
+    .assembly-shell {
+      min-height: auto !important;
+    }
+
+    .assembly-shell {
+      position: relative !important;
+      padding: 6rem clamp(1.25rem, 5vw, 5rem) !important;
+    }
+  </style>
+</noscript>
+
+<script is:inline define:vars={{ tierData }}>
+  window.SPONSOR_TIERS = tierData;
 </script>
 
 <script>
-    import { gsap } from 'gsap';
-    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-    gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 
-    const LUXE_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+  window.addEventListener('DOMContentLoaded', () => {
+    const tiers = (window as any).SPONSOR_TIERS || [];
+    const field = document.querySelector<HTMLElement>('#honeycomb-field');
+    const idleLayer = document.querySelector<SVGSVGElement>('.honeycomb-idle-layer');
+    const activeLayer = document.querySelector<HTMLElement>('.honeycomb-active-layer');
+    const steps = gsap.utils.toArray<HTMLElement>('.tier-step');
+    const railLinks = gsap.utils.toArray<HTMLElement>('[data-tier-link]');
+    const title = document.querySelector<HTMLElement>('#active-tier-title');
+    const count = document.querySelector<HTMLElement>('#active-tier-count');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
 
-    window.addEventListener('DOMContentLoaded', () => {
-        const mm = gsap.matchMedia();
-
-        mm.add("(prefers-reduced-motion: no-preference)", (context) => {
-            
-            // 1. HERO ENTRANCE
-            gsap.to(".hero-reveal", { y: 0, scaleX: 1, opacity: 1, duration: 1.5, stagger: 0.1, ease: LUXE_EASE, delay: 0.2 });
-            gsap.to("#hero-image", { scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }, y: 150, scale: 1.15, ease: "none" });
-
-            // 2. PIN AND FADE THE GRID SYSTEM
-            const systemFade = gsap.timeline({
-                scrollTrigger: {
-                    trigger: "#spatial-system",
-                    start: "top bottom", // Start fading as soon as system enters viewport
-                    end: "top top",      // Fully visible when system reaches top
-                    scrub: true
-                }
-            });
-            systemFade.to("#grid-viewport", { opacity: 1, ease: "none" });
-
-            ScrollTrigger.create({
-                trigger: "#spatial-system",
-                start: "top top",
-                end: "bottom bottom",
-                pin: false, // Already fixed in CSS, but we use this for state
-                onLeave: () => gsap.to("#grid-viewport", { opacity: 0, duration: 0.5 }),
-                onEnterBack: () => gsap.to("#grid-viewport", { opacity: 1, duration: 0.8 })
-            });
-
-            // 3. MATHEMATICAL GRID GENERATION
-            const gridContainer = document.querySelector('#master-grid');
-            const HEX_W = 180;
-            const HEX_H = 156; 
-            const GAP = 20;   
-            const COLS = 11;
-            const ROWS = 8;
-            
-            const allLinks: any[] = [];
-            
-            if (gridContainer) {
-                const colMarginX = (HEX_W * 0.25) - GAP;
-                const colOffsetY = (HEX_H + GAP) / 2;
-                
-                const wrapper = document.createElement('div');
-                wrapper.className = "master-grid-wrapper flex flex-row items-center justify-center pointer-events-auto transition-transform duration-700";
-                
-                for (let c = 0; c < COLS; c++) {
-                    const colDiv = document.createElement('div');
-                    colDiv.style.cssText = `display: flex; flex-direction: column; gap: ${GAP}px; margin-left: ${c > 0 ? -colMarginX : 0}px; transform: translateY(${c % 2 === 1 ? colOffsetY : 0}px);`;
-                    
-                    for (let r = 0; r < ROWS; r++) {
-                        const link = document.createElement('a');
-                        link.className = "grid-link group relative flex items-center justify-center cursor-default";
-                        link.style.width = `${HEX_W}px`;
-                        link.style.height = `${HEX_H}px`;
-                        link.style.pointerEvents = "none";
-                        
-                        link.innerHTML = `
-                            <svg viewBox="0 0 116 100" class="absolute inset-0 w-full h-full transform transition-all duration-700 hex-svg scale-[0.05]">
-                                <polygon points="29 0, 87 0, 116 50, 87 100, 29 100, 0 50" fill="white" class="hex-fill" />
-                                <path d="M29,1 L87,1 L115,50 L87,99 L29,99 L1,50 Z" fill="none" stroke="#ff8900" stroke-width="2" class="hex-border opacity-0" stroke-dasharray="400" stroke-dashoffset="400" />
-                            </svg>
-                            <div class="hex-content relative z-10 w-full h-full flex items-center justify-center p-12 opacity-0 transition-all duration-700 scale-75">
-                                <img src="" class="max-w-[75%] max-h-[60%] object-contain" />
-                            </div>
-                        `;
-                        
-                        colDiv.appendChild(link);
-                        allLinks.push(link);
-                    }
-                    wrapper.appendChild(colDiv);
-                }
-                gridContainer.appendChild(wrapper);
-            }
-
-            // RE-CENTER ON RESIZE (Hardening Case #3)
-            window.addEventListener('resize', () => {
-                ScrollTrigger.refresh();
-            });
-
-            // 4. ACTIVE SLOT MAPPING
-            const cc = Math.floor(COLS / 2);
-            const rc = Math.floor(ROWS / 2);
-            
-            const sortedLinks = [...allLinks].sort((a, b) => {
-                const aIdx = allLinks.indexOf(a);
-                const bIdx = allLinks.indexOf(b);
-                const dist = (idx: number) => {
-                    const col = Math.floor(idx / ROWS);
-                    const row = idx % ROWS;
-                    return Math.sqrt(Math.pow(col - cc, 2) + Math.pow(row - rc, 2));
-                };
-                return dist(aIdx) - dist(bIdx);
-            });
-
-            // 5. MORPHING LOGIC (Cinematic Cutscenes)
-            const steps = gsap.utils.toArray('.step');
-            const tierTitle = document.querySelector('#tier-title');
-            const masterGrid = document.querySelector('#master-grid');
-            const partnerData = (window as any).PARTNER_DATA || [];
-            let activeTimeline: gsap.core.Timeline | null = null;
-
-            steps.forEach((step: any, idx: number) => {
-                const data = partnerData[idx];
-                if (!data) return;
-
-                ScrollTrigger.create({
-                    trigger: step,
-                    start: "top center",
-                    end: "bottom center",
-                    toggleActions: "play reverse play reverse",
-                    onEnter: () => cinematicTransition(data, true),
-                    onEnterBack: () => cinematicTransition(data, true),
-                    onLeave: () => cinematicTransition(data, false),
-                    onLeaveBack: () => cinematicTransition(data, false)
-                });
-            });
-
-            function cinematicTransition(data: any, assemble: boolean) {
-                // KILL previous timeline to prevent race conditions during rapid scroll
-                if (activeTimeline) activeTimeline.kill();
-                activeTimeline = gsap.timeline();
-
-                if (assemble) {
-                    // PHASE 1: INITIALIZE
-                    if (tierTitle) {
-                        gsap.to(tierTitle, { 
-                            innerHTML: "INITIALIZING ASSEMBLY...", 
-                            duration: 0.1, 
-                            overwrite: true,
-                            onComplete: () => {
-                                tierTitle.innerHTML = data.title;
-                                gsap.to(tierTitle, { opacity: 1, duration: 0.5, overwrite: true });
-                            }
-                        });
-                    }
-
-                    // Grid "Scanning" Move
-                    activeTimeline.to(masterGrid, { 
-                        scale: 0.95, 
-                        rotation: 1, 
-                        duration: 0.8, 
-                        ease: "power2.inOut",
-                        overwrite: "auto"
-                    }, 0);
-
-                    activeTimeline.add(() => updateGrid(data), 0.3);
-
-                    activeTimeline.to(masterGrid, { 
-                        scale: 1, 
-                        rotation: 0, 
-                        duration: 1, 
-                        ease: "back.out(1.2)",
-                        overwrite: "auto"
-                    }, 0.8);
-
-                } else {
-                    // PHASE 2: DE-ASSEMBLE
-                    if (tierTitle) {
-                        gsap.to(tierTitle, { 
-                            innerHTML: "SCANNING FIELD...", 
-                            duration: 0.2,
-                            opacity: 0.3,
-                            overwrite: true
-                        });
-                    }
-
-                    activeTimeline.to(masterGrid, { 
-                        scale: 1.05, 
-                        rotation: -1, 
-                        duration: 0.8, 
-                        ease: "power2.inOut",
-                        overwrite: "auto"
-                    }, 0);
-
-                    activeTimeline.add(() => resetGrid(), 0.1);
-                }
-            }
-
-            function updateGrid(data: any) {
-                data.sponsors.forEach((sponsor: any, i: number) => {
-                    const link = sortedLinks[i];
-                    if (!link) return;
-                    
-                    const svg = link.querySelector('.hex-svg');
-                    const border = link.querySelector('.hex-border');
-                    const content = link.querySelector('.hex-content');
-                    const img = link.querySelector('img');
-                    
-                    link.href = sponsor.website;
-                    link.target = "_blank";
-                    link.rel = "noopener noreferrer";
-                    link.style.pointerEvents = "auto";
-                    link.classList.remove('cursor-default');
-                    link.classList.add('cursor-pointer');
-                    if (img) img.src = sponsor.logo;
-                    
-                    // Use overwrite: "auto" to prevent flicker on rapid scroll
-                    gsap.to(svg, { scale: 1, duration: 1, ease: "back.out(1.7)", delay: i * 0.015, overwrite: "auto" });
-                    gsap.to(border, { opacity: 0.4, strokeDashoffset: 0, duration: 0.8, delay: 0.4 + (i * 0.015), overwrite: "auto" });
-                    gsap.to(content, { opacity: 1, scale: 1, duration: 0.6, delay: 0.3 + (i * 0.015), overwrite: "auto" });
-                });
-
-                // Surrounding dots
-                const paddingCount = Math.min(data.sponsors.length, 12);
-                for (let j = data.sponsors.length; j < data.sponsors.length + paddingCount; j++) {
-                    if (sortedLinks[j]) {
-                        gsap.to(sortedLinks[j].querySelector('.hex-svg'), { scale: 0.35, duration: 1, ease: "power2.out", overwrite: "auto" });
-                    }
-                }
-            }
-
-            function resetGrid() {
-                sortedLinks.forEach((link) => {
-                    link.style.pointerEvents = "none";
-                    link.classList.add('cursor-default');
-                    link.classList.remove('cursor-pointer');
-                    
-                    const svg = link.querySelector('.hex-svg');
-                    const border = link.querySelector('.hex-border');
-                    const content = link.querySelector('.hex-content');
-                    
-                    gsap.to(svg, { scale: 0.05, duration: 0.6, ease: "power2.in", overwrite: "auto" });
-                    gsap.to(border, { opacity: 0, strokeDashoffset: 400, duration: 0.3, overwrite: "auto" });
-                    gsap.to(content, { opacity: 0, scale: 0.8, duration: 0.4, overwrite: "auto" });
-                });
-            }
-
-            return () => context.revert();
+    const preloadSponsorLogos = () => {
+      const logos = new Set<string>();
+      tiers.forEach((tier: any) => {
+        tier.sponsors?.forEach((sponsor: any) => {
+          if (sponsor.logo) logos.add(sponsor.logo);
         });
+      });
+
+      logos.forEach((logo) => {
+        const img = new window.Image();
+        img.decoding = 'async';
+        img.src = logo;
+      });
+    };
+
+    preloadSponsorLogos();
+
+    gsap.to('.hero-reveal', {
+      y: 0,
+      opacity: 1,
+      duration: reduceMotion ? 0 : 1,
+      stagger: reduceMotion ? 0 : 0.08,
+      ease: 'power3.out',
     });
+
+    if (!field || !idleLayer || !activeLayer || reduceMotion || mobile || tiers.length === 0) {
+      return;
+    }
+
+    const IDLE_SCALE = 0.16;
+    const ACTIVE_SEED_SCALE = 0.42;
+    const IDLE_OPACITY = 0.46;
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const maxSponsorCount = Math.max(...tiers.map((tier: any) => tier.sponsors.length));
+    let slots: any[] = [];
+    let activeSlots: any[] = [];
+    let activePool: any[] = [];
+    let activeTimeline: gsap.core.Timeline | null = null;
+    let activeIndex = -1;
+    let geometry = { w: 104, h: 90 };
+
+    const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+    const resetSlot = (slot: any) => {
+      if (!slot?.el) return;
+      slot.el.classList.remove('is-active');
+      slot.el.removeAttribute('href');
+      slot.el.removeAttribute('target');
+      slot.el.removeAttribute('rel');
+      slot.el.removeAttribute('aria-label');
+      slot.el.setAttribute('aria-hidden', 'true');
+      slot.img.removeAttribute('src');
+      slot.img.removeAttribute('alt');
+    };
+
+    const setRail = (index: number) => {
+      const tier = tiers[index];
+      if (!tier) return;
+      if (title) title.textContent = tier.title;
+      if (count) count.textContent = tier.countLabel;
+      railLinks.forEach((link, linkIndex) => {
+        link.classList.toggle('is-active', linkIndex === index);
+      });
+    };
+
+    const createActiveSlot = (parent: DocumentFragment) => {
+      const el = document.createElement('a');
+      el.className = 'honeycomb-slot';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = `
+        <span class="honeycomb-frame" aria-hidden="true"></span>
+        <img loading="lazy" decoding="async" />
+      `;
+      parent.appendChild(el);
+      return { el, img: el.querySelector('img') };
+    };
+
+    const createIdleHex = (parent: DocumentFragment, slot: any, index: number) => {
+      const polygon = document.createElementNS(SVG_NS, 'polygon');
+      const cx = slot.x + geometry.w / 2;
+      const cy = slot.y + geometry.h / 2;
+      const radius = Math.min(geometry.w, geometry.h) * 0.5 * IDLE_SCALE;
+      const points = Array.from({ length: 6 }, (_, i) => {
+        const angle = (Math.PI / 180) * (60 * i);
+        return `${(cx + Math.cos(angle) * radius).toFixed(2)},${(cy + Math.sin(angle) * radius).toFixed(2)}`;
+      }).join(' ');
+
+      polygon.setAttribute('points', points);
+      polygon.setAttribute('class', 'honeycomb-idle-hex');
+      polygon.setAttribute('opacity', String(IDLE_OPACITY * slot.idleTone));
+      polygon.setAttribute('data-slot-index', String(index));
+      parent.appendChild(polygon);
+      slot.idleEl = polygon;
+    };
+
+    const buildField = () => {
+      idleLayer.innerHTML = '';
+      activeLayer.innerHTML = '';
+      activeSlots = [];
+      slots = [];
+      activePool = [];
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const w = clamp(vw / 11, 92, 128);
+      const h = w * 0.8660254;
+      const gap = clamp(vw / 100, 10, 16);
+      const centerDistance = h + gap;
+      const dx = centerDistance * 0.8660254;
+      const dy = centerDistance;
+      const cols = Math.ceil(vw / dx) + 4;
+      const rows = Math.ceil(vh / dy) + 4;
+      const startX = -w;
+      const startY = -h;
+      const centerX = vw / 2;
+      const centerY = vh / 2;
+      const idleFragment = document.createDocumentFragment();
+      const activeFragment = document.createDocumentFragment();
+
+      geometry = { w, h };
+      idleLayer.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
+      idleLayer.setAttribute('width', String(vw));
+      idleLayer.setAttribute('height', String(vh));
+
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          const x = startX + c * dx;
+          const y = startY + r * dy + (c % 2 === 1 ? dy / 2 : 0);
+          const dist = Math.hypot(x + w / 2 - centerX, y + h / 2 - centerY);
+          const idleTone = clamp(1 - dist / Math.hypot(centerX, centerY), 0.16, 0.82);
+          const slot = { x, y, dist, idleTone, idleEl: null, el: null, img: null, activeScale: 1 };
+          slots.push(slot);
+        }
+      }
+
+      slots.sort((a, b) => a.dist - b.dist);
+      slots.forEach((slot, index) => createIdleHex(idleFragment, slot, index));
+
+      for (let i = 0; i < maxSponsorCount; i++) {
+        const active = createActiveSlot(activeFragment);
+        const poolSlot = { ...active, activeScale: 1 };
+
+        poolSlot.el.addEventListener('mouseenter', () => {
+          if (!poolSlot.el.classList.contains('is-active')) return;
+          gsap.to(poolSlot.el, { scale: (poolSlot.activeScale || 1) * 1.035, duration: 0.18, ease: 'power2.out', overwrite: 'auto' });
+        });
+        poolSlot.el.addEventListener('mouseleave', () => {
+          if (!poolSlot.el.classList.contains('is-active')) return;
+          gsap.to(poolSlot.el, { scale: poolSlot.activeScale || 1, duration: 0.18, ease: 'power2.out', overwrite: 'auto' });
+        });
+
+        poolSlot.el.style.width = `${w}px`;
+        poolSlot.el.style.height = `${h}px`;
+        gsap.set(poolSlot.el, { autoAlpha: 0, scale: IDLE_SCALE, x: -9999, y: -9999 });
+        activePool.push(poolSlot);
+      }
+
+      idleLayer.appendChild(idleFragment);
+      activeLayer.appendChild(activeFragment);
+    };
+
+    const getActiveScale = (selected: any[]) => {
+      if (!selected.length) return 1;
+      const minX = Math.min(...selected.map((slot) => slot.x));
+      const maxX = Math.max(...selected.map((slot) => slot.x + geometry.w));
+      const minY = Math.min(...selected.map((slot) => slot.y));
+      const maxY = Math.max(...selected.map((slot) => slot.y + geometry.h));
+      const clusterW = maxX - minX;
+      const clusterH = maxY - minY;
+      const availableW = window.innerWidth * 0.66;
+      const availableH = window.innerHeight * 0.6;
+      const margin = 18;
+      const edgeScale = selected.reduce((scale: number, slot: any) => {
+        const cx = slot.x + geometry.w / 2;
+        const cy = slot.y + geometry.h / 2;
+        const leftScale = (2 * Math.max(0, cx - margin)) / geometry.w;
+        const rightScale = (2 * Math.max(0, window.innerWidth - margin - cx)) / geometry.w;
+        const topScale = (2 * Math.max(0, cy - margin)) / geometry.h;
+        const bottomScale = (2 * Math.max(0, window.innerHeight - margin - cy)) / geometry.h;
+        return Math.min(scale, leftScale, rightScale, topScale, bottomScale);
+      }, 1);
+      return clamp(Math.min(1, availableW / clusterW, availableH / clusterH, edgeScale), 0.58, 1);
+    };
+
+    const prepareSlot = (slot: any, sponsor: any) => {
+      slot.activeScale = slot.activeScale || 1;
+      slot.el.classList.add('is-active');
+      slot.el.removeAttribute('aria-hidden');
+      slot.el.setAttribute('aria-label', sponsor.website ? `Visit ${sponsor.name}` : sponsor.name);
+      if (sponsor.website) {
+        slot.el.href = sponsor.website;
+        slot.el.target = '_blank';
+        slot.el.rel = 'noopener noreferrer';
+      } else {
+        slot.el.removeAttribute('href');
+        slot.el.removeAttribute('target');
+        slot.el.removeAttribute('rel');
+      }
+      slot.img.src = sponsor.logo;
+      slot.img.alt = sponsor.alt || sponsor.name;
+    };
+
+    const setActiveTier = (index: number, immediate = false) => {
+      const tier = tiers[index];
+      if (!tier || index === activeIndex || slots.length === 0) return;
+
+      activeTimeline?.kill();
+      activeTimeline = gsap.timeline();
+      setRail(index);
+
+      const selectedGeometry = slots.slice(0, tier.sponsors.length);
+      const selected = activePool.slice(0, tier.sponsors.length);
+      const activeScale = getActiveScale(selectedGeometry);
+      const previous = [...activeSlots];
+
+      if (previous.length) {
+        activeTimeline.to(previous.map((slot) => slot.el), {
+          scale: IDLE_SCALE,
+          autoAlpha: 0,
+          duration: immediate ? 0 : 0.34,
+          stagger: immediate ? 0 : { each: 0.008, from: 'center' },
+          ease: 'power2.inOut',
+          onComplete: () => {
+            previous.forEach((slot) => {
+              resetSlot(slot);
+              gsap.set(slot.el, { x: -9999, y: -9999 });
+            });
+          },
+        });
+      }
+
+      activeTimeline.add(() => {
+        selected.forEach((slot, slotIndex) => {
+          slot.activeScale = activeScale;
+          slot.x = selectedGeometry[slotIndex].x;
+          slot.y = selectedGeometry[slotIndex].y;
+          prepareSlot(slot, tier.sponsors[slotIndex]);
+          gsap.set(slot.el, {
+            x: slot.x,
+            y: slot.y,
+            width: geometry.w,
+            height: geometry.h,
+            scale: immediate ? activeScale : ACTIVE_SEED_SCALE,
+            autoAlpha: 1,
+          });
+          gsap.set(slot.img, { opacity: 1, scale: 1 });
+        });
+        activeSlots = selected;
+      });
+
+      const growDuration = immediate ? 0 : 0.66;
+      const waveStep = immediate ? 0 : 0.025;
+
+      activeTimeline.addLabel('hexGrow');
+      activeTimeline.to(
+        selected.map((slot) => slot.el),
+        {
+          scale: activeScale,
+          duration: growDuration,
+          stagger: immediate ? 0 : { each: waveStep, from: 0 },
+          ease: 'back.out(1.15)',
+          overwrite: true,
+        },
+        'hexGrow'
+      );
+      activeIndex = index;
+    };
+
+    buildField();
+    setActiveTier(0, true);
+
+    steps.forEach((step, index) => {
+      ScrollTrigger.create({
+        trigger: step,
+        start: 'top center',
+        end: 'bottom center',
+        onEnter: () => setActiveTier(index),
+        onEnterBack: () => setActiveTier(index),
+      });
+    });
+
+    gsap.to('.assembly-shell', {
+      scrollTrigger: {
+        trigger: '#sponsor-assembly',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+      },
+      '--assembly-progress': 1,
+      ease: 'none',
+    });
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        buildField();
+        const indexToRestore = Math.max(activeIndex, 0);
+        activeIndex = -1;
+        setActiveTier(indexToRestore, true);
+        ScrollTrigger.refresh();
+      }, 180);
+    });
+  });
 </script>
 
-<style>
-    .grid-link {
-        will-change: transform;
-        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 1;
-    }
-    
-    .grid-link:hover {
-        transform: scale(1.1) !important;
-        z-index: 100 !important;
+<style is:global>
+  .sponsors-page {
+    min-height: 100vh;
+    overflow: clip;
+  }
+
+  .terminal-kicker {
+    color: var(--brand-orange);
+    font-size: clamp(0.65rem, 0.58rem + 0.2vw, 0.82rem);
+    font-weight: 700;
+    letter-spacing: 0.48em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .sponsors-hero {
+    position: relative;
+    display: grid;
+    min-height: 100svh;
+    place-items: end start;
+    overflow: hidden;
+    padding: clamp(8rem, 12vw, 13rem) clamp(1.25rem, 5vw, 5rem) clamp(4rem, 8vw, 7rem);
+    isolation: isolate;
+  }
+
+  .hero-image,
+  .hero-shade {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .hero-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: saturate(0.8) contrast(1.08);
+    transform: scale(1.03);
+  }
+
+  .hero-shade {
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgba(5, 5, 5, 0.94) 0%, rgba(5, 5, 5, 0.64) 42%, rgba(5, 5, 5, 0.16) 100%),
+      linear-gradient(0deg, #050505 0%, rgba(5, 5, 5, 0.08) 45%, rgba(5, 5, 5, 0.35) 100%);
+  }
+
+  .hero-copy {
+    display: grid;
+    max-width: 58rem;
+    gap: 1.25rem;
+  }
+
+  .hero-title {
+    color: #fff;
+    font-size: clamp(4.8rem, 16vw, 15rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 0.78;
+    text-transform: uppercase;
+  }
+
+  .hero-text {
+    max-width: 42rem;
+    color: rgba(246, 247, 251, 0.78);
+    font-size: clamp(1rem, 1.4vw, 1.35rem);
+    line-height: 1.55;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  .primary-action,
+  .secondary-action {
+    display: inline-flex;
+    min-height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 137, 0, 0.72);
+    padding: 0 1.25rem;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
+  }
+
+  .primary-action {
+    background: var(--brand-orange);
+    color: #050505;
+  }
+
+  .secondary-action {
+    background: rgba(5, 5, 5, 0.28);
+  }
+
+  .primary-action:hover,
+  .secondary-action:hover {
+    transform: translateY(-2px);
+    border-color: #fff;
+  }
+
+  .hero-meta {
+    position: absolute;
+    right: clamp(1.25rem, 4vw, 4rem);
+    bottom: clamp(1.25rem, 4vw, 3rem);
+    display: flex;
+    gap: 1rem;
+    color: rgba(246, 247, 251, 0.62);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  .hero-reveal {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  .sponsor-assembly {
+    position: relative;
+    min-height: calc(var(--tier-count) * 160svh);
+    background: #050505;
+  }
+
+  .assembly-shell {
+    --assembly-progress: 0;
+    position: sticky;
+    top: 0;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .assembly-bg,
+  .grid-overlay,
+  .assembly-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+  }
+
+  .grid-overlay {
+    z-index: -2;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(circle at 55% 52%, #000 0%, rgba(0, 0, 0, 0.74) 44%, transparent 82%);
+    opacity: calc(0.22 + (var(--assembly-progress) * 0.12));
+  }
+
+  .assembly-vignette {
+    z-index: -1;
+    background:
+      radial-gradient(circle at 50% 44%, transparent 0%, rgba(5, 5, 5, 0.16) 50%, #050505 100%),
+      linear-gradient(90deg, rgba(5, 5, 5, 0.91) 0%, transparent 28%, transparent 70%, rgba(5, 5, 5, 0.92) 100%);
+  }
+
+  .assembly-hud {
+    position: absolute;
+    left: clamp(1.25rem, 4vw, 4rem);
+    top: clamp(4rem, 8vh, 6rem);
+    z-index: 5;
+    display: grid;
+    max-width: min(30rem, 36vw);
+    gap: 0.6rem;
+    pointer-events: none;
+  }
+
+  .assembly-hud h2 {
+    color: #fff;
+    font-size: clamp(2.25rem, 5vw, 5.8rem);
+    font-weight: 700;
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+
+  .assembly-hud p:last-child {
+    color: rgba(246, 247, 251, 0.58);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+  }
+
+  .tier-rail {
+    position: absolute;
+    right: clamp(1rem, 3vw, 3rem);
+    top: 50%;
+    z-index: 5;
+    display: grid;
+    width: min(13rem, 18vw);
+    transform: translateY(-50%);
+  }
+
+  .tier-rail-link {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.65rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.55rem 0 0.55rem 0.8rem;
+    color: rgba(246, 247, 251, 0.46);
+    font-size: clamp(0.58rem, 0.7vw, 0.72rem);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 220ms ease, border-color 220ms ease, transform 220ms ease;
+  }
+
+  .tier-rail-link.is-active {
+    border-color: var(--brand-orange);
+    color: #fff;
+    transform: translateX(-0.35rem);
+  }
+
+  .tier-rail-link span {
+    color: var(--brand-orange);
+  }
+
+  .honeycomb-field {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+  }
+
+  .honeycomb-idle-layer,
+  .honeycomb-active-layer {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .honeycomb-idle-layer {
+    pointer-events: none;
+  }
+
+  .honeycomb-active-layer {
+    z-index: 1;
+  }
+
+  .honeycomb-idle-hex {
+    fill: rgba(255, 255, 255, 0.72);
+  }
+
+  .honeycomb-slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: grid;
+    place-items: center;
+    clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+    background: rgba(255, 255, 255, 0.72);
+    pointer-events: none;
+    transform-origin: center;
+    will-change: transform, opacity;
+    contain: layout paint style;
+    backface-visibility: hidden;
+  }
+
+  .honeycomb-slot.is-active {
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: inset 0 0 0 1px rgba(255, 137, 0, 0.34), 0 0.55rem 1.35rem rgba(0, 0, 0, 0.18);
+    pointer-events: auto;
+    transition: box-shadow 220ms ease, background 220ms ease, filter 220ms ease;
+  }
+
+  .honeycomb-slot[href] {
+    cursor: pointer;
+  }
+
+  .honeycomb-slot[href]:hover,
+  .honeycomb-slot[href]:focus-visible {
+    background: #fff;
+    box-shadow: inset 0 0 0 2px var(--brand-orange), 0 0.6rem 1.5rem rgba(255, 137, 0, 0.14);
+    outline: none;
+  }
+
+  .honeycomb-frame {
+    position: absolute;
+    inset: 0.52rem;
+    clip-path: inherit;
+    border: 1px solid rgba(255, 137, 0, 0.22);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+
+  .honeycomb-slot.is-active .honeycomb-frame {
+    opacity: 1;
+  }
+
+  .honeycomb-slot img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    max-height: 58%;
+    max-width: 72%;
+    object-fit: contain;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .assembly-steps {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .tier-step {
+    min-height: 160svh;
+  }
+
+  .fallback-stage {
+    display: none;
+  }
+
+  .mobile-tier-heading {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .mobile-tier-heading h2 {
+    color: #fff;
+    font-size: clamp(2rem, 12vw, 3.8rem);
+    font-weight: 700;
+    line-height: 0.92;
+    text-transform: uppercase;
+  }
+
+  .fallback-tier {
+    display: grid;
+    gap: 1.35rem;
+  }
+
+  .fallback-logo-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .fallback-cell {
+    position: relative;
+    display: grid;
+    min-height: 8rem;
+    place-items: center;
+    clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+    background: rgba(255, 255, 255, 0.94);
+    padding: 1rem;
+  }
+
+  .fallback-cell-frame {
+    position: absolute;
+    inset: 0.55rem;
+    clip-path: inherit;
+    border: 1px solid rgba(255, 137, 0, 0.24);
+    pointer-events: none;
+  }
+
+  .fallback-cell img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    max-height: 58%;
+    max-width: 72%;
+    object-fit: contain;
+  }
+
+  .partner-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr) auto;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: #050505;
+    padding: clamp(4rem, 8vw, 8rem) clamp(1.25rem, 5vw, 5rem);
+  }
+
+  .partner-cta h2 {
+    margin-top: 0.55rem;
+    color: #fff;
+    font-size: clamp(2.5rem, 6vw, 6.5rem);
+    font-weight: 700;
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .partner-cta p:not(.terminal-kicker) {
+    color: rgba(246, 247, 251, 0.68);
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 1100px) {
+    .assembly-hud {
+      max-width: 28rem;
     }
 
-    .grid-link:hover .hex-fill {
-        filter: url(#inset-shadow) !important;
-        fill: #ffffff !important;
+    .tier-rail {
+      display: none;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .sponsors-page {
+      overflow: visible;
     }
 
-    .grid-link:hover .hex-border {
-        opacity: 1 !important;
-        stroke-width: 4 !important;
+    .sponsors-hero {
+      min-height: 100svh;
+      padding: 8.5rem 1rem 3rem;
+      place-items: end start;
     }
 
-    .hex-fill, .hex-border {
-        transition: all 0.5s ease !important;
+    .hero-shade {
+      background:
+        linear-gradient(0deg, #050505 0%, rgba(5, 5, 5, 0.22) 52%, rgba(5, 5, 5, 0.54) 100%),
+        linear-gradient(90deg, rgba(5, 5, 5, 0.78), rgba(5, 5, 5, 0.22));
     }
+
+    .hero-title {
+      font-size: clamp(3.2rem, 13.5vw, 4.2rem);
+      line-height: 0.88;
+    }
+
+    .hero-actions {
+      width: 100%;
+    }
+
+    .primary-action,
+    .secondary-action {
+      width: 100%;
+    }
+
+    .hero-meta {
+      display: none;
+    }
+
+    .sponsor-assembly {
+      min-height: auto;
+      padding: 1rem 0 0;
+    }
+
+    .assembly-shell {
+      position: relative;
+      display: grid;
+      gap: 4rem;
+      min-height: auto;
+      overflow: visible;
+      padding: 4rem 1rem;
+    }
+
+    .assembly-bg {
+      position: fixed;
+      opacity: 0.55;
+    }
+
+    .honeycomb-field,
+    .assembly-hud,
+    .tier-rail,
+    .assembly-steps {
+      display: none;
+    }
+
+    .fallback-stage {
+      display: grid;
+      gap: 4rem;
+    }
+
+    .partner-cta {
+      grid-template-columns: 1fr;
+      padding: 4rem 1rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .fallback-logo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-reveal {
+      opacity: 1;
+      transform: none;
+    }
+
+    .sponsor-assembly {
+      min-height: auto;
+    }
+
+    .assembly-shell {
+      position: relative;
+      display: grid;
+      gap: 4rem;
+      min-height: auto;
+      padding: 6rem clamp(1.25rem, 5vw, 5rem);
+    }
+
+    .honeycomb-field,
+    .assembly-hud,
+    .tier-rail,
+    .assembly-steps {
+      display: none;
+    }
+
+    .fallback-stage {
+      display: grid;
+      gap: 4rem;
+    }
+  }
 </style>
