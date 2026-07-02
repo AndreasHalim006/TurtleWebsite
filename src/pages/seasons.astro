@@ -1,0 +1,195 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SeasonSection from '../components/seasons/SeasonSection.astro';
+import { getCollection } from 'astro:content';
+
+const seasons = await getCollection('seasons');
+seasons.sort((a, b) => a.data.order - b.data.order);
+
+const pageTitle = "Seasons | ARISTURTLE";
+---
+
+<BaseLayout title={pageTitle} forceCompact={true}>
+  <div class="bg-[#0A0A0A] w-full min-h-screen text-white relative">
+    
+    {/* Sticky Season Selector Sub-Navbar */}
+    <div class="sticky top-[56px] md:top-[74px] z-40 w-full bg-[#0A0A0A]/90 backdrop-blur-md border-b border-gray-800">
+      <div class="max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-start md:justify-center gap-8 md:gap-12 py-4 overflow-x-auto hide-scrollbar">
+        {seasons.map((season) => (
+          <a 
+            href={`#${season.data.year}`} 
+            class="season-nav-link font-jura text-sm lg:text-base font-bold uppercase text-gray-400 hover:text-[--brand-orange] transition-colors whitespace-nowrap"
+          >
+            {season.data.year}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    {/* Vertical Stack of Seasons */}
+    <div class="flex flex-col w-full">
+      {seasons.map((season, index) => (
+        <div 
+          id={season.data.year} 
+          class={`season-section scroll-mt-[140px] ${index !== 0 ? "mt-12 pt-16 md:mt-24 md:pt-24 border-t border-white/10" : "pt-8"}`}
+        >
+          <SeasonSection season={season} />
+        </div>
+      ))}
+    </div>
+
+    {/* Global Cursor Tracking Image Preview */}
+    <img 
+      id="global-member-preview" 
+      src="" 
+      class="fixed top-0 left-0 w-[240px] h-[300px] object-cover pointer-events-none z-50 rounded border border-white/10 shadow-2xl invisible"
+      alt="Preview"
+    />
+
+  </div>
+</BaseLayout>
+
+<style>
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const previewImg = document.getElementById('global-member-preview') as HTMLImageElement;
+  const members = document.querySelectorAll('.member-item');
+
+  if (previewImg && members.length > 0) {
+    // Set initial state: centered on cursor coords, invisible
+    gsap.set(previewImg, { xPercent: -50, yPercent: -50, scale: 0, autoAlpha: 0 });
+
+    // Use quickTo for performant mouse tracking
+    const xTo = gsap.quickTo(previewImg, "x", { duration: 0.4, ease: "power3" });
+    const yTo = gsap.quickTo(previewImg, "y", { duration: 0.4, ease: "power3" });
+
+    let isHovering = false;
+
+    window.addEventListener("mousemove", (e) => {
+      if (isHovering) {
+        xTo(e.clientX);
+        yTo(e.clientY);
+      }
+    });
+
+    members.forEach(member => {
+      member.addEventListener("mouseenter", (e: Event) => {
+        const mouseEvent = e as MouseEvent;
+        isHovering = true;
+        
+        // Update image source only if it changed to avoid decode lag
+        const imgUrl = member.getAttribute('data-image');
+        if (imgUrl && previewImg.getAttribute('src') !== imgUrl) {
+          previewImg.src = imgUrl;
+        }
+        
+        // Snap position so it doesn't fly in from previous location
+        gsap.set(previewImg, { x: mouseEvent.clientX, y: mouseEvent.clientY });
+
+        // Animate in with overwrite "auto" to only kill conflicting opacity/scale tweens, leaving x/y intact
+        gsap.to(previewImg, { scale: 1, autoAlpha: 1, duration: 0.4, ease: "power3.out", overwrite: "auto" });
+        gsap.to(member, { x: -10, color: '#fff', duration: 0.3, ease: "power2.out", overwrite: "auto" });
+      });
+
+      member.addEventListener("mouseleave", () => {
+        isHovering = false;
+        // Animate out
+        gsap.to(previewImg, { scale: 0, autoAlpha: 0, duration: 0.3, ease: "power2.inOut", overwrite: "auto" });
+        gsap.to(member, { x: 0, color: '', duration: 0.3, ease: "power2.inOut", overwrite: "auto" });
+      });
+
+      member.addEventListener("click", () => {
+        const email = member.getAttribute('data-email');
+        if (email) {
+          navigator.clipboard.writeText(email).then(() => {
+            const emailSpan = member.querySelector('.email-text');
+            if (emailSpan) {
+              const originalText = emailSpan.textContent;
+              emailSpan.textContent = "COPIED!";
+              emailSpan.classList.add('text-green-400');
+              setTimeout(() => {
+                emailSpan.textContent = originalText;
+                emailSpan.classList.remove('text-green-400');
+              }, 2000);
+            }
+          });
+        }
+      });
+    });
+  }
+
+  // ScrollSpy for updating URL hash based on visible season
+  const seasonSections = document.querySelectorAll('.season-section');
+  const navLinks = document.querySelectorAll('.season-nav-link');
+  
+  if (seasonSections.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          if (id) {
+            // Update URL hash without jumping
+            history.replaceState(null, '', `#${id}`);
+            
+            // Highlight active link in the sub-navbar
+            navLinks.forEach(link => {
+              if (link.getAttribute('href') === `#${id}`) {
+                link.classList.add('text-[--brand-orange]');
+                link.classList.remove('text-gray-400');
+              } else {
+                link.classList.remove('text-[--brand-orange]');
+                link.classList.add('text-gray-400');
+              }
+            });
+            
+            // Auto-scroll the nav container to keep active link in view
+            const activeLink = document.querySelector(`.season-nav-link[href="#${id}"]`);
+            if (activeLink) {
+              activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          }
+          
+          // Preload images for the members of this season so the hover effect is instant
+          if (!entry.target.hasAttribute('data-preloaded')) {
+            const membersInSeason = entry.target.querySelectorAll('.member-item');
+            
+            // Create a hidden container to force image decoding
+            let hiddenContainer = document.getElementById('preload-container');
+            if (!hiddenContainer) {
+              hiddenContainer = document.createElement('div');
+              hiddenContainer.id = 'preload-container';
+              hiddenContainer.style.display = 'none';
+              document.body.appendChild(hiddenContainer);
+            }
+
+            membersInSeason.forEach(member => {
+              const imgUrl = member.getAttribute('data-image');
+              if (imgUrl && imgUrl !== '/favicon.svg') {
+                const img = new Image();
+                img.src = imgUrl;
+                // Appending to DOM forces the browser to decode the image, eliminating lag
+                hiddenContainer.appendChild(img);
+              }
+            });
+            entry.target.setAttribute('data-preloaded', 'true');
+          }
+        }
+      });
+    }, {
+      rootMargin: '-30% 0px -60% 0px', // Triggers when element is near the middle/top of the viewport
+      threshold: 0
+    });
+
+    seasonSections.forEach(section => observer.observe(section));
+  }
+</script>

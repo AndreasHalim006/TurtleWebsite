@@ -1,0 +1,541 @@
+---
+import Grainient from '../reactbits/Grainient';
+
+export interface Sponsor {
+  name: string;
+  logo: string;
+  website?: string;
+  alt: string;
+}
+
+export interface Tier {
+  id: string;
+  title: string;
+  description: string;
+  countLabel: string;
+  sponsors: Sponsor[];
+}
+
+export interface Props {
+  tiers: Tier[];
+}
+
+const { tiers } = Astro.props;
+const tierCount = tiers.length;
+---
+
+<section 
+  id="sponsor-assembly" 
+  class="relative bg-[#050505] min-h-[calc(var(--tier-count)*160svh)] max-md:min-h-fit max-md:pt-4 motion-reduce:min-h-fit" 
+  style={`--tier-count: ${tierCount};`}
+>
+  <div id="assembly-data" data-tiers={JSON.stringify(tiers)} style="display: none;"></div>
+
+  <div class="assembly-shell sticky top-0 min-h-[100svh] overflow-hidden isolate [--assembly-progress:0] motion-reduce:relative motion-reduce:grid motion-reduce:gap-[4rem] motion-reduce:min-h-fit motion-reduce:px-[clamp(1.25rem,5vw,5rem)] motion-reduce:py-[6rem] max-md:relative max-md:grid max-md:gap-[4rem] max-md:min-h-fit max-md:overflow-visible max-md:px-4 max-md:py-16">
+    <div class="absolute inset-0 -z-30 max-md:fixed max-md:opacity-55" aria-hidden="true">
+      <Grainient
+        client:load
+        color1="#171717"
+        color2="#4a2605"
+        color3="#050505"
+        timeSpeed={0.08}
+        colorBalance={0.35}
+        warpStrength={0.28}
+        warpFrequency={1.8}
+        warpSpeed={0.35}
+        warpAmplitude={42}
+        blendSoftness={0.18}
+        noiseScale={1.1}
+        grainAmount={0.08}
+        contrast={1.35}
+        saturation={0.72}
+        zoom={1.05}
+      />
+      
+      <!-- grid-overlay -->
+      <div 
+        class="absolute inset-0 -z-20 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:radial-gradient(circle_at_55%_52%,#000_0%,rgba(0,0,0,0.74)_44%,transparent_82%)] opacity-[calc(0.22+(var(--assembly-progress)*0.12))]"
+      ></div>
+      
+      <!-- assembly-vignette -->
+      <div 
+        class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_44%,transparent_0%,rgba(5,5,5,0.16)_50%,#050505_100%),linear-gradient(90deg,rgba(5,5,5,0.91)_0%,transparent_28%,transparent_70%,rgba(5,5,5,0.92)_100%)]"
+      ></div>
+    </div>
+
+    <!-- HUD -->
+    <header class="assembly-hud absolute left-[clamp(1.25rem,4vw,4rem)] top-[clamp(4rem,8vh,6rem)] z-10 grid max-w-[min(30rem,36vw)] gap-2.5 pointer-events-none xl:max-w-[28rem] max-md:hidden motion-reduce:hidden" aria-live="polite">
+      <p class="text-[var(--brand-orange)] text-[clamp(0.65rem,0.58rem+0.2vw,0.82rem)] font-bold tracking-[0.48em] leading-relaxed uppercase">// ACTIVE_TIER</p>
+      <h2 id="active-tier-title" class="text-white text-[clamp(2.25rem,5vw,5.8rem)] font-bold leading-[0.88] uppercase">{tiers[0]?.title}</h2>
+      <p id="active-tier-count" class="text-white/58 text-[0.72rem] font-bold tracking-[0.26em] uppercase">{tiers[0]?.sponsors.length ?? 0} partners indexed</p>
+    </header>
+
+    <!-- Rail -->
+    <nav class="tier-rail absolute right-[clamp(1rem,3vw,3rem)] top-1/2 z-10 grid w-[min(13rem,18vw)] -translate-y-1/2 xl:hidden max-md:hidden motion-reduce:hidden" aria-label="Sponsor tiers">
+      {tiers.map((tier, index) => (
+        <a href={`#tier-step-${tier.id}`} class:list={[
+            'tier-rail-link grid grid-cols-[2rem_1fr] gap-2.5 border-l border-white/15 py-[0.55rem] pr-0 pl-[0.8rem] text-white/46 text-[clamp(0.58rem,0.7vw,0.72rem)] tracking-[0.1em] uppercase transition-all duration-200 ease-out', 
+            index === 0 ? 'is-active border-[var(--brand-orange)] text-white -translate-x-[0.35rem]' : ''
+          ]} data-tier-link={index}>
+          <span class="text-[var(--brand-orange)]">{String(index + 1).padStart(2, '0')}</span>
+          <strong>{tier.title}</strong>
+        </a>
+      ))}
+    </nav>
+
+    <!-- Honeycomb Field -->
+    <div id="honeycomb-field" class="honeycomb-field absolute inset-0 z-0 overflow-hidden max-md:hidden motion-reduce:hidden" aria-label="Interactive sponsor honeycomb">
+      <svg class="honeycomb-idle-layer absolute inset-0 h-full w-full pointer-events-none" aria-hidden="true"></svg>
+      <div class="honeycomb-active-layer absolute inset-0 h-full w-full z-[1]"></div>
+    </div>
+
+    <!-- Fallback Stage -->
+    <div class="fallback-stage hidden max-md:grid max-md:gap-[4rem] motion-reduce:grid motion-reduce:gap-[4rem] w-full">
+      {tiers.map((tier, index) => (
+        <section class="fallback-tier grid gap-5" aria-labelledby={`tier-title-${tier.id}`}>
+          <div class="grid gap-1.5">
+            <p class="text-[var(--brand-orange)] text-[clamp(0.65rem,0.58rem+0.2vw,0.82rem)] font-bold tracking-[0.48em] leading-relaxed uppercase">// {String(index + 1).padStart(2, '0')}</p>
+            <h2 id={`tier-title-${tier.id}`} class="text-white text-[clamp(2rem,12vw,3.8rem)] font-bold leading-[0.92] uppercase">{tier.title}</h2>
+          </div>
+
+          <div class:list={['fallback-logo-grid grid w-full grid-cols-2 gap-2.5 max-[380px]:grid-cols-1', tier.sponsors.length >= 18 && 'is-dense']}>
+            {tier.sponsors.map((sponsor) => {
+              const content = (
+                <>
+                  <span class="absolute inset-[0.55rem] border border-[rgba(255,137,0,0.24)] pointer-events-none [clip-path:inherit]" aria-hidden="true"></span>
+                  <img class="relative z-[1] block max-h-[58%] max-w-[72%] object-contain" src={sponsor.logo} alt={sponsor.alt} loading="lazy" decoding="async" />
+                </>
+              );
+
+              const cellClasses = "relative grid min-h-[8rem] place-items-center bg-white/94 p-4 [clip-path:polygon(25%_0,75%_0,100%_50%,75%_100%,25%_100%,0_50%)]";
+
+              return sponsor.website ? (
+                <a
+                  class={cellClasses}
+                  href={sponsor.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Visit ${sponsor.name}`}
+                >
+                  {content}
+                </a>
+              ) : (
+                <div class={cellClasses} aria-label={sponsor.name}>
+                  {content}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+
+  <div class="assembly-steps absolute inset-0 -z-10 pointer-events-none max-md:hidden motion-reduce:hidden" aria-hidden="true">
+    {tiers.map((tier) => (
+      <div id={`tier-step-${tier.id}`} class="tier-step min-h-[160svh]"></div>
+    ))}
+  </div>
+</section>
+
+<style is:global>
+  /* Necessary styles that can't be easily put in Tailwind due to dynamic creation or highly specific interactions */
+  .honeycomb-idle-hex {
+    fill: rgba(255, 255, 255, 0.72);
+  }
+
+  .honeycomb-slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: grid;
+    place-items: center;
+    clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+    background: rgba(255, 255, 255, 0.72);
+    pointer-events: none;
+    transform-origin: center;
+    will-change: transform, opacity;
+    contain: layout paint style;
+    backface-visibility: hidden;
+  }
+
+  .honeycomb-slot.is-active {
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: inset 0 0 0 1px rgba(255, 137, 0, 0.34), 0 0.55rem 1.35rem rgba(0, 0, 0, 0.18);
+    pointer-events: auto;
+    transition: box-shadow 220ms ease, background 220ms ease, filter 220ms ease;
+  }
+
+  .honeycomb-slot[href] {
+    cursor: pointer;
+  }
+
+  .honeycomb-slot[href]:hover,
+  .honeycomb-slot[href]:focus-visible {
+    background: #fff;
+    box-shadow: inset 0 0 0 2px var(--brand-orange), 0 0.6rem 1.5rem rgba(255, 137, 0, 0.14);
+    outline: none;
+  }
+
+  .honeycomb-frame {
+    position: absolute;
+    inset: 0.52rem;
+    clip-path: inherit;
+    border: 1px solid rgba(255, 137, 0, 0.22);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+
+  .honeycomb-slot.is-active .honeycomb-frame {
+    opacity: 1;
+  }
+
+  .honeycomb-slot img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    max-height: 58%;
+    max-width: 72%;
+    object-fit: contain;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  noscript .honeycomb-field,
+  noscript .tier-rail,
+  noscript .assembly-hud,
+  noscript .assembly-steps {
+    display: none !important;
+  }
+
+  noscript .fallback-stage {
+    display: grid !important;
+  }
+
+  noscript #sponsor-assembly,
+  noscript .assembly-shell {
+    min-height: auto !important;
+  }
+
+  noscript .assembly-shell {
+    position: relative !important;
+    padding: 6rem clamp(1.25rem, 5vw, 5rem) !important;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const dataEl = document.getElementById('assembly-data');
+    if (!dataEl) return;
+    
+    const tiers = JSON.parse(dataEl.getAttribute('data-tiers') || '[]');
+    const field = document.querySelector<HTMLElement>('#honeycomb-field');
+    const idleLayer = document.querySelector<SVGSVGElement>('.honeycomb-idle-layer');
+    const activeLayer = document.querySelector<HTMLElement>('.honeycomb-active-layer');
+    const steps = gsap.utils.toArray<HTMLElement>('.tier-step');
+    const railLinks = gsap.utils.toArray<HTMLElement>('[data-tier-link]');
+    const title = document.querySelector<HTMLElement>('#active-tier-title');
+    const count = document.querySelector<HTMLElement>('#active-tier-count');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+
+    if (!field || !idleLayer || !activeLayer || reduceMotion || mobile || tiers.length === 0) {
+      return;
+    }
+
+    const IDLE_SCALE = 0.16;
+    const ACTIVE_SEED_SCALE = 0.42;
+    const IDLE_OPACITY = 0.46;
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const maxSponsorCount = Math.max(...tiers.map((tier: any) => tier.sponsors.length));
+    let slots: any[] = [];
+    let activeSlots: any[] = [];
+    let activePool: any[] = [];
+    let activeTimeline: gsap.core.Timeline | null = null;
+    let activeIndex = -1;
+    let geometry = { w: 104, h: 90 };
+
+    const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+    const resetSlot = (slot: any) => {
+      if (!slot?.el) return;
+      slot.el.classList.remove('is-active');
+      slot.el.removeAttribute('href');
+      slot.el.removeAttribute('target');
+      slot.el.removeAttribute('rel');
+      slot.el.removeAttribute('aria-label');
+      slot.el.setAttribute('aria-hidden', 'true');
+      slot.img.removeAttribute('src');
+      slot.img.removeAttribute('alt');
+    };
+
+    const setRail = (index: number) => {
+      const tier = tiers[index];
+      if (!tier) return;
+      if (title) title.textContent = tier.title;
+      if (count) count.textContent = tier.countLabel;
+      railLinks.forEach((link, linkIndex) => {
+        if(linkIndex === index) {
+          link.classList.add('is-active', 'border-[var(--brand-orange)]', 'text-white', '-translate-x-[0.35rem]');
+          link.classList.remove('border-white/15');
+        } else {
+          link.classList.remove('is-active', 'border-[var(--brand-orange)]', 'text-white', '-translate-x-[0.35rem]');
+          link.classList.add('border-white/15');
+        }
+      });
+    };
+
+    const createActiveSlot = (parent: DocumentFragment) => {
+      const el = document.createElement('a');
+      el.className = 'honeycomb-slot';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = `
+        <span class="honeycomb-frame" aria-hidden="true"></span>
+        <img loading="lazy" decoding="async" />
+      `;
+      parent.appendChild(el);
+      return { el, img: el.querySelector('img') };
+    };
+
+    const createIdleHex = (parent: DocumentFragment, slot: any, index: number) => {
+      const polygon = document.createElementNS(SVG_NS, 'polygon');
+      const cx = slot.x + geometry.w / 2;
+      const cy = slot.y + geometry.h / 2;
+      const radius = Math.min(geometry.w, geometry.h) * 0.5 * IDLE_SCALE;
+      const points = Array.from({ length: 6 }, (_, i) => {
+        const angle = (Math.PI / 180) * (60 * i);
+        return `${(cx + Math.cos(angle) * radius).toFixed(2)},${(cy + Math.sin(angle) * radius).toFixed(2)}`;
+      }).join(' ');
+
+      polygon.setAttribute('points', points);
+      polygon.setAttribute('class', 'honeycomb-idle-hex');
+      polygon.setAttribute('opacity', String(IDLE_OPACITY * slot.idleTone));
+      polygon.setAttribute('data-slot-index', String(index));
+      parent.appendChild(polygon);
+      slot.idleEl = polygon;
+    };
+
+    const buildField = () => {
+      idleLayer.innerHTML = '';
+      activeLayer.innerHTML = '';
+      activeSlots = [];
+      slots = [];
+      activePool = [];
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const w = clamp(vw / 11, 92, 128);
+      const h = w * 0.8660254;
+      const gap = clamp(vw / 100, 10, 16);
+      const centerDistance = h + gap;
+      const dx = centerDistance * 0.8660254;
+      const dy = centerDistance;
+      const cols = Math.ceil(vw / dx) + 4;
+      const rows = Math.ceil(vh / dy) + 4;
+      const startX = -w;
+      const startY = -h;
+      const centerX = vw / 2;
+      const centerY = vh / 2;
+      const idleFragment = document.createDocumentFragment();
+      const activeFragment = document.createDocumentFragment();
+
+      geometry = { w, h };
+      idleLayer.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
+      idleLayer.setAttribute('width', String(vw));
+      idleLayer.setAttribute('height', String(vh));
+
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          const x = startX + c * dx;
+          const y = startY + r * dy + (c % 2 === 1 ? dy / 2 : 0);
+          const dist = Math.hypot(x + w / 2 - centerX, y + h / 2 - centerY);
+          const idleTone = clamp(1 - dist / Math.hypot(centerX, centerY), 0.16, 0.82);
+          const slot = { x, y, dist, idleTone, idleEl: null, el: null, img: null, activeScale: 1 };
+          slots.push(slot);
+        }
+      }
+
+      slots.sort((a, b) => a.dist - b.dist);
+      slots.forEach((slot, index) => createIdleHex(idleFragment, slot, index));
+
+      for (let i = 0; i < maxSponsorCount; i++) {
+        const active = createActiveSlot(activeFragment);
+        const poolSlot = { ...active, activeScale: 1 };
+
+        poolSlot.el.addEventListener('mouseenter', () => {
+          if (!poolSlot.el.classList.contains('is-active')) return;
+          // Easing is omitted to use global default
+          gsap.to(poolSlot.el, { scale: (poolSlot.activeScale || 1) * 1.035, duration: 0.18, overwrite: 'auto' });
+        });
+        poolSlot.el.addEventListener('mouseleave', () => {
+          if (!poolSlot.el.classList.contains('is-active')) return;
+          // Easing is omitted to use global default
+          gsap.to(poolSlot.el, { scale: poolSlot.activeScale || 1, duration: 0.18, overwrite: 'auto' });
+        });
+
+        poolSlot.el.style.width = `${w}px`;
+        poolSlot.el.style.height = `${h}px`;
+        gsap.set(poolSlot.el, { autoAlpha: 0, scale: IDLE_SCALE, x: -9999, y: -9999 });
+        activePool.push(poolSlot);
+      }
+
+      idleLayer.appendChild(idleFragment);
+      activeLayer.appendChild(activeFragment);
+    };
+
+    const getActiveScale = (selected: any[]) => {
+      if (!selected.length) return 1;
+      const minX = Math.min(...selected.map((slot) => slot.x));
+      const maxX = Math.max(...selected.map((slot) => slot.x + geometry.w));
+      const minY = Math.min(...selected.map((slot) => slot.y));
+      const maxY = Math.max(...selected.map((slot) => slot.y + geometry.h));
+      const clusterW = maxX - minX;
+      const clusterH = maxY - minY;
+      const availableW = window.innerWidth * 0.66;
+      const availableH = window.innerHeight * 0.6;
+      const margin = 18;
+      const edgeScale = selected.reduce((scale: number, slot: any) => {
+        const cx = slot.x + geometry.w / 2;
+        const cy = slot.y + geometry.h / 2;
+        const leftScale = (2 * Math.max(0, cx - margin)) / geometry.w;
+        const rightScale = (2 * Math.max(0, window.innerWidth - margin - cx)) / geometry.w;
+        const topScale = (2 * Math.max(0, cy - margin)) / geometry.h;
+        const bottomScale = (2 * Math.max(0, window.innerHeight - margin - cy)) / geometry.h;
+        return Math.min(scale, leftScale, rightScale, topScale, bottomScale);
+      }, 1);
+      return clamp(Math.min(1, availableW / clusterW, availableH / clusterH, edgeScale), 0.58, 1);
+    };
+
+    const prepareSlot = (slot: any, sponsor: any) => {
+      slot.activeScale = slot.activeScale || 1;
+      slot.el.classList.add('is-active');
+      slot.el.removeAttribute('aria-hidden');
+      slot.el.setAttribute('aria-label', sponsor.website ? `Visit ${sponsor.name}` : sponsor.name);
+      if (sponsor.website) {
+        slot.el.href = sponsor.website;
+        slot.el.target = '_blank';
+        slot.el.rel = 'noopener noreferrer';
+      } else {
+        slot.el.removeAttribute('href');
+        slot.el.removeAttribute('target');
+        slot.el.removeAttribute('rel');
+      }
+      slot.img.src = sponsor.logo;
+      slot.img.alt = sponsor.alt || sponsor.name;
+    };
+
+    const setActiveTier = (index: number, immediate = false) => {
+      const tier = tiers[index];
+      if (!tier || index === activeIndex || slots.length === 0) return;
+
+      activeTimeline?.kill();
+      activeTimeline = gsap.timeline();
+      setRail(index);
+
+      const selectedGeometry = slots.slice(0, tier.sponsors.length);
+      const selected = activePool.slice(0, tier.sponsors.length);
+      const activeScale = getActiveScale(selectedGeometry);
+      const previous = [...activeSlots];
+
+      if (previous.length) {
+        activeTimeline.to(previous.map((slot) => slot.el), {
+          scale: IDLE_SCALE,
+          autoAlpha: 0,
+          duration: immediate ? 0 : 0.34,
+          stagger: immediate ? 0 : { each: 0.008, from: 'center' },
+          // Removed hardcoded ease
+          onComplete: () => {
+            previous.forEach((slot) => {
+              resetSlot(slot);
+              gsap.set(slot.el, { x: -9999, y: -9999 });
+            });
+          },
+        });
+      }
+
+      activeTimeline.add(() => {
+        selected.forEach((slot, slotIndex) => {
+          slot.activeScale = activeScale;
+          slot.x = selectedGeometry[slotIndex].x;
+          slot.y = selectedGeometry[slotIndex].y;
+          prepareSlot(slot, tier.sponsors[slotIndex]);
+          gsap.set(slot.el, {
+            x: slot.x,
+            y: slot.y,
+            width: geometry.w,
+            height: geometry.h,
+            scale: immediate ? activeScale : ACTIVE_SEED_SCALE,
+            autoAlpha: 1,
+          });
+          gsap.set(slot.img, { opacity: 1, scale: 1 });
+        });
+        activeSlots = selected;
+      });
+
+      const growDuration = immediate ? 0 : 0.66;
+      const waveStep = immediate ? 0 : 0.025;
+
+      activeTimeline.addLabel('hexGrow');
+      activeTimeline.to(
+        selected.map((slot) => slot.el),
+        {
+          scale: activeScale,
+          duration: growDuration,
+          stagger: immediate ? 0 : { each: waveStep, from: 0 },
+          // Removed hardcoded ease
+          overwrite: true,
+        },
+        'hexGrow'
+      );
+      activeIndex = index;
+    };
+
+    buildField();
+    setActiveTier(0, true);
+
+    steps.forEach((step, index) => {
+      ScrollTrigger.create({
+        trigger: step,
+        start: 'top center',
+        end: 'bottom center',
+        onEnter: () => setActiveTier(index),
+        onEnterBack: () => setActiveTier(index),
+      });
+    });
+
+    gsap.to('.assembly-shell', {
+      scrollTrigger: {
+        trigger: '#sponsor-assembly',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+      },
+      '--assembly-progress': 1,
+      ease: 'none',
+    });
+
+    let resizeTimer = 0;
+    let cachedWidth = window.innerWidth;
+    
+    window.addEventListener('resize', () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        const newWidth = window.innerWidth;
+        if (newWidth === cachedWidth) return; // Prevent layout thrashing from mobile toolbars (height change)
+        cachedWidth = newWidth;
+        
+        buildField();
+        const indexToRestore = Math.max(activeIndex, 0);
+        activeIndex = -1;
+        setActiveTier(indexToRestore, true);
+        ScrollTrigger.refresh();
+      }, 180);
+    });
+  });
+</script>

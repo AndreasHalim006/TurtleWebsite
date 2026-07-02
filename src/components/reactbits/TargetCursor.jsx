@@ -81,13 +81,21 @@ const TargetCursor = ({
 
     const startIdleSpin = () => {
       if (!ringRef.current) return;
-      gsap.killTweensOf(ringRef.current);
-      gsap.set(ringRef.current, { clearProps: 'transform' });
-      ringRef.current.classList.remove('is-locked');
+      gsap.killTweensOf(ringRef.current, 'rotation');
+      const currentRot = gsap.getProperty(ringRef.current, "rotation") || 0;
+      const normalizedRot = currentRot % 360;
+      gsap.set(ringRef.current, { rotation: normalizedRot });
+      gsap.to(ringRef.current, {
+          rotation: normalizedRot + 360,
+          duration: spinDuration,
+          ease: "none",
+          repeat: -1
+      });
     };
 
     // Set initial idle positions for all 6 corners
     const setIdleFormation = () => {
+        if (!cornersRef.current) return;
         const corners = Array.from(cornersRef.current);
         const { idleDist } = constants;
         corners.forEach((corner, i) => {
@@ -116,14 +124,25 @@ const TargetCursor = ({
       if (activeTarget && isActiveRef.current) {
           const rect = activeTarget.getBoundingClientRect();
           const offset = 8;
-          targetCornerPositionsRef.current = [
-            { x: rect.left + rect.width * 0.25 - offset, y: rect.top - offset },
-            { x: rect.left + rect.width * 0.75 + offset, y: rect.top - offset },
-            { x: rect.right + offset, y: rect.top + rect.height * 0.5 },
-            { x: rect.left + rect.width * 0.75 + offset, y: rect.bottom + offset },
-            { x: rect.left + rect.width * 0.25 - offset, y: rect.bottom + offset },
-            { x: rect.left - offset, y: rect.top + rect.height * 0.5 }
+          
+          const targetRingRot = Math.round((gsap.getProperty(ringRef.current, "rotation") || 0) / 60) * 60;
+          const shift = Math.round(targetRingRot / 60);
+
+          const orderedTargets = [
+            { x: rect.right + offset, y: rect.top + rect.height * 0.5 }, // 0: Mid-Right
+            { x: rect.left + rect.width * 0.75 + offset, y: rect.bottom + offset }, // 60: Bot-Right
+            { x: rect.left + rect.width * 0.25 - offset, y: rect.bottom + offset }, // 120: Bot-Left
+            { x: rect.left - offset, y: rect.top + rect.height * 0.5 }, // 180: Mid-Left
+            { x: rect.left + rect.width * 0.25 - offset, y: rect.top - offset }, // 240: Top-Left
+            { x: rect.left + rect.width * 0.75 + offset, y: rect.top - offset } // 300: Top-Right
           ];
+    
+          const mappedTargets = [];
+          for (let i = 0; i < 6; i++) {
+             const targetIndex = (((i + shift) % 6) + 6) % 6;
+             mappedTargets.push(orderedTargets[targetIndex]);
+          }
+          targetCornerPositionsRef.current = mappedTargets;
       }
 
       if (!targetCornerPositionsRef.current) return;
@@ -132,14 +151,25 @@ const TargetCursor = ({
       const cursorY = gsap.getProperty(cursorRef.current, 'y');
       const corners = Array.from(cornersRef.current);
       
+      const ringRot = gsap.getProperty(ringRef.current, 'rotation') || 0;
+      const ringRotRad = ringRot * (Math.PI / 180);
+      const cosA = Math.cos(ringRotRad);
+      const sinA = Math.sin(ringRotRad);
+      
       corners.forEach((corner, i) => {
         const currentX = gsap.getProperty(corner, 'x');
         const currentY = gsap.getProperty(corner, 'y');
-        const targetX = targetCornerPositionsRef.current[i].x - cursorX;
-        const targetY = targetCornerPositionsRef.current[i].y - cursorY;
-        const finalX = currentX + (targetX - currentX) * strength;
-        const finalY = currentY + (targetY - currentY) * strength;
         
+        const dx = targetCornerPositionsRef.current[i].x - cursorX;
+        const dy = targetCornerPositionsRef.current[i].y - cursorY;
+        
+        // Transform screen delta to ring's local coordinate system
+        const targetLocalX = dx * cosA + dy * sinA;
+        const targetLocalY = -dx * sinA + dy * cosA;
+        
+        const finalX = currentX + (targetLocalX - currentX) * strength;
+        const finalY = currentY + (targetLocalY - currentY) * strength;
+
         const duration = strength >= 0.99 ? (parallaxOn ? 0.2 : 0) : 0.05;
         gsap.to(corner, {
           x: finalX,
@@ -203,38 +233,43 @@ const TargetCursor = ({
       const corners = Array.from(cornersRef.current);
       corners.forEach(corner => gsap.killTweensOf(corner));
       
-      // Stop and reset idle ring spin while locked onto a target.
-      ringRef.current?.classList.add('is-locked');
+      // Stop idle ring spin and get precise current rotation from GSAP
       gsap.killTweensOf(ringRef.current, 'rotation');
-      gsap.to(ringRef.current, { rotation: 0, duration: 0.2 });
+      const currentRotDeg = gsap.getProperty(ringRef.current, "rotation") || 0;
+
+      // Snap the ring to the nearest multiple of 60 degrees
+      const targetRingRot = Math.round(currentRotDeg / 60) * 60;
+      gsap.to(ringRef.current, { rotation: targetRingRot, duration: 0.2, ease: "power2.out" });
 
       const rect = target.getBoundingClientRect();
       const offset = 8; 
 
-      // HEXAGON VERTICES MATH (Cradling from outside)
-      targetCornerPositionsRef.current = [
-        { x: rect.left + rect.width * 0.25 - offset, y: rect.top - offset },
-        { x: rect.left + rect.width * 0.75 + offset, y: rect.top - offset },
-        { x: rect.right + offset, y: rect.top + rect.height * 0.5 },
-        { x: rect.left + rect.width * 0.75 + offset, y: rect.bottom + offset },
-        { x: rect.left + rect.width * 0.25 - offset, y: rect.bottom + offset },
-        { x: rect.left - offset, y: rect.top + rect.height * 0.5 }
+      // Ordered clockwise starting from 0 degrees (Mid-Right)
+      const orderedTargets = [
+        { x: rect.right + offset, y: rect.top + rect.height * 0.5 }, // 0: Mid-Right
+        { x: rect.left + rect.width * 0.75 + offset, y: rect.bottom + offset }, // 60: Bot-Right
+        { x: rect.left + rect.width * 0.25 - offset, y: rect.bottom + offset }, // 120: Bot-Left
+        { x: rect.left - offset, y: rect.top + rect.height * 0.5 }, // 180: Mid-Left
+        { x: rect.left + rect.width * 0.25 - offset, y: rect.top - offset }, // 240: Top-Left
+        { x: rect.left + rect.width * 0.75 + offset, y: rect.top - offset } // 300: Top-Right
       ];
+
+      const shift = Math.round(targetRingRot / 60);
+      
+      const mappedTargets = [];
+      for (let i = 0; i < 6; i++) {
+         const targetIndex = (((i + shift) % 6) + 6) % 6;
+         mappedTargets.push(orderedTargets[targetIndex]);
+      }
+
+      targetCornerPositionsRef.current = mappedTargets;
 
       isActiveRef.current = true;
       gsap.ticker.add(tickerFnRef.current);
 
       gsap.to(activeStrengthRef, { current: 1, duration: hoverDuration, ease: 'power2.out' });
-
-      // Rotate corners to hex angles
-      const hexRotations = [60, 120, 180, 240, 300, 0];
-      corners.forEach((corner, i) => {
-        gsap.to(corner, {
-          rotation: hexRotations[i],
-          duration: 0.2,
-          ease: 'power2.out'
-        });
-      });
+      
+      // We do not animate corner rotations. They stay firmly locked at their local angles.
 
       const leaveHandler = () => {
         gsap.ticker.remove(tickerFnRef.current);
@@ -251,11 +286,9 @@ const TargetCursor = ({
           const tl = gsap.timeline();
           corners.forEach((corner, i) => {
             const angle = (i * Math.PI * 2) / 6;
-            const idleRotation = (i * 60 + 180) % 360;
             tl.to(corner, { 
                 x: Math.cos(angle) * idleDist, 
                 y: Math.sin(angle) * idleDist, 
-                rotation: idleRotation,
                 duration: 0.3, 
                 ease: 'power3.out' 
             }, 0);
@@ -306,20 +339,6 @@ const TargetCursor = ({
       className="fixed top-0 left-0 w-0 h-0 pointer-events-none z-[9999]"
       style={{ willChange: 'transform' }}
     >
-      <style>{`
-        @keyframes target-cursor-idle-spin {
-          to { transform: rotate(360deg); }
-        }
-
-        .target-cursor-ring {
-          animation: target-cursor-idle-spin var(--target-cursor-spin-duration, 2s) linear infinite;
-        }
-
-        .target-cursor-ring.is-locked {
-          animation-play-state: paused;
-        }
-      `}</style>
-
       <div
         ref={dotRef}
         className="absolute top-1/2 left-1/2 w-1.5 h-1.5 bg-brand-orange rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#ff8900]"
@@ -329,7 +348,7 @@ const TargetCursor = ({
       <div
         ref={ringRef}
         className="target-cursor-ring absolute top-1/2 left-1/2 w-0 h-0"
-        style={{ willChange: 'transform', '--target-cursor-spin-duration': `${spinDuration}s` }}
+        style={{ willChange: 'transform' }}
       >
         {[0, 1, 2, 3, 4, 5].map((i) => (
           <div

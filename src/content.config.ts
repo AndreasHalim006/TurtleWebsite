@@ -40,4 +40,26 @@ const sponsorCategories = defineCollection({
   }),
 });
 
-export const collections = { showcase, sponsorCategories, sponsors };
+const seasons = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/seasons' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      year: z.string(),
+      order: z.number(),
+      heroImage: z.string().optional(),
+      departments: z.array(
+        z.object({
+          name: z.string(),
+          members: z.array(z.object({
+            name: z.string(),
+            role: z.string(),
+            email: z.string(),
+            image: z.string().optional(),
+          })),
+        })
+      ).optional(),
+    }),
+});
+
+export const collections = { showcase, sponsorCategories, sponsors, seasons };

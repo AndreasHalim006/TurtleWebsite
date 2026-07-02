@@ -1,0 +1,84 @@
+---
+import { Image } from 'astro:assets';
+import heroImage from '../../images/Aristurtle_photo_2-1_2.jpg';
+
+export interface Props {
+  totalSponsors: number;
+  totalTiers: number;
+}
+
+const { totalSponsors, totalTiers } = Astro.props;
+---
+
+<section 
+  id="hero" 
+  class="relative grid min-h-[100svh] place-items-end justify-items-start overflow-hidden px-4 pb-12 pt-[8.5rem] md:px-[clamp(1.25rem,5vw,5rem)] md:pb-[clamp(4rem,8vw,7rem)] md:pt-[clamp(8rem,12vw,13rem)] isolate"
+>
+  <Image 
+    src={heroImage} 
+    alt="Aristurtle race car with partner markings" 
+    class="absolute inset-0 -z-20 h-full w-full object-cover object-center saturate-[0.8] contrast-[1.08] scale-[1.03]" 
+    priority 
+  />
+  
+  <div 
+    class="absolute inset-0 -z-10 bg-[linear-gradient(0deg,#050505_0%,rgba(5,5,5,0.22)_52%,rgba(5,5,5,0.54)_100%),linear-gradient(90deg,rgba(5,5,5,0.78),rgba(5,5,5,0.22))] md:bg-[linear-gradient(90deg,rgba(5,5,5,0.94)_0%,rgba(5,5,5,0.64)_42%,rgba(5,5,5,0.16)_100%),linear-gradient(0deg,#050505_0%,rgba(5,5,5,0.08)_45%,rgba(5,5,5,0.35)_100%)]"
+  ></div>
+
+  <div class="grid max-w-[58rem] gap-5">
+    <p class="hero-reveal text-[var(--brand-orange)] text-[clamp(0.65rem,0.58rem+0.2vw,0.82rem)] font-bold tracking-[0.48em] leading-relaxed uppercase opacity-0 translate-y-6 motion-reduce:opacity-100 motion-reduce:translate-y-0">
+      // PARTNER_NETWORK
+    </p>
+    
+    <h1 class="hero-reveal text-white text-[clamp(3.2rem,13.5vw,4.2rem)] md:text-[clamp(4.8rem,16vw,15rem)] font-bold tracking-normal leading-[0.88] md:leading-[0.78] uppercase opacity-0 translate-y-6 motion-reduce:opacity-100 motion-reduce:translate-y-0">
+      Partners
+    </h1>
+    
+    <p class="hero-reveal max-w-[42rem] text-white/78 text-[clamp(1rem,1.4vw,1.35rem)] leading-[1.55] opacity-0 translate-y-6 motion-reduce:opacity-100 motion-reduce:translate-y-0">
+      The technical, industrial, academic, and media partners powering Aristurtle on and off track.
+    </p>
+    
+    <div class="hero-reveal flex flex-wrap w-full md:w-auto gap-3 pt-3 opacity-0 translate-y-6 motion-reduce:opacity-100 motion-reduce:translate-y-0">
+      <a 
+        href="mailto:contact@aristurtle.gr" 
+        class="inline-flex min-h-[3.25rem] w-full md:w-auto items-center justify-center border border-[rgba(255,137,0,0.72)] hover:border-white px-5 text-[0.72rem] font-bold tracking-[0.24em] uppercase transition-all duration-200 ease-out bg-[var(--brand-orange)] text-[#050505] hover:-translate-y-[2px]"
+      >
+        Become a Partner
+      </a>
+      <a 
+        href="#sponsor-assembly" 
+        class="inline-flex min-h-[3.25rem] w-full md:w-auto items-center justify-center border border-[rgba(255,137,0,0.72)] hover:border-white px-5 text-[0.72rem] font-bold tracking-[0.24em] uppercase transition-all duration-200 ease-out bg-[rgba(5,5,5,0.28)] text-white hover:-translate-y-[2px]"
+      >
+        View Network
+      </a>
+    </div>
+  </div>
+
+  <div 
+    class="hero-reveal hidden md:flex absolute right-[clamp(1.25rem,4vw,4rem)] bottom-[clamp(1.25rem,4vw,3rem)] gap-4 text-white/62 text-[0.68rem] font-bold tracking-[0.28em] uppercase opacity-0 translate-y-6 motion-reduce:opacity-100 motion-reduce:translate-y-0" 
+    aria-label={`${totalSponsors} active partners across ${totalTiers} tiers`}
+  >
+    <span>{String(totalTiers).padStart(2, '0')} tiers</span>
+    <span>{String(totalSponsors).padStart(2, '0')} partners</span>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const initHeroAnimations = () => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    gsap.to('.hero-reveal', {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      stagger: 0.08,
+      // Removed hardcoded ease to fall back to the global LUXE_EASE defined in BaseLayout
+    });
+  };
+
+  // Run on mount
+  initHeroAnimations();
+</script>

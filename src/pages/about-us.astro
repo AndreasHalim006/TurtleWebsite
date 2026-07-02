@@ -1,0 +1,199 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+
+const acrosticItems = [
+    { letter: 'A', title: 'utonomous', text: 'We have created the first Autonomous / Driverless Electric race car in the Balkan region.' },
+    { letter: 'R', title: 'esearch', text: 'Aristurtle is a team that fosters research on cutting-edge technologies and empowers young engineers to innovate.' },
+    { letter: 'I', title: 'nitiative', text: 'Back in 2013, we built the first electric race car in Northern Greece. Aristurtle is a pioneering team in the field of electric mobility and is driven solely by the will of its members.' },
+    { letter: 'S', title: 'ustainability', text: 'Our commitment to safeguarding the environment is something we actively prove every day. Raising public awareness for Electric and Autonomous mobility is our main focus.' },
+    { letter: 'T', title: 'rack record', text: 'Our team has had an unparalleled course in the Formula Student competitions it has participated. Our performance is improving exponentially.' },
+    { letter: 'U', title: 'nity', text: 'We believe in long-lasting relationships. By supporting our work, you become part of our ever-growing family.' },
+    { letter: 'R', title: 'eturn', text: 'Aristurtle’s sponsorship program offers strategic promotion solutions to all of its sponsors by creating unique, stimulative content. By leveraging our exposure on mass and social media, we are able to create value for our sponsors that exceeds the amount of their contribution.' },
+    { letter: 'T', title: 'alent', text: 'Our team members are exceptionally skilled individuals and we constantly strive to contribute to each and every one’s personal development and cultivation.' },
+    { letter: 'L', title: 'earning', text: 'We provide engineering students with hands-on practical experience by bridging the gap between theory and practice.' },
+    { letter: 'E', title: 'xcellence', text: 'Aristurtle is the Greek Electric Vehicle Formula Student team with the most participations and distinctions in international FSAE competitions.' }
+];
+---
+
+<BaseLayout title="About Us | ARISTURTLE" forceCompact={true}>
+  <div class="pt-48 pb-32 w-full max-w-[1800px] mx-auto about-container overflow-hidden">
+    
+    <!-- HEADER BLOCK -->
+    <header class="about-reveal">
+        <h1 class="text-5xl md:text-8xl font-black uppercase mb-8 leading-none tracking-tight">
+            About <span class="text-[var(--brand-orange)]">Us</span>
+        </h1>
+        <div class="h-1 w-32 bg-[var(--brand-orange)] mb-12"></div>
+    </header>
+
+    <!-- SPACER -->
+    <div class="h-20 md:h-32"></div>
+
+    <!-- BLOCK 1: INTRO TEXT -->
+    <section class="space-y-12 text-lg md:text-2xl text-gray-300 font-light about-reveal">
+        <p class="leading-relaxed md:leading-loose">
+            <strong class="text-white font-medium">Aristotle University Racing Team Electric</strong>, better known as Aristurtle, is a pioneering student research team at Aristotle University of Thessaloniki dedicated to designing, developing and building electric and driverless race cars. The team operates under the Department of Electrical and Computer Engineering and consists of undergraduate students from various fields, ranging from Electrical Engineering and Mechanical Engineering to Physics and Economics. Working under the pressure of demanding deadlines, the team’s members tackle tasks that require full use of their theoretical and practical abilities in order to be addressed successfully. Through their involvement with Aristurtle, students can broaden their academic knowledge, learn to work and co-operate in a structured environment, and gain unmatched experiences and skills for life.
+        </p>
+        <p class="leading-relaxed md:leading-loose pt-4">
+            Responsible for representing the team in the academic community is Minas Alexiadis – Assistant Professor of the Department of Electrical and Computer Engineering of the Aristotle University. The construction of our electric race cars is being executed in accordance with the rules and standards laid out by Formula Student. The construction process is supervised by three Electrical System Advisors, PhD students in the Electrical Machines Laboratory of the Department. The Team is divided into 8 Subgroups that work on different parts of the vehicle and collaborate jointly according to their needs. The Team Captain is responsible for coordinating all the Subgroups in order to deliver a unified impeccably operating result.
+        </p>
+    </section>
+        
+    <!-- SPACER -->
+    <div class="h-20 md:h-32"></div>
+
+    <!-- BLOCK 2: PURPOSE & VISION CARD -->
+    <section class="about-reveal">
+        <div class="py-20 px-10 md:py-32 md:px-24 border border-[#333] bg-[#0A0A0A] relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-1 h-full bg-[var(--brand-orange)] opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            
+            <div class="mb-24">
+                <h3 class="text-3xl md:text-5xl font-bold text-white mb-10 uppercase tracking-wider">Our Purpose</h3>
+                <p class="leading-relaxed md:leading-loose text-gray-400 text-xl md:text-2xl">Aristurtle’s purpose is to design, develop and build top-tier electric race cars and compete in international Formula Student competitions against academic institutions from all around the world.</p>
+            </div>
+            
+            <div class="mt-24 pt-24 border-t border-[#222]">
+                <h3 class="text-3xl md:text-5xl font-bold text-[var(--brand-orange)] mb-10 uppercase tracking-wider">Our Vision</h3>
+                <p class="leading-relaxed md:leading-loose text-gray-400 text-xl md:text-2xl">Aristurtle’s vision is to contribute in the research around innovative technologies and to promote electric mobility in Greece and abroad, by materializing high-level pioneering products.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SPACER -->
+    <div class="h-20 md:h-32"></div>
+
+    <!-- BLOCK 3: WHY ELECTRIC / WHY DRIVERLESS GRID -->
+    <section>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-32">
+            <section class="about-reveal">
+                <h2 class="text-4xl md:text-5xl font-bold uppercase mb-12">
+                    <span class="text-[var(--brand-orange)]">Why</span> Electric?
+                </h2>
+                <div class="space-y-8 text-gray-300 font-light leading-relaxed md:leading-loose text-lg md:text-xl">
+                    <p>
+                        At Aristurtle, we believe that if something is worth making, it is also worth preserving. This is why achieving sustainability has been the number one issue in our agenda since day one. By creating a new electric race car every year, we emphasize the role of electricity in creating modern and eco-friendly mobility solutions. After constructing seven electric race cars, we consider ourselves to be Ambassadors of Electromobility, raising awareness and fostering public understanding of its transformative potential.
+                    </p>
+                    <p>
+                        Our team has always embraced innovation and closely follows the footsteps of global trend-setters while aiming to evaluate, develop and integrate the newest technological advancements in its work.
+                    </p>
+                </div>
+            </section>
+
+            <section class="about-reveal">
+                <h2 class="text-4xl md:text-5xl font-bold uppercase mb-12">
+                    <span class="text-[var(--brand-orange)]">Why</span> Driverless?
+                </h2>
+                <div class="space-y-8 text-gray-300 font-light leading-relaxed md:leading-loose text-lg md:text-xl">
+                    <p>
+                        After electromobility, autonomous driving features are the next major advancement in the automotive industry.
+                    </p>
+                    <p>
+                        Aristurtle was the first Greek FS team to announce its commitment towards the creation of a driverless vehicle, in March 2019. The team’s hard work bore fruition in 2021, when Thetis DV came into operation, becoming the first driverless race car in Greece. Then came the successful integration of our Autonomous System into a single EV/DV, Persephone. Through the latest iteration of this concept, Calypso, our latest vehicle, remains the only driverless Formula Student single-seater in Greece.
+                    </p>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <!-- SPACER -->
+    <div class="h-20 md:h-32"></div>
+
+    <!-- BLOCK 4: WHY SUPPORT ARISTURTLE (ACROSTICS) -->
+    <section class="pt-24 border-t border-[#222]">
+        <h2 class="text-4xl md:text-6xl font-bold uppercase mb-20 text-center about-reveal">
+            Why support <span class="text-[var(--brand-orange)]">Aristurtle?</span>
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+            {acrosticItems.map((item, index) => (
+                <div class="acrostic-card bg-[#0A0A0A] p-10 md:p-14 border border-[#222] hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
+                    <h3 class="text-3xl md:text-4xl font-bold mb-8 uppercase flex items-baseline">
+                        <span class="text-6xl md:text-7xl text-[var(--brand-orange)] mr-2 font-black">{item.letter}</span>
+                        <span class="text-white group-hover:text-gray-200 transition-colors tracking-wide">{item.title}</span>
+                    </h3>
+                    <p class="text-gray-400 font-light leading-relaxed md:leading-loose text-lg md:text-xl">{item.text}</p>
+                </div>
+            ))}
+        </div>
+    </section>
+
+    <!-- SPACER -->
+    <div class="h-20 md:h-32"></div>
+
+    <!-- BLOCK 5: IKISKOS -->
+    <section>
+        <div class="bg-[#141414] p-16 md:p-24 border border-[#333] relative about-reveal">
+            <div class="absolute top-0 right-0 w-32 h-32 border-t-4 border-r-4 border-[var(--brand-orange)] opacity-20 hidden md:block"></div>
+            <div class="absolute bottom-0 left-0 w-32 h-32 border-b-4 border-l-4 border-[var(--brand-orange)] opacity-20 hidden md:block"></div>
+            
+            <h2 class="text-4xl md:text-6xl font-bold uppercase mb-16 text-white tracking-wider">Ikiskos</h2>
+            <div class="space-y-10 text-gray-300 font-light leading-relaxed md:leading-loose text-lg md:text-2xl max-w-5xl">
+                <p>
+                    The team’s workplace is located in the heart of the Aristotle University campus, in the premises of the Polytechnic School, and is called “Ikiskos” from <span class="italic font-serif text-[var(--brand-orange)]">οἰκέω</span> (oikéō, “I inhabit”). It consists of three prefabricated cabins and an office that the team members use on a regular basis.
+                </p>
+                <p>
+                    A great deal of research and construction that goes into our race cars takes place in Ikiskos, therefore, we do our best at keeping it in top shape, for ourselves and for future generations of Aristurtle engineers. From the inception of our first car, Electra, to the creation of our newest one, Calypso, Ikiskos has always been the place where the mind meets the tool.
+                </p>
+            </div>
+        </div>
+    </section>
+
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .about-container {
+    padding-left: 6vw;
+    padding-right: 6vw;
+  }
+  @media (min-width: 1024px) {
+    .about-container {
+      padding-left: 8vw;
+      padding-right: 8vw;
+    }
+  }
+</style>
+
+<script>
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const reveals = gsap.utils.toArray('.about-reveal');
+    reveals.forEach((element: any) => {
+        gsap.fromTo(element, 
+            { y: 50, autoAlpha: 0 },
+            { 
+                y: 0, 
+                autoAlpha: 1, 
+                duration: 1, 
+                ease: 'luxe', 
+                scrollTrigger: {
+                    trigger: element,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                }
+            }
+        );
+    });
+
+    gsap.fromTo('.acrostic-card',
+        { y: 50, autoAlpha: 0 },
+        {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.8,
+            ease: 'luxe',
+            stagger: 0.1,
+            scrollTrigger: {
+                trigger: '.acrostic-card',
+                start: 'top 80%',
+                toggleActions: 'play none none reverse'
+            }
+        }
+    );
+</script>

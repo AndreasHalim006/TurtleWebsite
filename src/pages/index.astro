@@ -7,6 +7,10 @@ import HUDWindow from '../components/HUDWindow.astro';
 import RotatingText from '../components/reactbits/RotatingText.jsx';
 import FlowingMenu from '../components/reactbits/FlowingMenu.jsx';
 import FuzzyText from '../components/reactbits/FuzzyText.jsx';
+import MagnetLines from '../components/reactbits/MagnetLines.jsx';
+import BounceCards from '../components/reactbits/BounceCards.jsx';
+import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
+import Footer from '../components/Footer.astro';
 
 // Local assets
 import heroVideo from '../images/We_Are_Aristurtle_Sept2025_ForzaEnding.mp4';
@@ -67,13 +71,21 @@ const JOURNEY_CONFIG = [
   },
   {
     id: "history",
-    p: 0.75,
-    windows: []
+    p: 0.7598072031061722,
+    windows: [
+      { id: "w-62se", w: "21.4vw", h: "80.0vh", x: "76.2%", y: "17.1%", content: "history-stats-panel", noBorder: false },
+      { id: "w-ygxs", w: "64.7vw", h: "27.5vh", x: "2.9%", y: "15.0%", content: "history-main-header", noBorder: true },
+      { id: "w-smmv", w: "37.2vw", h: "46.2vh", x: "3.3%", y: "49.0%", content: "history-narrative", noBorder: true }
+    ]
   },
   {
     id: "sponsors",
-    p: 0.90,
-    windows: []
+    p: 0.9,
+    windows: [
+      { id: "w-fh5g", w: "93.9vw", h: "29.2vh", x: "2.5%", y: "13.7%", content: "sponsors-hero-title", noBorder: false },
+      { id: "w-5cmn", w: "28.3vw", h: "45.9vh", x: "67.9%", y: "49.6%", content: "sponsors-call-to-action", noBorder: true },
+      { id: "w-i6cd", w: "43.2vw", h: "45.9vh", x: "2.4%", y: "49.0%", content: "sponsors-partnership-text", noBorder: true }
+    ]
   }
 ];
 
@@ -124,7 +136,7 @@ const getSlotClasses = (slot: string) => {
 		
 		<div class="fixed inset-0 z-0 bg-brand-emerald pointer-events-none opacity-20"></div>
 
-		<section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-10 overflow-hidden bg-brand-midnight m-0 p-0">
+		<section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-50 overflow-hidden bg-brand-midnight m-0 p-0">
 			<div class="absolute inset-0 z-0">
 				<video autoplay muted loop playsinline class="w-full h-full object-cover">
 					<source src={heroVideo} type="video/mp4" />
@@ -133,22 +145,8 @@ const getSlotClasses = (slot: string) => {
 			<div id="hero-parallax-wrapper" class="relative w-full max-w-[1800px] mx-auto h-full flex z-10 px-[6vw] pb-[5vh] pt-[5vh]"></div>
 		</section>
 
-		<div class="relative w-full h-[56px] md:h-[74px] z-50">
-			<div class="absolute top-0 left-0 w-full h-[4px] -translate-y-1/2 bg-brand-orange">
-				<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-					<div class="w-24 h-[110.85px] md:w-32 md:h-[147.8px] bg-brand-orange flex items-center justify-center rotate-90" style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);">
-						<div class="w-[calc(100%-8px)] h-[calc(100%-8px)] bg-void flex items-center justify-center p-6" style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);">
-							<div class="-rotate-90 w-full flex items-center justify-center">
-								<Image src={protergiaLogo} alt="Powered by Protergia" class="w-full h-auto object-contain" />
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="journey-container" class="relative w-full h-[1200vh]">
-            <div id="journey-viewport" class="sticky top-0 left-0 w-full h-screen overflow-hidden bg-void">
+		<div id="journey-container" class="relative w-full h-[100vh]">
+            <div id="journey-viewport" class="sticky top-0 left-0 w-full h-screen overflow-hidden bg-void z-10">
                 <div id="journey-stage" class="absolute top-0 left-0 will-change-transform origin-top-left">
                     
                     <JourneySVG />
@@ -220,7 +218,7 @@ const getSlotClasses = (slot: string) => {
 
                               {(win.content.toLowerCase() === 'vision-node') && (
                                 <p class="font-sans text-brand-orange text-[min(6cqw,20cqh)] leading-[1.15] uppercase tracking-tighter font-bold italic" style="text-wrap: balance;">
-                                  PIONEERING_THE_FUTURE_OF_FS
+                                  Find your passion
                                 </p>
                               )}
                               
@@ -253,7 +251,7 @@ const getSlotClasses = (slot: string) => {
 
                               {(win.content.toLowerCase() === 'text-block') && (
                                 <div class="flex flex-col items-start justify-center h-full text-left font-sans uppercase">
-                                  <div class="flex flex-col gap-[0.5cqh] w-full">
+                                  <div class="flex flex-col gap-[0.5cqh] w-full" id="acrostic-list-container">
                                     {[
                                       { id: 'A', letter: 'A', rest: 'utonomous' },
                                       { id: 'R1', letter: 'R', rest: 'esearch' },
@@ -267,8 +265,8 @@ const getSlotClasses = (slot: string) => {
                                       { id: 'E', letter: 'E', rest: 'xcellence' }
                                     ].map((item) => (
                                       <div 
-                                        class="flex items-baseline leading-none w-full cursor-pointer group hover:bg-white/5 transition-colors duration-200 pr-4 rounded-r-lg"
-                                        onmouseenter={`if(window.onAcrosticHover) window.onAcrosticHover('${item.id}')`}
+                                        class="flex items-baseline leading-none w-full cursor-pointer group hover:bg-white/5 transition-colors duration-200 pr-4 rounded-r-lg acrostic-item"
+                                        data-id={item.id}
                                       >
                                         <span class="text-brand-orange text-[min(16cqw,8.2cqh)] font-black mr-[0.1em] group-hover:scale-110 transition-transform duration-300 origin-left">{item.letter}</span>
                                         <span class="text-white text-[min(5.5cqw,3.8cqh)] font-bold tracking-tighter whitespace-nowrap group-hover:text-brand-orange transition-colors duration-300">{item.rest}</span>
@@ -306,6 +304,71 @@ const getSlotClasses = (slot: string) => {
                                 </div>
                               )}
 
+                              {(win.content.toLowerCase() === 'history-main-header') && (
+                                <div class="w-full h-full flex items-center justify-center pointer-events-auto">
+                                    <BounceCards
+                                        client:load
+                                        className="history-bounce-cards"
+                                        images={[
+                                            teamPhoto1.src,
+                                            teamPhoto2.src,
+                                            teamPhoto3.src,
+                                            teamPhoto4.src,
+                                            teamPhoto5.src
+                                        ]}
+                                        containerWidth={600}
+                                        containerHeight={300}
+                                        animationDelay={0.5}
+                                        animationStagger={0.08}
+                                        enableHover={true}
+                                    />
+                                </div>
+                              )}
+
+                              {(win.content.toLowerCase() === 'history-narrative') && (
+                                <p class="font-sans text-white/80 text-[min(4.2cqw,12cqh)] leading-[1.3] uppercase tracking-tight font-bold text-left" style="text-wrap: balance;">
+                                  Founded in 2013, Aristurtle has evolved from a group of visionaries into a premier Formula Student powerhouse, building <span class="text-brand-orange">8 electric race cars</span> and pioneering autonomous racing in the Balkans.
+                                </p>
+                              )}
+
+                              {(win.content.toLowerCase() === 'history-stats-panel') && (
+                                <div class="w-full h-full flex items-center justify-center pointer-events-auto">
+                                  <MagnetLines
+                                    client:load
+                                    rows={18}
+                                    columns={5}
+                                    containerSize="100%"
+                                    lineColor="var(--brand-orange)"
+                                    lineWidth="0.8cqw"
+                                    lineHeight="6cqh"
+                                    baseAngle={45}
+                                  />
+                                </div>
+                              )}
+
+                              {(win.content.toLowerCase() === 'sponsors-hero-title') && (
+                                <div class="flex flex-col items-center justify-center w-full h-full gap-4">
+                                    <SponsorLogoLoop client:load />
+                                </div>
+                              )}
+
+                              {(win.content.toLowerCase() === 'sponsors-partnership-text') && (
+                                <p class="font-sans text-white text-[min(5.5cqw,15cqh)] leading-[1.15] uppercase tracking-tighter font-bold text-left" style="text-wrap: balance;">
+                                  Our success is driven by the support of our <span class="text-brand-orange">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
+                                </p>
+                              )}
+
+                              {(win.content.toLowerCase() === 'sponsors-call-to-action') && (
+                                <div class="flex flex-col gap-6 items-center justify-center h-full text-center">
+                                    <p class="font-sans text-white text-[min(4.5cqw,12cqh)] leading-[1.15] uppercase tracking-tight font-bold" style="text-wrap: balance;">
+                                        JOIN OUR MISSION. BECOME A SPONSOR.
+                                    </p>
+                                    <a href="/sponsors" class="px-8 py-4 bg-brand-orange text-black font-black uppercase tracking-widest text-[min(2cqw,4cqh)] hover:scale-105 transition-transform rounded-sm">
+                                        SUPPORT THE TEAM
+                                    </a>
+                                </div>
+                              )}
+
                               {/* 
                                 Default fallback removed as requested. 
                                 Windows without explicit content will remain empty 
@@ -319,6 +382,12 @@ const getSlotClasses = (slot: string) => {
                 </div>
             </div>
 		</div>
+
+        <div id="footer-container" class="fixed top-0 left-0 w-full h-screen z-50 flex flex-col justify-end bg-brand-midnight pointer-events-none">
+            <div class="pointer-events-auto">
+                <Footer />
+            </div>
+        </div>
 	</div>
 </BaseLayout>
 
@@ -333,7 +402,40 @@ const getSlotClasses = (slot: string) => {
 
 	CustomEase.create("luxe", "0.16, 1, 0.3, 1");
 
-	window.addEventListener('DOMContentLoaded', () => {
+	// Catch errors and display them on screen to help diagnose client-side issues
+	window.addEventListener('error', (e) => {
+		console.error("Global script error caught:", e);
+		const errDiv = document.createElement('div');
+		errDiv.style.position = 'fixed';
+		errDiv.style.top = '10px';
+		errDiv.style.left = '10px';
+		errDiv.style.background = 'red';
+		errDiv.style.color = 'white';
+		errDiv.style.zIndex = '999999';
+		errDiv.style.padding = '10px';
+		errDiv.style.fontSize = '14px';
+		errDiv.style.fontFamily = 'monospace';
+		errDiv.innerHTML = `JS ERROR: ${e.message} at ${e.filename}:${e.lineno}`;
+		document.body.appendChild(errDiv);
+	});
+
+	window.addEventListener('unhandledrejection', (e) => {
+		console.error("Promise rejection caught:", e.reason);
+		const errDiv = document.createElement('div');
+		errDiv.style.position = 'fixed';
+		errDiv.style.top = '10px';
+		errDiv.style.left = '10px';
+		errDiv.style.background = 'red';
+		errDiv.style.color = 'white';
+		errDiv.style.zIndex = '999999';
+		errDiv.style.padding = '10px';
+		errDiv.style.fontSize = '14px';
+		errDiv.style.fontFamily = 'monospace';
+		errDiv.innerHTML = `Promise Error: ${e.reason}`;
+		document.body.appendChild(errDiv);
+	});
+
+	const initJourney = () => {
 		const mm = gsap.matchMedia();
 
 		mm.add({
@@ -345,6 +447,8 @@ const getSlotClasses = (slot: string) => {
             const stage = document.querySelector('#journey-stage');
             const pathMain = document.querySelector('#journey-path-main');
             const otherPaths = document.querySelectorAll('.other-car-paths path');
+            const journeyContainer = document.querySelector('#journey-container') as HTMLElement;
+            let cleanupJourney: (() => void) | null = null;
 
             if (stage && pathMain) {
                 const scaleFactor = 6; 
@@ -357,25 +461,34 @@ const getSlotClasses = (slot: string) => {
                     { id: '#station-about',    p: 0.150 }, 
                     { id: '#station-mission',  p: 0.412 }, 
                     { id: '#station-subsystems', p: 0.6388404733510687 }, 
-                    { id: '#station-history',  p: 0.750 }, 
-                    { id: '#station-sponsors', p: 0.900 }  
+                    { id: '#station-history',  p: 0.7598072031061722 }, 
+                    { id: '#station-sponsors', p: 0.9 }  
                 ];
 
                 const journeyTimeline = gsap.timeline({
+                    paused: true
+                });
+
+                // Hero Dive-In ScrollTrigger
+                const heroDiveTimeline = gsap.timeline({
                     scrollTrigger: {
-                        trigger: "#journey-container",
+                        trigger: "#hero",
                         start: "top top",
-                        end: "bottom bottom",
-                        scrub: 2, 
-                        invalidateOnRefresh: true
-                    },
-                    onUpdate: function() {
-                        const tlProgress = journeyTimeline.progress();
-                        const drawEnd = 0.85; 
-                        const p = Math.min(tlProgress / drawEnd, 1);
-                        gsap.set(otherPaths, { drawSVG: `${p * 100}%` });
+                        end: "+=100%", // Pin for 100vh of scroll
+                        scrub: true,
+                        pin: true,
+                        pinSpacing: false // Allows journey-container to slide up behind the pinned hero
                     }
                 });
+
+                if (!reduceMotion) {
+                    heroDiveTimeline
+                        .to("#hero-parallax-wrapper", { scale: 3, autoAlpha: 0, duration: 1 })
+                        .to("#hero video", { scale: 1.5, duration: 1 }, 0)
+                        .to("#hero", { autoAlpha: 0, duration: 0.5 }, 0.5);
+                } else {
+                    heroDiveTimeline.to("#hero", { autoAlpha: 0, duration: 1 });
+                }
 
                 const getTransformedPos = (progress: number) => {
                     const pathEl = pathMain as SVGPathElement;
@@ -387,19 +500,32 @@ const getSlotClasses = (slot: string) => {
                     };
                 };
 
-                const getCameraPos = (px: number, py: number, currentScale = 1) => {
+                // CAMERA HELPERS FOR DECOUPLED SMOOTH TRANSITIONS
+                const getStationPos = (stateIndex: number) => {
+                    // 0 = hero (path origin), 1 = journey-start (also path origin)
+                    if (stateIndex <= 1) {
+                        return getTransformedPos(0);
+                    } else if (stateIndex >= 2 && stateIndex <= 6) {
+                        const wp = waypoints[stateIndex - 2];
+                        return getTransformedPos(wp.p);
+                    } else if (stateIndex === 7) {
+                        return { x: stageWidth / 2, y: stageHeight / 2 };
+                    }
+                    return { x: 0, y: 0 };
+                };
+
+                const getCameraParamsForState = (stateIndex: number) => {
+                    const pos = getStationPos(stateIndex);
+                    const scale = stateIndex === 7 ? 0.06 : 1.0;
                     return {
-                        x: -px * currentScale + window.innerWidth / 2,
-                        y: -py * currentScale + window.innerHeight / 2
+                        x: -pos.x * scale + window.innerWidth / 2,
+                        y: -pos.y * scale + window.innerHeight / 2,
+                        scale: scale
                     };
                 };
 
-                const startPos = getTransformedPos(0);
-                const initialCamera = getCameraPos(startPos.x, startPos.y);
-                gsap.set(stage, { x: initialCamera.x, y: initialCamera.y, transformOrigin: "0 0" });
-
-                const moveCameraX = gsap.quickTo(stage, "x", { duration: 0.7, ease: "power3.out" });
-                const moveCameraY = gsap.quickTo(stage, "y", { duration: 0.7, ease: "power3.out" });
+                const initialCamera = getCameraParamsForState(0);
+                gsap.set(stage, { x: initialCamera.x, y: initialCamera.y, scale: initialCamera.scale, transformOrigin: "0 0" });
 
                 waypoints.forEach((wp) => {
                     const pos = getTransformedPos(wp.p);
@@ -419,6 +545,10 @@ const getSlotClasses = (slot: string) => {
 
                 gsap.set(pathMain, { drawSVG: "0%" });
                 gsap.set(otherPaths, { drawSVG: "0%" });
+                gsap.set('#footer-container', { yPercent: 100 });
+
+                // Starting label — camera at path origin, nothing drawn yet
+                journeyTimeline.addLabel("journey-start");
 
                 let lastP = 0;
 
@@ -427,17 +557,31 @@ const getSlotClasses = (slot: string) => {
                     const stationEl = document.querySelector(wp.id) as HTMLElement;
                     const segmentTracker = { progress: lastP };
 
+                    const startVal = lastP;
+                    const endVal = wp.p;
+                    const startPos = getStationPos(index + 1);
+                    const endPos = getStationPos(index + 2);
+
                     journeyTimeline.to(segmentTracker, {
                         progress: wp.p,
                         ease: "none",
                         duration: duration * 30,
                         onUpdate: function() {
                             const p = segmentTracker.progress;
-                            const currentPos = getTransformedPos(p);
+                            const s = (p - startVal) / (endVal - startVal || 1);
                             gsap.set(pathMain, { drawSVG: `${p * 100}%` });
-                            const target = getCameraPos(currentPos.x, currentPos.y);
-                            moveCameraX(target.x);
-                            moveCameraY(target.y);
+                            gsap.set(otherPaths, { drawSVG: `${Math.min(p / 0.9, 1) * 100}%` });
+
+                            // Cinematic zoom out-in centered trajectory
+                            // Scale S: goes from 1.0 -> 0.4 -> 1.0 in the middle of travel (s = 0.5)
+                            const S = 1.0 - 2.4 * s * (1.0 - s);
+                            const px = startPos.x + (endPos.x - startPos.x) * s;
+                            const py = startPos.y + (endPos.y - startPos.y) * s;
+                            gsap.set(stage, {
+                                x: -px * S + window.innerWidth / 2,
+                                y: -py * S + window.innerHeight / 2,
+                                scale: S
+                            });
                         }
                     });
 
@@ -464,7 +608,11 @@ const getSlotClasses = (slot: string) => {
                             ease: "luxe" 
                         }, "-=0.8");
 
-                        journeyTimeline.to({}, { duration: 2 }); 
+                        // Labeled anchor for stopping programmatic scrolls
+                        journeyTimeline.addLabel(`station-${wp.id.replace('#station-', '')}-active`);
+
+                        // HOLD: shortened to 0.1 to prevent visual delay when initiating transitions
+                        journeyTimeline.to({}, { duration: 0.1 }); 
 
                         journeyTimeline.to(allWindows, { autoAlpha: 0, scale: 0.8, duration: 0.5, stagger: 0.05 });
                         if (allFrames.length > 0) {
@@ -481,33 +629,277 @@ const getSlotClasses = (slot: string) => {
                     lastP = wp.p;
                 });
 
-                const finalScale = 0.15;
                 const remainingDuration = (1 - lastP) * 10;
                 const lastStation = document.querySelector(waypoints[waypoints.length - 1].id);
                 const finalTracker = { progress: lastP };
 
+                const startValFinal = lastP;
+                const endValFinal = 1;
+                const startPosFinal = getStationPos(6); // Sponsors
+                const endPosFinal = getStationPos(7); // Outro center
+
                 journeyTimeline
                     .to(lastStation, { autoAlpha: 0, duration: 0.5 }, "+=0.5")
+                    // Pre-draw the rest of the line while off-screen to avoid raster thrashing during scale animation
+                    .set(pathMain, { drawSVG: "100%" })
+                    .set(otherPaths, { drawSVG: "100%" })
                     .to(finalTracker, {
                         progress: 1,
                         ease: "none",
                         duration: remainingDuration * 0.5,
                         onUpdate: function() {
                             const p = finalTracker.progress;
-                            const currentPos = getTransformedPos(p);
-                            gsap.set(pathMain, { drawSVG: `${p * 100}%` });
-                            const target = getCameraPos(currentPos.x, currentPos.y);
-                            moveCameraX(target.x);
-                            moveCameraY(target.y);
+                            const s = (p - startValFinal) / (endValFinal - startValFinal || 1);
+
+                            // Outro zoom-out: scale S goes from 1.0 -> 0.06
+                            const S = 1.0 + (0.06 - 1.0) * s;
+                            const px = startPosFinal.x + (endPosFinal.x - startPosFinal.x) * s;
+                            const py = startPosFinal.y + (endPosFinal.y - startPosFinal.y) * s;
+                            gsap.set(stage, {
+                                x: -px * S + window.innerWidth / 2,
+                                y: -py * S + window.innerHeight / 2,
+                                scale: S,
+                                force3D: true
+                            });
+
+                            // Compensate stroke width so lines don't vanish due to massive scale down
+                            gsap.set('#journey-svg g', { strokeWidth: 15 + (80 - 15) * s });
                         }
                     })
-                    .to(stage, { 
-                        scale: finalScale, 
-                        x: () => window.innerWidth / 2 - (stageWidth * finalScale) / 2, 
-                        y: () => window.innerHeight / 2 - (stageHeight * finalScale) / 2, 
-                        ease: "luxe", 
-                        duration: remainingDuration * 0.5 
-                    });
+                    .addLabel("outro")
+                    // Slide down lightweight footer over the canvas instead of moving the heavy canvas
+                    .to('#footer-container', { yPercent: 0, duration: 15, ease: "none" })
+                    .addLabel("footer");
+
+                // CINEMATIC SECTION SCROLL STATE MACHINE
+                let currentStateIndex = 0;
+                let isAnimating = false;
+
+                const STATES = [
+                    { name: 'hero', label: null, scrollY: 0 },
+                    { name: 'about', label: 'station-about-active', scrollY: 0 },
+                    { name: 'mission', label: 'station-mission-active', scrollY: 0 },
+                    { name: 'subsystems', label: 'station-subsystems-active', scrollY: 0 },
+                    { name: 'history', label: 'station-history-active', scrollY: 0 },
+                    { name: 'sponsors', label: 'station-sponsors-active', scrollY: 0 },
+                    { name: 'outro', label: 'outro', scrollY: 0 },
+                    { name: 'footer', label: 'footer', scrollY: 0 }
+                ];
+
+                const updateScrollYPositions = () => {
+                    // Use client rect and window scroll offset for pixel-perfect document Y coordination
+                    const targetY = journeyContainer ? journeyContainer.getBoundingClientRect().top + window.scrollY : window.innerHeight;
+                    for (let i = 1; i < STATES.length; i++) {
+                        STATES[i].scrollY = targetY;
+                    }
+                    console.log("Cinematic Scroll: Scroll Y positions initialized:", STATES.map(s => `${s.name}: ${s.scrollY}`));
+                };
+                updateScrollYPositions();
+
+                const goToState = (targetIndex: number) => {
+                    if (targetIndex < 0 || targetIndex >= STATES.length) return;
+                    if (isAnimating) return;
+                    isAnimating = true;
+
+                    const targetState = STATES[targetIndex];
+                    const currentState = STATES[currentStateIndex];
+                    const lenis = (window as any).lenis;
+
+                    console.log(`Cinematic Scroll: Transitioning ${currentState.name} (${currentState.scrollY}px) -> ${targetState.name} (${targetState.scrollY}px)`);
+
+                    const isFooterTransition = targetIndex === 7 || currentStateIndex === 7;
+                    const transitionDuration = reduceMotion ? 0 : (isFooterTransition ? 1.5 : 6.0);
+                    const scrollDuration = reduceMotion ? 0 : 4.0;
+
+                    const isReturningToHero = currentStateIndex === 1 && targetIndex === 0;
+                    const isLeavingHero = currentStateIndex === 0 && targetIndex === 1;
+
+                    // 1. Scroll transition between hero and journey sections (using Lenis native scrollTo)
+                    if (currentState.scrollY !== targetState.scrollY && lenis) {
+                        if (isReturningToHero && !reduceMotion) {
+                            // Delay the scroll up so the journey line undraws first, 
+                            // overlapping slightly with the start of the scroll up
+                            setTimeout(() => {
+                                lenis.scrollTo(targetState.scrollY, { duration: scrollDuration });
+                            }, scrollDuration * 0.5 * 1000);
+                        } else {
+                            lenis.scrollTo(targetState.scrollY, { duration: scrollDuration });
+                        }
+                    }
+
+                    // Delay the timeline start if transitioning from hero to journey
+                    // Overlap slightly with the end of the scroll (50% of duration) to eliminate empty time
+                    const delayTimeline = (isLeavingHero && !reduceMotion) ? scrollDuration * 0.5 : 0;
+
+                    // 2. Play journey timeline to the corresponding label anchor using GSAP native tweenTo
+                    if (targetState.label) {
+                        journeyTimeline.tweenTo(targetState.label, {
+                            delay: delayTimeline,
+                            duration: transitionDuration,
+                            ease: isLeavingHero ? "power2.inOut" : "luxe",
+                            onComplete: () => {
+                                currentStateIndex = targetIndex;
+                                isAnimating = false;
+                                console.log(`Cinematic Scroll: Arrived at ${targetState.name}`);
+                            }
+                        });
+                    } else {
+                        // Return journey stage camera to path start (Hero state)
+                        journeyTimeline.tweenTo(0, {
+                            duration: scrollDuration,
+                            ease: isReturningToHero ? "power2.inOut" : "luxe",
+                            onComplete: () => {
+                                if (isReturningToHero && !reduceMotion) {
+                                    // The physical scroll up started at 50% of this timeline's duration and takes scrollDuration to finish.
+                                    // We must wait for it to complete before releasing the isAnimating lock.
+                                    setTimeout(() => {
+                                        currentStateIndex = targetIndex;
+                                        isAnimating = false;
+                                        console.log(`Cinematic Scroll: Returned to ${targetState.name}`);
+                                    }, scrollDuration * 0.5 * 1000);
+                                } else {
+                                    currentStateIndex = targetIndex;
+                                    isAnimating = false;
+                                    console.log(`Cinematic Scroll: Returned to ${targetState.name}`);
+                                }
+                            }
+                        });
+                    }
+                };
+
+                const handleScrollIntent = (direction: 'up' | 'down') => {
+                    if (isAnimating) return;
+                    if (direction === 'down') {
+                        if (currentStateIndex < STATES.length - 1) {
+                            goToState(currentStateIndex + 1);
+                        }
+                    } else if (direction === 'up') {
+                        if (currentStateIndex > 0) {
+                            goToState(currentStateIndex - 1);
+                        }
+                    }
+                };
+
+                // CAPTURE PHASE GESTURE INTERCEPTORS
+                // Registering on capturing phase and calling stopImmediatePropagation
+                // prevents manual scroll inputs from reaching Lenis or the browser.
+                const wheelHandler = (e: WheelEvent) => {
+                    const active = currentStateIndex > 0 || isAnimating;
+                    if (active) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                    }
+                    if (isAnimating) return;
+                    
+                    if (Math.abs(e.deltaY) > 8) {
+                        // Cancel the event so it does not cause native scroll/fight with scrollTo
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        handleScrollIntent(e.deltaY > 0 ? 'down' : 'up');
+                    }
+                };
+
+                let touchStartY = 0;
+                const touchStartHandler = (e: TouchEvent) => {
+                    touchStartY = e.touches[0].clientY;
+                };
+
+                const touchMoveHandler = (e: TouchEvent) => {
+                    if (currentStateIndex > 0 || isAnimating) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                    }
+                };
+
+                const touchEndHandler = (e: TouchEvent) => {
+                    if (isAnimating) return;
+                    const touchEndY = e.changedTouches[0].clientY;
+                    const deltaY = touchStartY - touchEndY;
+                    
+                    if (Math.abs(deltaY) > 30) {
+                        handleScrollIntent(deltaY > 0 ? 'down' : 'up');
+                    }
+                };
+
+                const keydownHandler = (e: KeyboardEvent) => {
+                    if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Space'].includes(e.code)) {
+                        if (currentStateIndex > 0 || isAnimating) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                        }
+                    }
+                    if (isAnimating) return;
+
+                    if (e.code === 'ArrowDown' || e.code === 'PageDown' || (e.code === 'Space' && !e.shiftKey)) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        handleScrollIntent('down');
+                    } else if (e.code === 'ArrowUp' || e.code === 'PageUp' || (e.code === 'Space' && e.shiftKey)) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        handleScrollIntent('up');
+                    }
+                };
+
+                const mousedownHandler = (e: MouseEvent) => {
+                    if (e.button === 1) { // Middle click auto-scroll
+                        if (currentStateIndex > 0 || isAnimating) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                        }
+                    }
+                };
+
+                const resizeHandler = () => {
+                    updateScrollYPositions();
+                    if (currentStateIndex > 0) {
+                        const lenis = (window as any).lenis;
+                        if (lenis) {
+                            lenis.scrollTo(STATES[currentStateIndex].scrollY, { duration: 0 });
+                        }
+                    }
+                    const currentCam = getCameraParamsForState(currentStateIndex);
+                    gsap.set(stage, { x: currentCam.x, y: currentCam.y, scale: currentCam.scale });
+                };
+
+                const loadHandler = () => {
+                    const lenis = (window as any).lenis;
+                    if (lenis) {
+                        lenis.scrollTo(0, { duration: 0 });
+                        lenis.start();
+                    }
+                };
+
+                // Register capturing phase listeners
+                window.addEventListener('wheel', wheelHandler, { capture: true, passive: false });
+                window.addEventListener('touchstart', touchStartHandler, { capture: true, passive: true });
+                window.addEventListener('touchmove', touchMoveHandler, { capture: true, passive: false });
+                window.addEventListener('touchend', touchEndHandler, { capture: true, passive: true });
+                window.addEventListener('keydown', keydownHandler, { capture: true });
+                window.addEventListener('mousedown', mousedownHandler, { capture: true });
+                window.addEventListener('resize', resizeHandler);
+                window.addEventListener('load', loadHandler);
+
+                // Initial reset run to guarantee start conditions
+                setTimeout(() => {
+                    const lenis = (window as any).lenis;
+                    if (lenis) {
+                        lenis.scrollTo(0, { duration: 0 });
+                        lenis.start();
+                    }
+                }, 50);
+
+                // Store cleanup for later (do NOT return early — code below still needs to run)
+                cleanupJourney = () => {
+                    window.removeEventListener('wheel', wheelHandler, { capture: true });
+                    window.removeEventListener('touchstart', touchStartHandler, { capture: true });
+                    window.removeEventListener('touchmove', touchMoveHandler, { capture: true });
+                    window.removeEventListener('touchend', touchEndHandler, { capture: true });
+                    window.removeEventListener('keydown', keydownHandler, { capture: true });
+                    window.removeEventListener('mousedown', mousedownHandler, { capture: true });
+                    window.removeEventListener('resize', resizeHandler);
+                    window.removeEventListener('load', loadHandler);
+                };
             }
 
             // INTERACTIVE SUBTEAMS SCRIPT
@@ -549,8 +941,8 @@ const getSlotClasses = (slot: string) => {
                 S: "Our commitment to safeguarding the environment is something we actively prove every day. Raising public awareness for Electric and Autonomous mobility is our main focus.",
                 T1: "Our team has had an unparalleled course in the Formula Student competitions it has participated. Our performance is improving exponentially.",
                 U: "We believe in long-lasting relationships. By supporting our work, you become part of our ever-growing family.",
-                R2: "Aristurtle’s sponsorship program offers strategic promotion solutions to all of its sponsors by creating unique, stimulative content. By leveraging our exposure on mass and social media, we are able to create value for our sponsors that exceeds the amount of their contribution.",
-                T2: "Our team members are exceptionally skilled individuals and we constantly strive to contribute to each and every one’s personal development and cultivation.",
+                R2: "Aristurtle's sponsorship program offers strategic promotion solutions to all of its sponsors by creating unique, stimulative content. By leveraging our exposure on mass and social media, we are able to create value for our sponsors that exceeds the amount of their contribution.",
+                T2: "Our team members are exceptionally skilled individuals and we constantly strive to contribute to each and every one's personal development and cultivation.",
                 L: "We provide engineering students with hands-on practical experience by bridging the gap between theory and practice.",
                 E: "Aristurtle is the Greek Electric Vehicle Formula Student team with the most participations and distinctions in international FSAE competitions."
             };
@@ -567,7 +959,6 @@ const getSlotClasses = (slot: string) => {
                 
                 if (!container || !wrapper) return;
                 
-                // 1. Kill all active timelines and specific element tweens
                 if (marqueeTimeline) {
                     marqueeTimeline.kill();
                     marqueeTimeline = null;
@@ -577,19 +968,13 @@ const getSlotClasses = (slot: string) => {
                 const newText = acrosticDescriptions[entryID];
                 if (!newText) return;
 
-                // 2. FULL DOM RESET - This removes all SplitText artifacts (spans/divs)
-                // and ensures we are working with fresh nodes every time.
                 wrapper.innerHTML = `<p id="acrostic-expl-text" class="font-sans text-white text-[min(10cqw,12cqh)] leading-none uppercase font-black tracking-tighter italic inline-block">${newText}</p>`;
                 const textEl = document.getElementById('acrostic-expl-text');
                 if (!textEl) return;
 
-                // 3. Measure viewWidth AFTER reset
                 const viewWidth = container.offsetWidth || 0;
-                
-                // 4. Create NEW split
                 const split = new SplitText(textEl, { type: "chars" });
                 
-                // 5. Setup Wrapper and Container
                 gsap.set(wrapper, { x: viewWidth });
                 gsap.set(container, { autoAlpha: 1 });
                 
@@ -606,14 +991,12 @@ const getSlotClasses = (slot: string) => {
                     }
                 });
 
-                // Move from viewWidth to -textWidth
                 marqueeTimeline.to(wrapper, {
                     x: -textWidth,
                     duration: duration,
                     ease: "none"
                 }, 0);
 
-                // Settle characters as they move into the window
                 split.chars.forEach((char, i) => {
                     const charOffset = char.offsetLeft; 
                     const appearTime = charOffset / speed;
@@ -639,13 +1022,21 @@ const getSlotClasses = (slot: string) => {
                 });
             };
 
-            (window as any).onAcrosticHover = (id: string) => {
-                if (id === currentAcrosticId) return;
-                currentAcrosticId = id;
-                startMarquee(id);
-            };
+            const acrosticItems = document.querySelectorAll('.acrostic-item');
+            console.log(`[Acrostic] Found ${acrosticItems.length} acrostic items`);
+            acrosticItems.forEach((item) => {
+                item.addEventListener('mouseenter', () => {
+                    const id = item.getAttribute('data-id');
+                    console.log(`[Acrostic] Hover on item: ${id}`);
+                    if (id) {
+                        if (id === currentAcrosticId) return;
+                        currentAcrosticId = id;
+                        startMarquee(id);
+                    }
+                });
+            });
 
-            const acrosticList = document.querySelector('#station-subsystems .flex-col.gap-\\[0\\.5cqh\\]');
+            const acrosticList = document.getElementById('acrostic-list-container');
             if (acrosticList) {
                 acrosticList.addEventListener('mouseleave', () => {
                     currentAcrosticId = "";
@@ -655,10 +1046,17 @@ const getSlotClasses = (slot: string) => {
             }
 
 			return () => {
+				if (cleanupJourney) cleanupJourney();
 				context.revert();
 			};
 		});
-	});
+	};
+
+	if (document.readyState === 'loading') {
+		window.addEventListener('DOMContentLoaded', initJourney);
+	} else {
+		initJourney();
+	}
 </script>
 
 <style is:global>
@@ -667,4 +1065,12 @@ const getSlotClasses = (slot: string) => {
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 137, 0, 0.3); border-radius: 10px; }
+    
+    /* Hide scrollbars for the cinematic homepage experience */
+    html, body {
+        scrollbar-width: none; /* Firefox */
+    }
+    html::-webkit-scrollbar, body::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
 </style>

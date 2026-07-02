@@ -8,12 +8,16 @@ interface Props {
 
 const { forceCompact = false } = Astro.props;
 
+const baseUrl = import.meta.env.BASE_URL;
+
 const menuItems = [
-  { label: 'Subteams', ariaLabel: 'Go to Subteams', link: '#subteams' },
-  { label: 'History', ariaLabel: 'Go to History', link: '#history' },
-  { label: 'Sponsors', ariaLabel: 'Go to Sponsors', link: '#sponsors' },
-  { label: 'Contact', ariaLabel: 'Go to Contact', link: '/contact' },
-  { label: 'Recruitment', ariaLabel: 'Join the team', link: '#recruitment' }
+  { label: 'ABOUT US', ariaLabel: 'About Us', link: `${baseUrl}about-us` },
+  { label: 'SEASONS', ariaLabel: 'Seasons', link: `${baseUrl}seasons` },
+  { label: 'GARAGE', ariaLabel: 'Garage', link: `${baseUrl}garage` },
+  { label: 'SUBDIVISIONS', ariaLabel: 'Subdivisions', link: `${baseUrl}subdivisions` },
+  { label: 'SPONSORS', ariaLabel: 'Sponsors', link: `${baseUrl}sponsors` },
+  { label: 'RECRUITMENT', ariaLabel: 'Recruitment', link: `${baseUrl}recruitment` },
+  { label: 'CONTACT', ariaLabel: 'Contact', link: `${baseUrl}contact` }
 ];
 
 const socialItems = [

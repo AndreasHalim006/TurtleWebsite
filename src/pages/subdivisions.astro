@@ -1,0 +1,409 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import Footer from '../components/Footer.astro';
+
+// Team photos — reuse the same images referenced in the home page
+import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
+import teamPhoto2 from '../images/Aristurtle_photo_2-1_2.jpg';
+import teamPhoto3 from '../images/Aristurtle_photo_3-1_2.jpg';
+import teamPhoto4 from '../images/Untitled-7 1.jpg';
+import teamPhoto5 from '../images/Untitled-12 3.jpg';
+import teamPhoto6 from '../images/team.png';
+import teamPhoto7 from '../images/IMG_8908.jpg';
+
+interface SubTeam {
+    name: string;
+    description: string;
+    bullets?: string[];
+}
+
+interface Subdivision {
+    id: string;
+    name: string;
+    tagline: string;
+    description: string;
+    image: ImageMetadata;
+    subteams?: SubTeam[];
+    bullets?: string[];
+}
+
+const subdivisions: Subdivision[] = [
+    {
+        id: 'mechanical',
+        name: 'Mechanical',
+        tagline: 'The backbone of the car',
+        description: 'The Mechanical subdivision encompasses the core physical systems of the race car — from the aerodynamic package that generates downforce, to the carbon-fiber monocoque chassis, the suspension geometry, and the drivetrain that delivers power to the wheels.',
+        image: teamPhoto1,
+        subteams: [
+            {
+                name: 'Aerodynamics',
+                description: 'Maximizing downforce and ensuring adequate cooling of the single-seater.',
+                bullets: [
+                    'Development and optimization of the aerodynamic package (front/rear wing, floor)',
+                    'Computational Fluid Dynamics (CFD) analysis for airflow studies',
+                    'Practical validation of simulation data through on-track experiments',
+                ],
+            },
+            {
+                name: 'Chassis & Composites',
+                description: 'Strategic mass distribution for optimal dynamic behavior during driving.',
+                bullets: [
+                    'Structural design (CAD) of the aluminum monocoque chassis',
+                    'FEA analysis to verify the stiffness of the aluminum and carbon-fiber components, targeting minimum weight',
+                    'Shaping and welding of the aluminum chassis, as well as manufacturing carbon-fiber parts for the aerodynamic aids and electric motors',
+                    'Research and experiments on composite materials',
+                    'Design of the seat and driving position with a focus on comfort, accessibility, and driver safety',
+                ],
+            },
+            {
+                name: 'Suspension',
+                description: 'Engineering maximum precision and immediate steering response.',
+                bullets: [
+                    'Kinematic analysis for determining the suspension layout',
+                    'Study for maximum accuracy and immediate steering response',
+                    'Technical design and calculation of the braking system',
+                    'Component verification through simulations (CAE)',
+                    'Topology optimization of hubs (uprights & wheel hubs) to reduce unsprung mass',
+                    'Setup and tuning of the suspension during testing sessions',
+                ],
+            },
+            {
+                name: 'Drivetrain',
+                description: 'Mechanical design of custom in-wheel planetary gear systems.',
+                bullets: [
+                    'Mechanical design of prototype motors',
+                    'Design of custom-built planetary gear systems inside the wheel hub (in-wheel)',
+                    'FEA utilization for low weight and high structural integrity',
+                    'Management of manufacturing methods and part production',
+                    'Experimental validation of the transmission through dedicated test rigs',
+                ],
+            },
+        ],
+    },
+    {
+        id: 'powertrain',
+        name: 'Powertrain',
+        tagline: 'High-voltage power delivery',
+        description: 'The Powertrain subdivision is responsible for the high-voltage systems, specifically the electrical drive systems of the vehicle. These systems broadly include the Energy Accumulator, the Inverters, and the Electric Motors. The role of the Powertrain system in an electric race car is pivotal for its performance. Team members must address challenges by developing innovative and effective solutions for the design, integration, and construction of systems that comply with the strict Formula Student regulations — always aiming to minimize weight and optimize overall vehicle performance.',
+        image: teamPhoto5,
+        bullets: [
+            'Analysis and modeling of the electrical and thermal behavior of the Accumulator',
+            'Electrical and mechanical design and construction of the Accumulator segments and battery connections',
+            'Electrical and mechanical design and construction of the Electric Motors',
+            'Simulation and implementation of motor control systems',
+            'Modeling and simulation of the overall Powertrain system',
+            'High-voltage wiring of the system',
+            'Study and design of the Powertrain cooling system',
+        ],
+    },
+    {
+        id: 'electronics',
+        name: 'Electronics & Embedded',
+        tagline: 'Low-voltage nervous system',
+        description: 'The Low Voltage subdivision is responsible for all low-voltage systems, which play a critical role in the functionality, safety, and performance of the single-seater. The team develops, designs, and implements systems that manage communication, control, and interaction of all critical subsystems of the car — combining schematic and PCB design, embedded software development, and electrical construction and maintenance to ensure smooth and effective operation of the vehicle\'s entire electrical system.',
+        image: teamPhoto7,
+        bullets: [
+            'Design, simulation, and manufacturing of Printed Circuit Boards (PCBs)',
+            'Microcontroller programming',
+            'Integration and management of inter-module communication via protocols such as CAN, MQTT, UART, and SPI',
+            'Design, construction, and integration of the Wiring Harness',
+            'Management of sensors and actuators',
+            'Development of driver interface and telemetry systems (displays, indicators, controls)',
+            'Design of 3D-printed prototype parts for integration into the car via 3D CAD',
+        ],
+    },
+    {
+        id: 'it-software',
+        name: 'IT & Software Development',
+        tagline: 'Digital infrastructure architect',
+        description: 'The IT subdivision is the architect of Aristurtle\'s digital ecosystem. Our mission is the integration of cutting-edge technologies that optimize workflows across the entire team and transform the massive volume of vehicle data into a competitive advantage. Through the continuous evolution of our digital infrastructure, IT ensures that the team stays at the forefront of technology, enabling engineers to make immediate and accurate data-driven decisions.',
+        image: teamPhoto2,
+        bullets: [
+            'Design and maintenance of the central server and cloud infrastructure',
+            'Development of custom webapps such as the Telemetry system (real-time processing and visualization of vehicle data), Team Radio, Online Inventory, and more',
+            'Data Engineering for secure storage and rapid processing of massive data volumes, creating reliable databases that feed analyses across the team',
+            'Creation of automation and AI agent flows for intelligent data processing and simplification of complex procedures, acting as digital assistants for the team',
+            'Development and technical management of the official website, ensuring the team\'s digital presence',
+        ],
+    },
+    {
+        id: 'vehicle-dynamics',
+        name: 'Vehicle Dynamics & Control',
+        tagline: 'Performance through physics',
+        description: 'The Vehicle Dynamics & Controls subdivision is responsible for studying the dynamic behavior of the single-seater and defining the design targets for the entire team. Through advanced simulations and custom control algorithms, the team optimizes track performance, ensuring absolute vehicle handling.',
+        image: teamPhoto6,
+        subteams: [
+            {
+                name: 'Master the Track',
+                description: 'Analyze the dynamic behavior of the single-seater on track and unlock its peak performance through understanding the physical forces that act upon it.',
+            },
+            {
+                name: 'Bridge the Gap',
+                description: 'Develop the team\'s custom Lap Time Simulator, combining advanced mathematical analyses with real-world track data to predict vehicle behavior.',
+            },
+            {
+                name: 'The Math Behind the Speed',
+                description: 'Create complex mathematical models for tires, suspension, and aerodynamics, laying the foundations for the ideal car setup.',
+            },
+            {
+                name: 'Harness the Power',
+                description: 'Design and integrate top-tier control systems such as Torque Vectoring and Traction Control, defining the ultimate driving experience and precise vehicle handling.',
+            },
+        ],
+    },
+    {
+        id: 'driverless',
+        name: 'Driverless',
+        tagline: 'Autonomous racing intelligence',
+        description: 'The Autonomous System subdivision is responsible for converting our vehicle into a fully autonomous race car through software development, sensor installation, and machine learning algorithms. Our goal is an autonomous racing vehicle equipped with a powerful computing unit and advanced sensors, capable of completing the competition courses at maximum possible speed.',
+        image: teamPhoto3,
+        subteams: [
+            {
+                name: 'Perception',
+                description: 'Perception is the "eyes" of the autonomous system. Its role is to recognize the cones that delineate the track and to accurately calculate their distance from the car. Spatial mapping is achieved through sensors (monocular/stereo cameras, LiDAR), while neural networks and mathematical algorithms enable cone detection and position estimation.',
+                bullets: [
+                    'Code development for sensor processing',
+                    'Neural network training',
+                    'Algorithm application and optimization',
+                ],
+            },
+            {
+                name: 'State Estimation & SLAM',
+                description: 'In autonomous driving, state estimation refers to the process of continuously determining the vehicle\'s current position, velocity, and orientation. This is achieved by fusing data from sensors such as GPS, IMU, and wheel encoders, along with mathematical models that describe the vehicle\'s dynamics through algorithms that account for noise and system uncertainty.',
+                bullets: [
+                    'Combination of software and sensors',
+                    'Control and optimization techniques',
+                    'Application of stochastic methods and vehicle dynamics',
+                ],
+            },
+            {
+                name: 'Path Planning & Control',
+                description: 'One of the most critical elements in autonomous driving is determining the optimal path the vehicle must follow within the track. This is achieved through path planning by implementing algorithms that aim to chart a trajectory for the car to follow. Equally important is control, which ensures the car faithfully follows the computed path through various controllers that continuously adjust speed and steering.',
+            },
+            {
+                name: 'Simulation',
+                description: 'The development of a simulation system for a Formula Student Driverless team involves creating a digital environment that realistically represents the track, the car, and its sensors — with the goal of testing and optimizing autonomous driving algorithms. Through the simulator, the team can develop, test, and optimize the perception, localization, trajectory planning, and control subsystems in a controlled and realistic simulated environment.',
+            },
+        ],
+    },
+    {
+        id: 'operations',
+        name: 'Operations',
+        tagline: 'Business & communications core',
+        description: 'The Operations subdivision is the business and communications nucleus of Aristurtle. Connecting the engineering work with the market, it is responsible for securing resources, promoting our public image, and managing all non-technical processes.',
+        image: teamPhoto4,
+        subteams: [
+            {
+                name: 'Economic Resources',
+                description: 'Sourcing sponsorships (financial & material) and maintaining B2B relationships with partners.',
+            },
+            {
+                name: 'Business Plan',
+                description: 'Market research and development of the business model (pitch) for competitions.',
+            },
+            {
+                name: 'Film & Photography',
+                description: 'Full audiovisual coverage (capture and post-production) of team activities, from daily life at Ikiskos to race events.',
+            },
+            {
+                name: 'Graphic Design',
+                description: 'Design of the visual identity, production of promotional material, and curation of the car\'s livery.',
+            },
+            {
+                name: 'Social Media',
+                description: 'Management of our digital presence, content strategy, and daily audience engagement across social platforms.',
+            },
+        ],
+    },
+];
+---
+
+<BaseLayout title="Subdivisions | ARISTURTLE" description="Explore the 7 specialized subdivisions that power Aristurtle's Formula Student racing team." forceCompact={true}>
+    <div class="subdivisions-container pt-64 pb-64 w-full max-w-[1800px] mx-auto overflow-hidden">
+
+        <!-- HEADER -->
+        <header class="sub-reveal">
+            <h1 class="text-5xl md:text-8xl font-black uppercase mb-12 leading-none tracking-tight">
+                Sub<span class="text-[var(--brand-orange)]">divisions</span>
+            </h1>
+            <div class="h-1 w-32 bg-[var(--brand-orange)] mb-10"></div>
+            <p class="text-xl md:text-3xl text-gray-400 font-light max-w-4xl leading-relaxed md:leading-loose">
+                Our team is structured into specialized subdivisions, each focused on a critical aspect of designing, building, and racing our electric and autonomous single-seater.
+            </p>
+        </header>
+
+        <!-- SPACER -->
+        <div class="h-32 md:h-56"></div>
+
+        <!-- SUBDIVISION INDEX -->
+        <nav class="sub-reveal mb-32 md:mb-56">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6">
+                {subdivisions.map((sub, i) => (
+                    <a
+                        href={`#${sub.id}`}
+                        class="group flex flex-col items-center gap-5 p-6 md:p-8 border border-[#222] bg-[#0A0A0A] hover:border-[var(--brand-orange)] transition-colors duration-300"
+                    >
+                        <span class="text-[var(--brand-orange)] font-bold text-sm tracking-widest uppercase opacity-50 group-hover:opacity-100 transition-opacity">
+                            {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <span class="text-white text-sm md:text-base font-semibold uppercase tracking-wider text-center leading-tight">
+                            {sub.name}
+                        </span>
+                    </a>
+                ))}
+            </div>
+        </nav>
+
+        <!-- SUBDIVISION SECTIONS -->
+        {subdivisions.map((sub, index) => (
+            <section id={sub.id} class="sub-section mb-40 md:mb-72">
+                <!-- Section header with number + name -->
+                <div class="sub-reveal flex items-baseline gap-6 md:gap-10 mb-16 md:mb-28">
+                    <span class="text-[var(--brand-orange)] font-black text-6xl md:text-9xl leading-none opacity-30">
+                        {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div>
+                        <h2 class="text-4xl md:text-7xl font-black uppercase tracking-tight text-white">
+                            {sub.name}
+                        </h2>
+                        <p class="text-base md:text-xl text-[var(--brand-orange)] font-light uppercase tracking-widest mt-3">
+                            {sub.tagline}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Image + description block -->
+                <div class="sub-reveal grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 mb-20 md:mb-32">
+                    <div class="relative overflow-hidden aspect-[16/10] bg-[#0A0A0A]">
+                        <Image
+                            src={sub.image}
+                            alt={`${sub.name} subdivision`}
+                            class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
+                            widths={[400, 800, 1200]}
+                            sizes="(max-width: 1024px) 100vw, 50vw"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60"></div>
+                    </div>
+
+                    <div class="flex flex-col justify-center py-4">
+                        <p class="text-gray-300 font-light leading-relaxed md:leading-loose text-lg md:text-2xl">
+                            {sub.description}
+                        </p>
+
+                        {/* Top-level bullets (for subdivisions without sub-teams, e.g. Powertrain) */}
+                        {sub.bullets && (
+                            <ul class="mt-12 space-y-5">
+                                {sub.bullets.map((bullet) => (
+                                    <li class="flex items-start gap-5 text-gray-400 font-light text-base md:text-lg">
+                                        <span class="text-[var(--brand-orange)] mt-1.5 flex-shrink-0">
+                                            <svg width="10" height="10" viewBox="0 0 8 8" fill="currentColor"><rect width="8" height="8"/></svg>
+                                        </span>
+                                        <span class="leading-relaxed md:leading-loose">{bullet}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                </div>
+
+                {/* Sub-teams grid */}
+                {sub.subteams && (
+                    <div class={`grid grid-cols-1 ${sub.subteams.length <= 3 ? 'md:grid-cols-' + sub.subteams.length : sub.subteams.length === 4 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-10 md:gap-14`}>
+                        {sub.subteams.map((st) => (
+                            <div class="sub-card bg-[#0A0A0A] p-12 md:p-16 border border-[#1a1a1a] hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
+                                <h3 class="text-xl md:text-2xl font-bold uppercase tracking-wider text-white mb-8 group-hover:text-[var(--brand-orange)] transition-colors duration-300">
+                                    {st.name}
+                                </h3>
+                                <p class="text-gray-400 font-light leading-relaxed md:leading-loose text-base md:text-lg">
+                                    {st.description}
+                                </p>
+                                {st.bullets && (
+                                    <ul class="mt-10 space-y-4 pt-10 border-t border-[#1a1a1a]">
+                                        {st.bullets.map((bullet) => (
+                                            <li class="flex items-start gap-4 text-gray-500 font-light text-sm md:text-base">
+                                                <span class="text-[var(--brand-orange)] mt-1.5 flex-shrink-0 opacity-60">
+                                                    <svg width="8" height="8" viewBox="0 0 6 6" fill="currentColor"><rect width="6" height="6"/></svg>
+                                                </span>
+                                                <span class="leading-relaxed md:leading-loose">{bullet}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Section divider */}
+                {index < subdivisions.length - 1 && (
+                    <div class="mt-40 md:mt-72 border-t border-[#1a1a1a]"></div>
+                )}
+            </section>
+        ))}
+
+    </div>
+
+    <Footer />
+</BaseLayout>
+
+<style>
+    .subdivisions-container {
+        padding-left: 6vw;
+        padding-right: 6vw;
+    }
+    @media (min-width: 1024px) {
+        .subdivisions-container {
+            padding-left: 10vw;
+            padding-right: 10vw;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Reveal-on-scroll for major blocks
+    const reveals = gsap.utils.toArray('.sub-reveal');
+    reveals.forEach((element: any) => {
+        gsap.fromTo(element,
+            { y: 50, autoAlpha: 0 },
+            {
+                y: 0,
+                autoAlpha: 1,
+                duration: 1,
+                ease: 'luxe',
+                scrollTrigger: {
+                    trigger: element,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse',
+                },
+            }
+        );
+    });
+
+    // Staggered card animation
+    document.querySelectorAll('.sub-section').forEach((section) => {
+        const cards = section.querySelectorAll('.sub-card');
+        if (cards.length === 0) return;
+
+        gsap.fromTo(cards,
+            { y: 40, autoAlpha: 0 },
+            {
+                y: 0,
+                autoAlpha: 1,
+                duration: 0.7,
+                ease: 'luxe',
+                stagger: 0.1,
+                scrollTrigger: {
+                    trigger: cards[0],
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse',
+                },
+            }
+        );
+    });
+</script>

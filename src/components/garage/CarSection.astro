@@ -1,0 +1,179 @@
+---
+// src/components/garage/CarSection.astro
+import { Image } from 'astro:assets';
+import LogoLoop from '../reactbits/LogoLoop.jsx';
+
+interface Props {
+  car: {
+    id: string;
+    name: string;
+    years: string;
+    description: string;
+    image: string;
+    drawingImage: string;
+    specs: string[];
+    sponsors?: string[];
+    gallery?: string[];
+    categorizedSponsors?: { category: string, images: string[] }[];
+  };
+}
+
+const { car } = Astro.props;
+
+// Dynamically import all images in src/images
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/images/*.{jpeg,jpg,png,gif,svg}');
+const imagePath = `/src/images/${car.image}`;
+const drawingPath = `/src/images/${car.drawingImage}`;
+
+// Dynamically import sponsor images
+const sponsorImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/garage/sponsors/*.{jpeg,jpg,png,gif,svg,webp}', { eager: true });
+
+// Dynamically import gallery images
+const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/garage/gallery/*.{jpeg,jpg,png,gif,svg,webp}', { eager: true });
+
+---
+
+<section id={car.id} class="w-full flex flex-col relative pt-8 lg:pt-0">
+  
+  {/* Hero Image & Name */}
+  <div class="relative w-full h-[50vh] lg:h-[80vh] flex items-center justify-center overflow-hidden">
+    {/* Background Image */}
+    {car.gallery && car.gallery.length > 0 && galleryImages[`/src/images/garage/gallery/${car.gallery[0]}`] ? (
+      <Image 
+        src={galleryImages[`/src/images/garage/gallery/${car.gallery[0]}`].default} 
+        alt={`${car.name} Hero Image`}
+        class="absolute inset-0 w-full h-full object-cover opacity-50" 
+      />
+    ) : (
+      images[imagePath] && (
+        <Image 
+          src={images[imagePath]()} 
+          alt={car.name} 
+          class="absolute inset-0 w-full h-full object-cover opacity-50" 
+        />
+      )
+    )}
+    
+    {/* Gradient Overlay for blending */}
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent pointer-events-none"></div>
+
+    {/* Text Overlay */}
+    <div class="relative z-10 flex flex-col items-center justify-center text-center mt-12">
+      <h2 class="font-jura text-6xl sm:text-8xl lg:text-[10vw] font-bold uppercase text-white tracking-tighter leading-none drop-shadow-2xl">{car.name}</h2>
+      <span class="font-jura text-[--brand-orange] text-base lg:text-xl font-bold tracking-[0.3em] mt-4 z-20 bg-[#0A0A0A]/60 px-4 py-1 rounded backdrop-blur-sm border border-gray-800">{car.years}</span>
+    </div>
+  </div>
+
+  {/* Content Container */}
+  <div class="w-full max-w-[1800px] mx-auto px-6 lg:px-12 xl:px-24 flex flex-col py-16 gap-24">
+
+    {/* Description and Specs */}
+    <div class="flex flex-col lg:flex-row items-start justify-between gap-16">
+      
+      {/* Description */}
+      <div class="w-full lg:w-5/12 flex flex-col">
+        <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] mb-6">About the Car</h3>
+        <p class="font-jura text-gray-300 text-lg lg:text-xl leading-relaxed text-justify">
+          {car.description}
+        </p>
+      </div>
+
+      {/* Tech Specs (Bento Grid) */}
+      <div class="w-full lg:w-7/12 flex flex-col">
+        <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] mb-6">Technical Specifications</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {car.specs.map(spec => {
+            // Attempt to bold numbers for emphasis
+            const boldedSpec = spec.replace(/(\d+(?:\.\d+)?\s*[a-zA-Z%/"\\]*)/g, '<strong class="text-white text-lg">$1</strong>');
+            return (
+              <div class="bg-[#141414] border border-gray-800 p-6 rounded flex items-center justify-center text-center hover:border-[--brand-orange]/50 transition-colors">
+                <span class="font-jura text-gray-400 text-sm lg:text-base leading-snug" set:html={boldedSpec} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+
+  {/* Gallery */}
+  {car.gallery && car.gallery.length > 1 && (
+    <div class="mt-16 w-full pt-8 border-t border-gray-800">
+      <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] text-center mb-12">Gallery</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+        {car.gallery.slice(1).map(imgFile => {
+           const imgPath = `/src/images/garage/gallery/${imgFile}`;
+           const imgAsset = galleryImages[imgPath];
+           if (!imgAsset) return null;
+           return (
+             <div class="aspect-[4/3] w-full overflow-hidden rounded-md bg-[#111] group">
+               <img 
+                 src={imgAsset.default.src} 
+                 alt={`${car.name} Gallery Image`}
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] opacity-80 group-hover:opacity-100"
+                 loading="lazy"
+               />
+             </div>
+           );
+        })}
+      </div>
+    </div>
+  )}
+
+  {/* Sponsors */}
+  {car.categorizedSponsors && car.categorizedSponsors.length > 0 && (
+    <div class="mt-16 w-full pt-8 border-t border-gray-800">
+      <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] text-center mb-12">Partners</h3>
+      <div class="flex flex-col gap-20 pb-16 w-full mx-auto overflow-hidden">
+        {car.categorizedSponsors.map(cat => {
+          const logosData = cat.images
+            // Filter out the giant textual placeholder images based on keywords
+            .filter(sponsor => !sponsor.toLowerCase().includes('sponsor'))
+            .map(sponsor => {
+              const sponsorPath = `/src/images/garage/sponsors/${sponsor}`;
+              const sponsorAsset = sponsorImages[sponsorPath];
+              return sponsorAsset ? {
+                src: sponsorAsset.default.src,
+                alt: `${cat.category} Sponsor`
+              } : null;
+            }).filter(Boolean);
+          
+          if (logosData.length === 0) return null;
+          
+          // Wrap logos in a component that adds white backgrounds
+          return (
+            <div class="flex flex-col items-center w-full">
+              <h4 class="font-jura text-xs lg:text-sm text-gray-500 uppercase tracking-widest mb-6">{cat.category}</h4>
+              <div class="w-full max-w-5xl relative overflow-hidden flex items-center justify-center sponsor-loop">
+                <LogoLoop
+                  client:visible
+                  logos={logosData}
+                  speed={80}
+                  direction="left"
+                  logoHeight={50}
+                  gap={100}
+                  hoverSpeed={20}
+                  fadeOut
+                  fadeOutColor="#0a0a0a"
+                  scaleOnHover
+                  ariaLabel={`${cat.category} Sponsor logos`}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  )}
+
+  </div>
+</section>
+
+<style is:global>
+  /* Ensure all images inside LogoLoop get the white card styling */
+  .sponsor-loop img {
+    background-color: white !important;
+    padding: 0.5rem !important;
+    border-radius: 0.375rem !important; /* rounded-md */
+    object-fit: contain !important;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+// src/components/garage/GarageHero.astro
+---
+<section class="relative min-h-[70vh] flex flex-col items-center justify-center pt-32 pb-16 px-[5vw] max-w-[1800px] mx-auto overflow-hidden">
+  <div class="relative z-10 text-center flex flex-col items-center gap-6">
+    <h1 class="font-jura text-[10vw] md:text-8xl lg:text-[120px] font-bold text-white uppercase leading-[0.8] tracking-tighter garage-hero-title">
+      Our <span class="text-[--brand-orange]">Garage</span>
+    </h1>
+    <p class="font-jura text-gray-400 text-lg md:text-2xl max-w-2xl font-medium tracking-wide garage-hero-subtitle">
+      A decade of engineering excellence. Explore the evolution of Aristurtle's race cars, from our pioneer Electra to our latest innovations.
+    </p>
+  </div>
+  
+  <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce opacity-50 garage-hero-scroll">
+    <span class="font-jura text-xs tracking-[0.2em] uppercase text-gray-500">Scroll</span>
+    <div class="w-[1px] h-12 bg-gradient-to-b from-gray-500 to-transparent"></div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  
+  const initHero = () => {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 1.2 } });
+    
+    tl.fromTo('.garage-hero-title', 
+      { y: 100, opacity: 0, rotationX: 45 },
+      { y: 0, opacity: 1, rotationX: 0, duration: 1.5 }
+    )
+    .fromTo('.garage-hero-subtitle',
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1 },
+      "-=1"
+    )
+    .fromTo('.garage-hero-scroll',
+      { opacity: 0 },
+      { opacity: 0.5, duration: 1 },
+      "-=0.5"
+    );
+  };
+  
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', initHero);
+</script>

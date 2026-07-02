@@ -1,0 +1,235 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import { Image } from 'astro:assets';
+
+import heroImage from '../images/IMG_8908.jpg';
+
+const subdivisions = [
+    {
+        id: 'mechanical',
+        name: 'Mechanical',
+        description: 'Design, analyze, and manufacture the core physical structures, aerodynamics, and drivetrain of the race car.',
+    },
+    {
+        id: 'powertrain',
+        name: 'Powertrain',
+        description: 'Develop the high-voltage electrical drive systems, custom battery accumulator, and electric motors for peak performance.',
+    },
+    {
+        id: 'electronics',
+        name: 'Electronics & Embedded',
+        description: 'Create the low-voltage nervous system that manages sensors, microcontrollers, and communication protocols.',
+    },
+    {
+        id: 'it-software',
+        name: 'IT & Software Development',
+        description: 'Architect the team\'s digital infrastructure, custom web apps, cloud systems, and complex data pipelines.',
+    },
+    {
+        id: 'vehicle-dynamics',
+        name: 'Vehicle Dynamics & Control',
+        description: 'Optimize track performance through advanced simulations, data analysis, and complex control systems like Torque Vectoring.',
+    },
+    {
+        id: 'driverless',
+        name: 'Driverless',
+        description: 'Convert the vehicle into an autonomous racer using computer vision, machine learning, and path planning algorithms.',
+    },
+    {
+        id: 'operations',
+        name: 'Operations',
+        description: 'Drive the business side of the team by managing sponsorships, marketing, public relations, and visual identity.',
+    }
+];
+
+const benefits = [
+    {
+        title: 'Real-World Engineering',
+        desc: 'Apply your theoretical knowledge to build an actual electric and autonomous race car from scratch.'
+    },
+    {
+        title: 'Professional Network',
+        desc: 'Connect with industry leaders, top-tier engineering companies, and passionate alumni around the globe.'
+    },
+    {
+        title: 'Hands-on Experience',
+        desc: 'Work with cutting-edge tools, advanced materials, and modern software stacks before you even graduate.'
+    }
+];
+---
+
+<BaseLayout title="Recruitment | ARISTURTLE" description="Join Aristurtle, the Formula Student racing team from Aristotle University of Thessaloniki. Build the future with us." forceCompact={true}>
+    
+    <div class="recruitment-container pt-40 pb-64 w-full max-w-[1800px] mx-auto overflow-hidden">
+        
+        <!-- HERO -->
+        <header class="sub-reveal grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-32 items-center">
+            <div>
+                <h1 class="text-5xl md:text-8xl font-black uppercase mb-8 leading-none tracking-tight">
+                    Join The <br/><span class="text-[var(--brand-orange)]">Team</span>
+                </h1>
+                <div class="h-1 w-32 bg-[var(--brand-orange)] mb-8"></div>
+                <p class="text-xl md:text-2xl text-gray-400 font-light leading-relaxed mb-10 max-w-2xl">
+                    Be part of something bigger. At Aristurtle, we don't just build electric and autonomous race cars — we build the next generation of top-tier engineers, developers, and professionals. 
+                </p>
+                <a href="#apply" class="inline-flex items-center justify-center bg-[var(--brand-orange)] text-black px-10 py-5 font-bold uppercase tracking-widest hover:bg-white transition-colors duration-300">
+                    Apply Now
+                </a>
+            </div>
+            
+            <div class="relative aspect-square md:aspect-video lg:aspect-[4/5] bg-[#0A0A0A] overflow-hidden">
+                <Image 
+                    src={heroImage} 
+                    alt="Aristurtle team working" 
+                    class="w-full h-full object-cover opacity-70"
+                    widths={[400, 800, 1200]}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent opacity-60"></div>
+            </div>
+        </header>
+
+        <!-- SUBDIVISIONS -->
+        <section class="mb-40">
+            <div class="sub-reveal mb-16">
+                <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tight text-white mb-6">
+                    Find Your <span class="text-gray-600">Place</span>
+                </h2>
+                <p class="text-lg md:text-xl text-gray-400 font-light max-w-3xl">
+                    Aristurtle is divided into 7 specialized subdivisions. Review their roles below and discover where your skills and passions align best.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {subdivisions.map((sub, i) => (
+                    <div class="sub-card flex flex-col justify-between bg-[#0A0A0A] p-8 md:p-10 border border-[#222] hover:border-[var(--brand-orange)] transition-colors duration-500 group">
+                        <div>
+                            <span class="text-[var(--brand-orange)] font-black text-3xl opacity-30 block mb-4">
+                                {String(i + 1).padStart(2, '0')}
+                            </span>
+                            <h3 class="text-xl md:text-2xl font-bold uppercase tracking-wider text-white mb-4 group-hover:text-[var(--brand-orange)] transition-colors duration-300">
+                                {sub.name}
+                            </h3>
+                            <p class="text-gray-400 font-light leading-relaxed text-sm md:text-base mb-8">
+                                {sub.description}
+                            </p>
+                        </div>
+                        
+                        <a href={`/subdivisions#${sub.id}`} class="inline-flex items-center text-[var(--brand-orange)] font-bold text-sm tracking-widest uppercase hover:text-white transition-colors group/btn">
+                            Learn More 
+                            <svg class="w-4 h-4 ml-2 transform group-hover/btn:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </section>
+
+        <!-- WHY JOIN US -->
+        <section class="mb-40">
+            <div class="sub-reveal mb-16 text-center">
+                <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tight text-white mb-6">
+                    Why <span class="text-[var(--brand-orange)]">Join Us</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16">
+                {benefits.map((benefit, i) => (
+                    <div class="sub-reveal flex flex-col items-center text-center p-8">
+                        <div class="w-16 h-16 rounded-full border border-[#333] flex items-center justify-center mb-8 text-[var(--brand-orange)]">
+                            <span class="font-bold">{(i+1)}</span>
+                        </div>
+                        <h3 class="text-xl font-bold uppercase tracking-wider text-white mb-4">
+                            {benefit.title}
+                        </h3>
+                        <p class="text-gray-400 font-light leading-relaxed">
+                            {benefit.desc}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        </section>
+
+        <!-- APPLY NOW -->
+        <section id="apply" class="sub-reveal relative py-24 md:py-32 px-6 bg-[#0A0A0A] border border-[#222] text-center overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[var(--brand-orange)] via-transparent to-transparent pointer-events-none"></div>
+            
+            <div class="relative z-10 max-w-3xl mx-auto">
+                <h2 class="text-4xl md:text-7xl font-black uppercase tracking-tight text-white mb-8">
+                    Ready to <span class="text-[var(--brand-orange)]">Accelerate?</span>
+                </h2>
+                <p class="text-lg md:text-xl text-gray-400 font-light mb-12">
+                    Submit your application today. We are looking for passionate, driven individuals ready to push the boundaries of technology and innovation.
+                </p>
+                <a href="mailto:info@aristurtle.gr" class="inline-flex items-center justify-center bg-white text-black px-12 py-6 font-bold text-lg uppercase tracking-widest hover:bg-[var(--brand-orange)] hover:text-black transition-colors duration-300">
+                    Submit Application
+                </a>
+                <p class="text-xs text-gray-600 font-light uppercase tracking-widest mt-6">
+                    * Applications are currently processed via email.
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+    <Footer />
+</BaseLayout>
+
+<style>
+    .recruitment-container {
+        padding-left: 6vw;
+        padding-right: 6vw;
+    }
+    @media (min-width: 1024px) {
+        .recruitment-container {
+            padding-left: 10vw;
+            padding-right: 10vw;
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Reveal-on-scroll for major blocks
+    const reveals = gsap.utils.toArray('.sub-reveal');
+    reveals.forEach((element: any) => {
+        gsap.fromTo(element,
+            { y: 50, autoAlpha: 0 },
+            {
+                y: 0,
+                autoAlpha: 1,
+                duration: 1,
+                ease: 'luxe',
+                scrollTrigger: {
+                    trigger: element,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse',
+                },
+            }
+        );
+    });
+
+    // Staggered card animation
+    const cards = document.querySelectorAll('.sub-card');
+    if (cards.length > 0) {
+        gsap.fromTo(cards,
+            { y: 40, autoAlpha: 0 },
+            {
+                y: 0,
+                autoAlpha: 1,
+                duration: 0.7,
+                ease: 'luxe',
+                stagger: 0.1,
+                scrollTrigger: {
+                    trigger: cards[0],
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse',
+                },
+            }
+        );
+    }
+</script>
