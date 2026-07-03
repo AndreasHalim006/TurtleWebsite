@@ -38,6 +38,7 @@ Thumbs.db
 
 # Large Assets
 *.mp4
+!public/videos/hero.mp4
 *.webm
 *.mov
 *.avi
