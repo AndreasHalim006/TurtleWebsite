@@ -12,8 +12,8 @@ import BounceCards from '../components/reactbits/BounceCards.jsx';
 import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
 import Footer from '../components/Footer.astro';
 
-// Local assets
-import heroVideo from '../images/We_Are_Aristurtle_Sept2025_ForzaEnding.mp4';
+// Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
+const heroVideo = '/TurtleWebsite/videos/hero.mp4';
 import protergiaLogo from '../images/powered_by_protergia.png';
 
 import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
