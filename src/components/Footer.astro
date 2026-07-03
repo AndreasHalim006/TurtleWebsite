@@ -2,7 +2,7 @@
 // src/components/Footer.astro
 import { Image } from 'astro:assets';
 
-// Use placeholders for now as per user request
+const baseUrl = '/TurtleWebsite/';
 const currentYear = new Date().getFullYear();
 ---
 
@@ -36,11 +36,11 @@ const currentYear = new Date().getFullYear();
             <div class="flex flex-col gap-4">
                 <h3 class="font-sans text-sm font-bold uppercase tracking-widest text-brand-orange mb-2">Explore</h3>
                 <nav class="flex flex-col gap-3">
-                    <a href="#" class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">Home</a>
-                    <a href="#" class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">The Team</a>
-                    <a href="#" class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">The Cars</a>
-                    <a href="/sponsors" class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">Sponsors</a>
-                    <a href="/contact" class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">Contact</a>
+                    <a href={baseUrl} class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">Home</a>
+                    <a href={baseUrl + "about-us"} class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">The Team</a>
+                    <a href={baseUrl + "garage"} class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">The Cars</a>
+                    <a href={baseUrl + "sponsors"} class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">Sponsors</a>
+                    <a href={baseUrl + "contact"} class="font-sans text-gray-400 hover:text-white uppercase font-bold tracking-wider text-sm transition-colors">Contact</a>
                 </nav>
             </div>
 

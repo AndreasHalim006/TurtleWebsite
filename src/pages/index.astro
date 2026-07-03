@@ -14,6 +14,7 @@ import Footer from '../components/Footer.astro';
 
 // Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
 const heroVideo = '/TurtleWebsite/videos/hero.mp4';
+const baseUrl = '/TurtleWebsite/';
 import protergiaLogo from '../images/powered_by_protergia.png';
 
 import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
@@ -366,7 +367,7 @@ const getSlotClasses = (slot: string) => {
                                         <span class="block">JOIN OUR MISSION.</span>
                                         <span class="block">BECOME A SPONSOR.</span>
                                     </p>
-                                    <a href="/sponsors" class="px-10 py-5 bg-brand-orange text-black font-black uppercase tracking-widest text-[min(3cqw,5cqh)] hover:scale-105 transition-transform rounded-sm mt-2">
+                                    <a href={baseUrl + "sponsors"} class="px-10 py-5 bg-brand-orange text-black font-black uppercase tracking-widest text-[min(3cqw,5cqh)] hover:scale-105 transition-transform rounded-sm mt-2">
                                         SUPPORT THE TEAM
                                     </a>
                                 </div>
