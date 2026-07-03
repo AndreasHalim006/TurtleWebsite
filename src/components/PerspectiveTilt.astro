@@ -1,0 +1,56 @@
+---
+// src/components/PerspectiveTilt.astro
+
+export interface Props {
+    text: string;
+    className?: string;
+    boxClassName?: string;
+}
+
+const { text, className = "", boxClassName = "" } = Astro.props;
+---
+
+<div class="perspective-container w-full flex justify-center items-center relative z-10" style="perspective: 800px;">
+    <!-- Exact CodePen Style Green Box -->
+    <div 
+        class={`tilt-box relative flex items-center justify-center rounded-2xl overflow-hidden ${boxClassName}`}
+        style="width: 100%; max-width: 600px; height: 300px; background: linear-gradient(135deg, #7cfc00, #009e00); box-shadow: 0px 20px 50px rgba(0,0,0,0.5);"
+    >
+        <h1 class={`relative z-10 font-black tracking-tight text-black select-none ${className}`} style="font-size: clamp(3rem, 10vw, 8rem);">
+            {text}
+        </h1>
+    </div>
+</div>
+
+<script>
+    import { gsap } from 'gsap';
+
+    const initTilt = () => {
+        const box = document.querySelector('.tilt-box');
+        if (!box) return;
+
+        let xTo = gsap.quickTo(box, "rotationY", {
+            ease: "power2",
+            duration: 0.4
+        }),
+        yTo = gsap.quickTo(box, "rotationX", {
+            ease: "power2",
+            duration: 0.4
+        });
+
+        window.addEventListener("mousemove", (e) => {
+            xTo(gsap.utils.interpolate(-20, 20, e.clientX / window.innerWidth));
+            yTo(gsap.utils.interpolate(20, -20, e.clientY / window.innerHeight));
+        });
+    };
+
+    initTilt();
+    document.addEventListener('astro:page-load', initTilt);
+</script>
+
+<style>
+    .tilt-box {
+        transform-style: preserve-3d;
+        will-change: transform;
+    }
+</style>

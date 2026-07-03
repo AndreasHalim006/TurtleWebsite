@@ -1,59 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ScrambledText from '../components/reactbits/ScrambledText.jsx';
+import BlindsHero from '../components/BlindsHero.astro';
 import { Image } from 'astro:assets';
 
-// Hero Image
-import heroImage from '../images/Aristurtle_photo_1-1_2.jpg';
+const pageGradient = ['#FF8900', '#FF6600'];
 ---
 
-<BaseLayout title="Contact | ARISTURTLE" description="Get in touch with Malamas Bogatinis, Team Leader of ARISTURTLE.">
+<BaseLayout title="Contact | ARISTURTLE" description="Get in touch with Malamas Bogatinis, Team Leader of ARISTURTLE." pageColors={pageGradient}>
     <div class="bg-void min-h-screen w-full relative text-foreground selection:bg-brand-orange selection:text-brand-emerald">
         
         <!-- PURE BACKGROUND GRID -->
         <div class="fixed inset-0 z-0 micro-grid opacity-10 pointer-events-none"></div>
 
         <!-- HERO SECTION -->
-        <section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-10 overflow-hidden bg-brand-midnight">
-            <div class="absolute inset-0 z-0 overflow-hidden">
-                <Image 
-                    src={heroImage} 
-                    alt="Aristurtle Team Workshop" 
-                    class="w-full h-full object-cover opacity-40 scale-105"
-                    id="hero-image"
-                />
-                <div class="absolute inset-0 bg-gradient-to-b from-void/40 via-transparent to-void"></div>
-            </div>
+        <div class="sticky top-0 w-full h-[100svh] z-0">
+            <BlindsHero title="CONTACT" description="Engineering precision meets human connection. Get in touch with the team leader." gradientColors={pageGradient} />
+        </div>
 
-            <div class="relative max-w-[1800px] mx-auto w-full text-center flex flex-col items-center gap-6 z-20 px-[5vw]">
-                <span class="font-sans text-[12px] font-bold uppercase tracking-[1em] text-brand-orange hero-reveal opacity-0 translate-y-8">
-                    // HUMAN_CONNECTION
-                </span>
-                <div class="overflow-hidden hero-reveal opacity-0 translate-y-8">
-                    <ScrambledText 
-                        client:load 
-                        className="text-6xl md:text-8xl lg:text-9xl font-bold leading-[0.85] text-white uppercase select-none"
-                        scrambleChars=".:01"
-                        radius={200}
-                    >
-                        Contact
-                    </ScrambledText>
-                </div>
-                <div class="w-32 h-[1px] bg-brand-orange/40 mt-6 hero-reveal opacity-0 scale-x-0"></div>
-                <p class="font-sans text-sm md:text-base opacity-60 max-w-xl tracking-widest mt-6 hero-reveal opacity-0 translate-y-8 leading-relaxed uppercase">
-                    Engineering precision meets human connection. Get in touch with the team leader.
-                </p>
-            </div>
-
-            <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30 hero-reveal translate-y-8">
-                <span class="text-[10px] uppercase tracking-[0.5em]">Scroll to Reach Out</span>
-                <div class="w-[1px] h-12 bg-white/40"></div>
-            </div>
-        </section>
+        <div class="bg-void w-full relative z-10">
 
         <!-- CONTENT SECTION -->
         <section id="contact-content" class="relative z-20 bg-void pt-32 pb-32 w-full">
-            <div class="grid grid-cols-1 lg:grid-cols-2 w-full gap-20 lg:gap-0 items-center">
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 w-full gap-20 lg:gap-0 items-center">
                 <!-- Left Column: Team Leader Info -->
                 <div class="flex justify-center items-center w-full px-[5vw]">
                     <section class="space-y-12 contact-info max-w-xl w-full text-center">
@@ -79,9 +47,9 @@ import heroImage from '../images/Aristurtle_photo_1-1_2.jpg';
                         </div>
 
                         <div class="flex gap-8 justify-center reveal-item opacity-0 translate-y-8">
-                            <a href="#" class="micro-label hover:text-brand-orange transition-colors">Instagram</a>
-                            <a href="#" class="micro-label hover:text-brand-orange transition-colors">LinkedIn</a>
-                            <a href="#" class="micro-label hover:text-brand-orange transition-colors">Facebook</a>
+                            <a href="#" class="gradient-underline micro-label hover:text-brand-orange transition-colors pb-1">Instagram</a>
+                            <a href="#" class="gradient-underline micro-label hover:text-brand-orange transition-colors pb-1">LinkedIn</a>
+                            <a href="#" class="gradient-underline micro-label hover:text-brand-orange transition-colors pb-1">Facebook</a>
                         </div>
                     </section>
                 </div>
@@ -105,6 +73,7 @@ import heroImage from '../images/Aristurtle_photo_1-1_2.jpg';
 
         <!-- FOOTER SECTION (EMPTY SPACE) -->
         <div class="h-[30vh] w-full" aria-hidden="true"></div>
+        </div>
     </div>
 </BaseLayout>
 
@@ -121,30 +90,6 @@ import heroImage from '../images/Aristurtle_photo_1-1_2.jpg';
 
         mm.add("(prefers-reduced-motion: no-preference)", (context) => {
             
-            // Hero Image Parallax
-            gsap.to("#hero-image", {
-                scrollTrigger: {
-                    trigger: "#hero",
-                    start: "top top",
-                    end: "bottom top",
-                    scrub: true
-                },
-                y: 100,
-                scale: 1.15,
-                ease: "none"
-            });
-
-            // Hero Reveal
-            gsap.to(".hero-reveal", {
-                y: 0,
-                scaleX: 1,
-                opacity: 1,
-                duration: 2,
-                stagger: 0.15,
-                ease: LUXE_EASE,
-                delay: 0.2
-            });
-
             // Content entrance
             gsap.to(".reveal-item", {
                 scrollTrigger: {

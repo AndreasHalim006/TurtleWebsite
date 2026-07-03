@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
+import BlindsHero from '../components/BlindsHero.astro';
+
+const pageGradient = ['#FF8900', '#FF3300'];
 
 const acrosticItems = [
     { letter: 'A', title: 'utonomous', text: 'We have created the first Autonomous / Driverless Electric race car in the Balkan region.' },
@@ -16,16 +19,15 @@ const acrosticItems = [
 ];
 ---
 
-<BaseLayout title="About Us | ARISTURTLE" forceCompact={true}>
-  <div class="pt-48 pb-32 w-full max-w-[1800px] mx-auto about-container overflow-hidden">
-    
-    <!-- HEADER BLOCK -->
-    <header class="about-reveal">
-        <h1 class="text-5xl md:text-8xl font-black uppercase mb-8 leading-none tracking-tight">
-            About <span class="text-[var(--brand-orange)]">Us</span>
-        </h1>
-        <div class="h-1 w-32 bg-[var(--brand-orange)] mb-12"></div>
-    </header>
+<BaseLayout title="About Us | ARISTURTLE" pageColors={pageGradient}>
+
+  <!-- HEADER BLOCK -->
+  <header class="about-reveal w-full sticky top-0 h-[100svh] z-0">
+      <BlindsHero title="ABOUT US" description="Discover the Aristotle University Racing Team Electric and the people who make it possible." gradientColors={pageGradient} />
+  </header>
+
+  <div class="relative z-10 w-full bg-void">
+    <div class="pb-32 w-full max-w-[1800px] mx-auto about-container overflow-hidden">
 
     <!-- SPACER -->
     <div class="h-20 md:h-32"></div>
@@ -44,7 +46,7 @@ const acrosticItems = [
     <div class="h-20 md:h-32"></div>
 
     <!-- BLOCK 2: PURPOSE & VISION CARD -->
-    <section class="about-reveal">
+    <section class="relative about-reveal">
         <div class="py-20 px-10 md:py-32 md:px-24 border border-[#333] bg-[#0A0A0A] relative overflow-hidden group">
             <div class="absolute top-0 left-0 w-1 h-full bg-[var(--brand-orange)] opacity-50 group-hover:opacity-100 transition-opacity"></div>
             
@@ -63,11 +65,12 @@ const acrosticItems = [
     <!-- SPACER -->
     <div class="h-20 md:h-32"></div>
 
-    <!-- BLOCK 3: WHY ELECTRIC / WHY DRIVERLESS GRID -->
+    <!-- BLOCK 3: ELECTRIC & DRIVERLESS SHOWCASE -->
     <section>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-32">
-            <section class="about-reveal">
-                <h2 class="text-4xl md:text-5xl font-bold uppercase mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <!-- Electric -->
+            <div class="relative bg-[#1A1A1A] border border-[#333] p-12 md:p-20 overflow-hidden group about-reveal">
+                <h2 class="text-4xl md:text-5xl font-bold uppercase mb-12 relative z-10">
                     <span class="text-[var(--brand-orange)]">Why</span> Electric?
                 </h2>
                 <div class="space-y-8 text-gray-300 font-light leading-relaxed md:leading-loose text-lg md:text-xl">
@@ -78,10 +81,10 @@ const acrosticItems = [
                         Our team has always embraced innovation and closely follows the footsteps of global trend-setters while aiming to evaluate, develop and integrate the newest technological advancements in its work.
                     </p>
                 </div>
-            </section>
-
-            <section class="about-reveal">
-                <h2 class="text-4xl md:text-5xl font-bold uppercase mb-12">
+            </div>
+            <!-- Driverless -->
+            <div class="relative bg-[#1A1A1A] border border-[#333] p-12 md:p-20 overflow-hidden group about-reveal">
+                <h2 class="text-4xl md:text-5xl font-bold uppercase mb-12 relative z-10">
                     <span class="text-[var(--brand-orange)]">Why</span> Driverless?
                 </h2>
                 <div class="space-y-8 text-gray-300 font-light leading-relaxed md:leading-loose text-lg md:text-xl">
@@ -92,7 +95,7 @@ const acrosticItems = [
                         Aristurtle was the first Greek FS team to announce its commitment towards the creation of a driverless vehicle, in March 2019. The team’s hard work bore fruition in 2021, when Thetis DV came into operation, becoming the first driverless race car in Greece. Then came the successful integration of our Autonomous System into a single EV/DV, Persephone. Through the latest iteration of this concept, Calypso, our latest vehicle, remains the only driverless Formula Student single-seater in Greece.
                     </p>
                 </div>
-            </section>
+            </div>
         </div>
     </section>
 
@@ -107,7 +110,7 @@ const acrosticItems = [
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
             {acrosticItems.map((item, index) => (
-                <div class="acrostic-card bg-[#0A0A0A] p-10 md:p-14 border border-[#222] hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
+                <div class="acrostic-card glow-card bg-[#0A0A0A] p-10 md:p-14 border border-[#222] hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
                     <h3 class="text-3xl md:text-4xl font-bold mb-8 uppercase flex items-baseline">
                         <span class="text-6xl md:text-7xl text-[var(--brand-orange)] mr-2 font-black">{item.letter}</span>
                         <span class="text-white group-hover:text-gray-200 transition-colors tracking-wide">{item.title}</span>
@@ -122,8 +125,8 @@ const acrosticItems = [
     <div class="h-20 md:h-32"></div>
 
     <!-- BLOCK 5: IKISKOS -->
-    <section>
-        <div class="bg-[#141414] p-16 md:p-24 border border-[#333] relative about-reveal">
+    <section class="relative">
+        <div class="bg-[#141414] p-16 md:p-24 border border-[#333] relative z-10 about-reveal">
             <div class="absolute top-0 right-0 w-32 h-32 border-t-4 border-r-4 border-[var(--brand-orange)] opacity-20 hidden md:block"></div>
             <div class="absolute bottom-0 left-0 w-32 h-32 border-b-4 border-l-4 border-[var(--brand-orange)] opacity-20 hidden md:block"></div>
             
@@ -138,7 +141,7 @@ const acrosticItems = [
             </div>
         </div>
     </section>
-
+    </div>
   </div>
 
   <Footer />

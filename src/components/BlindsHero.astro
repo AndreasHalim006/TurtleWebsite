@@ -1,0 +1,57 @@
+---
+// src/components/BlindsHero.astro
+import GradientBlinds from './reactbits/GradientBlinds.jsx';
+
+export interface Props {
+    title: string;
+    description?: string;
+    bgClass?: string;
+    heightClass?: string;
+    gradientColors?: string[];
+}
+
+const { 
+    title, 
+    description = "Engineering precision meets human connection.", 
+    bgClass = "bg-brand-midnight", 
+    heightClass = "min-h-[100svh]",
+    gradientColors = ['#FF8900', '#FF5500'] 
+} = Astro.props;
+---
+
+<div id="hero" class={`blinds-hero-container relative w-full ${heightClass} flex flex-col items-center justify-center border-b border-white/10 overflow-hidden ${bgClass}`}>
+    
+    <!-- React Bits Gradient Blinds Background -->
+    <div class="absolute inset-0 z-0">
+        <GradientBlinds 
+            client:visible 
+            gradientColors={gradientColors}
+            angle={20}
+            noise={0.5}
+            blindCount={16}
+            blindMinWidth={60}
+            spotlightRadius={0.5}
+            spotlightSoftness={1}
+            spotlightOpacity={1}
+            mouseDampening={0.15}
+            distortAmount={0}
+            shineDirection="left"
+            mixBlendMode="lighten"
+        />
+    </div>
+
+    <!-- Page Title & Small Description (Bottom Right) -->
+    <div class="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-20 text-right flex flex-col items-end pointer-events-none">
+        <h1 class="font-black uppercase tracking-tight text-white text-4xl md:text-6xl lg:text-[5rem] leading-none mb-2 drop-shadow-lg">
+            {title}
+        </h1>
+        {description && (
+            <p class="font-sans text-sm md:text-base text-gray-300 max-w-[300px] md:max-w-[400px] leading-relaxed drop-shadow-md">
+                {description}
+            </p>
+        )}
+    </div>
+    
+</div>
+
+

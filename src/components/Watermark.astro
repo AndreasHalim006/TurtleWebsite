@@ -1,0 +1,11 @@
+---
+export interface Props {
+    text: string;
+}
+const { text } = Astro.props;
+---
+<div class="absolute inset-0 overflow-hidden pointer-events-none z-0 flex items-center justify-center select-none" aria-hidden="true">
+    <span class="watermark-text font-jura font-black uppercase text-[15vw] md:text-[20vw] leading-none text-white opacity-[0.05] whitespace-nowrap">
+        {text}
+    </span>
+</div>

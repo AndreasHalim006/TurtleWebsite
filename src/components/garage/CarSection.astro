@@ -86,7 +86,7 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
             // Attempt to bold numbers for emphasis
             const boldedSpec = spec.replace(/(\d+(?:\.\d+)?\s*[a-zA-Z%/"\\]*)/g, '<strong class="text-white text-lg">$1</strong>');
             return (
-              <div class="bg-[#141414] border border-gray-800 p-6 rounded flex items-center justify-center text-center hover:border-[--brand-orange]/50 transition-colors">
+              <div class="glow-card bg-[#141414] border border-gray-800 p-6 rounded flex items-center justify-center text-center hover:border-[--brand-orange]/50 transition-colors">
                 <span class="font-jura text-gray-400 text-sm lg:text-base leading-snug" set:html={boldedSpec} />
               </div>
             );

@@ -2,6 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
 import Footer from '../components/Footer.astro';
+import BlindsHero from '../components/BlindsHero.astro';
+
+const pageGradient = ['#FF8900', '#D47300'];
 
 // Team photos — reuse the same images referenced in the home page
 import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
@@ -219,15 +222,19 @@ const subdivisions: Subdivision[] = [
 ];
 ---
 
-<BaseLayout title="Subdivisions | ARISTURTLE" description="Explore the 7 specialized subdivisions that power Aristurtle's Formula Student racing team." forceCompact={true}>
-    <div class="subdivisions-container pt-64 pb-64 w-full max-w-[1800px] mx-auto overflow-hidden">
+<BaseLayout title="Subdivisions | ARISTURTLE" pageColors={pageGradient}>
+    <!-- HERO SECTION -->
+    <div class="sticky top-0 w-full h-[100svh] z-0">
+        <BlindsHero title="SUBDIVISIONS" description="The seven specialized pillars of Aristurtle. Explore the teams that build our success." gradientColors={pageGradient} />
+    </div>
 
-        <!-- HEADER -->
-        <header class="sub-reveal">
-            <h1 class="text-5xl md:text-8xl font-black uppercase mb-12 leading-none tracking-tight">
-                Sub<span class="text-[var(--brand-orange)]">divisions</span>
-            </h1>
-            <div class="h-1 w-32 bg-[var(--brand-orange)] mb-10"></div>
+    <div class="bg-[var(--brand-emerald)] w-full min-h-screen text-white relative z-10">
+    <div class="subdivisions-container py-20 md:py-32 w-full max-w-[1800px] mx-auto overflow-hidden">
+
+        <!-- INTRO -->
+        <header class="sub-reveal flex flex-col items-start w-full">
+            <h2 class="text-3xl md:text-5xl font-bold uppercase mb-8">The Teams Behind The Car</h2>
+            <div class="h-1 w-32 bg-[var(--brand-orange)] mb-10 mt-2"></div>
             <p class="text-xl md:text-3xl text-gray-400 font-light max-w-4xl leading-relaxed md:leading-loose">
                 Our team is structured into specialized subdivisions, each focused on a critical aspect of designing, building, and racing our electric and autonomous single-seater.
             </p>
@@ -242,7 +249,7 @@ const subdivisions: Subdivision[] = [
                 {subdivisions.map((sub, i) => (
                     <a
                         href={`#${sub.id}`}
-                        class="group flex flex-col items-center gap-5 p-6 md:p-8 border border-[#222] bg-[#0A0A0A] hover:border-[var(--brand-orange)] transition-colors duration-300"
+                        class="group flex flex-col items-center gap-5 p-6 md:p-8 border border-white/10 bg-brand-midnight hover:border-[var(--brand-orange)] transition-colors duration-300"
                     >
                         <span class="text-[var(--brand-orange)] font-bold text-sm tracking-widest uppercase opacity-50 group-hover:opacity-100 transition-opacity">
                             {String(i + 1).padStart(2, '0')}
@@ -257,7 +264,7 @@ const subdivisions: Subdivision[] = [
 
         <!-- SUBDIVISION SECTIONS -->
         {subdivisions.map((sub, index) => (
-            <section id={sub.id} class="sub-section mb-40 md:mb-72">
+            <section id={sub.id} class="sub-section relative mb-40 md:mb-72">
                 <!-- Section header with number + name -->
                 <div class="sub-reveal flex items-baseline gap-6 md:gap-10 mb-16 md:mb-28">
                     <span class="text-[var(--brand-orange)] font-black text-6xl md:text-9xl leading-none opacity-30">
@@ -275,7 +282,7 @@ const subdivisions: Subdivision[] = [
 
                 <!-- Image + description block -->
                 <div class="sub-reveal grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 mb-20 md:mb-32">
-                    <div class="relative overflow-hidden aspect-[16/10] bg-[#0A0A0A]">
+                    <div class="relative overflow-hidden aspect-[16/10] bg-brand-midnight">
                         <Image
                             src={sub.image}
                             alt={`${sub.name} subdivision`}
@@ -283,7 +290,7 @@ const subdivisions: Subdivision[] = [
                             widths={[400, 800, 1200]}
                             sizes="(max-width: 1024px) 100vw, 50vw"
                         />
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent opacity-60"></div>
                     </div>
 
                     <div class="flex flex-col justify-center py-4">
@@ -311,7 +318,7 @@ const subdivisions: Subdivision[] = [
                 {sub.subteams && (
                     <div class={`grid grid-cols-1 ${sub.subteams.length <= 3 ? 'md:grid-cols-' + sub.subteams.length : sub.subteams.length === 4 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-10 md:gap-14`}>
                         {sub.subteams.map((st) => (
-                            <div class="sub-card bg-[#0A0A0A] p-12 md:p-16 border border-[#1a1a1a] hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
+                            <div class="sub-card glow-card bg-brand-midnight p-12 md:p-16 border border-white/10 hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
                                 <h3 class="text-xl md:text-2xl font-bold uppercase tracking-wider text-white mb-8 group-hover:text-[var(--brand-orange)] transition-colors duration-300">
                                     {st.name}
                                 </h3>
@@ -319,7 +326,7 @@ const subdivisions: Subdivision[] = [
                                     {st.description}
                                 </p>
                                 {st.bullets && (
-                                    <ul class="mt-10 space-y-4 pt-10 border-t border-[#1a1a1a]">
+                                    <ul class="mt-10 space-y-4 pt-10 border-t border-white/10">
                                         {st.bullets.map((bullet) => (
                                             <li class="flex items-start gap-4 text-gray-500 font-light text-sm md:text-base">
                                                 <span class="text-[var(--brand-orange)] mt-1.5 flex-shrink-0 opacity-60">
@@ -337,7 +344,7 @@ const subdivisions: Subdivision[] = [
 
                 {/* Section divider */}
                 {index < subdivisions.length - 1 && (
-                    <div class="mt-40 md:mt-72 border-t border-[#1a1a1a]"></div>
+                    <div class="mt-40 md:mt-72 border-t border-white/10"></div>
                 )}
             </section>
         ))}
@@ -345,6 +352,7 @@ const subdivisions: Subdivision[] = [
     </div>
 
     <Footer />
+    </div>
 </BaseLayout>
 
 <style>

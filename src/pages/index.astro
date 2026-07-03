@@ -74,7 +74,7 @@ const JOURNEY_CONFIG = [
     p: 0.7598072031061722,
     windows: [
       { id: "w-62se", w: "21.4vw", h: "80.0vh", x: "76.2%", y: "17.1%", content: "history-stats-panel", noBorder: false },
-      { id: "w-ygxs", w: "64.7vw", h: "27.5vh", x: "2.9%", y: "15.0%", content: "history-main-header", noBorder: true },
+      { id: "w-ygxs", w: "68vw", h: "45vh", x: "2.9%", y: "3.0%", content: "history-main-header", noBorder: true },
       { id: "w-smmv", w: "37.2vw", h: "46.2vh", x: "3.3%", y: "49.0%", content: "history-narrative", noBorder: true }
     ]
   },
@@ -148,8 +148,6 @@ const getSlotClasses = (slot: string) => {
 		<div id="journey-container" class="relative w-full h-[100vh]">
             <div id="journey-viewport" class="sticky top-0 left-0 w-full h-screen overflow-hidden bg-void z-10">
                 <div id="journey-stage" class="absolute top-0 left-0 will-change-transform origin-top-left">
-                    
-                    <JourneySVG />
 
                     {JOURNEY_CONFIG.map((station) => (
                       <div id={`station-${station.id}`} class="absolute w-screen h-screen pointer-events-none">
@@ -217,9 +215,13 @@ const getSlotClasses = (slot: string) => {
                               )}
 
                               {(win.content.toLowerCase() === 'vision-node') && (
-                                <p class="font-sans text-brand-orange text-[min(6cqw,20cqh)] leading-[1.15] uppercase tracking-tighter font-bold italic" style="text-wrap: balance;">
-                                  Find your passion
-                                </p>
+                                <div class="w-full h-full flex flex-col justify-center items-end pr-8 md:pr-16">
+                                  <p class="font-sans text-brand-orange text-[min(12cqw,30cqh)] leading-[0.9] uppercase tracking-tighter font-bold italic text-right">
+                                    <span class="block">Find.</span>
+                                    <span class="block">Your.</span>
+                                    <span class="block">Passion.</span>
+                                  </p>
+                                </div>
                               )}
                               
                               {(win.content.toLowerCase() === 'mission-pillars-interactive') && (
@@ -316,8 +318,8 @@ const getSlotClasses = (slot: string) => {
                                             teamPhoto4.src,
                                             teamPhoto5.src
                                         ]}
-                                        containerWidth={600}
-                                        containerHeight={300}
+                                        containerWidth={800}
+                                        containerHeight={400}
                                         animationDelay={0.5}
                                         animationStagger={0.08}
                                         enableHover={true}
@@ -326,7 +328,7 @@ const getSlotClasses = (slot: string) => {
                               )}
 
                               {(win.content.toLowerCase() === 'history-narrative') && (
-                                <p class="font-sans text-white/80 text-[min(4.2cqw,12cqh)] leading-[1.3] uppercase tracking-tight font-bold text-left" style="text-wrap: balance;">
+                                <p class="font-sans text-white/80 text-[min(6cqw,18cqh)] leading-[1.25] uppercase tracking-tight font-bold text-justify">
                                   Founded in 2013, Aristurtle has evolved from a group of visionaries into a premier Formula Student powerhouse, building <span class="text-brand-orange">8 electric race cars</span> and pioneering autonomous racing in the Balkans.
                                 </p>
                               )}
@@ -359,11 +361,12 @@ const getSlotClasses = (slot: string) => {
                               )}
 
                               {(win.content.toLowerCase() === 'sponsors-call-to-action') && (
-                                <div class="flex flex-col gap-6 items-center justify-center h-full text-center">
-                                    <p class="font-sans text-white text-[min(4.5cqw,12cqh)] leading-[1.15] uppercase tracking-tight font-bold" style="text-wrap: balance;">
-                                        JOIN OUR MISSION. BECOME A SPONSOR.
+                                <div class="flex flex-col gap-8 items-center justify-center h-full text-center">
+                                    <p class="font-sans text-white text-[min(6.5cqw,16cqh)] leading-[1.1] uppercase tracking-tight font-bold">
+                                        <span class="block">JOIN OUR MISSION.</span>
+                                        <span class="block">BECOME A SPONSOR.</span>
                                     </p>
-                                    <a href="/sponsors" class="px-8 py-4 bg-brand-orange text-black font-black uppercase tracking-widest text-[min(2cqw,4cqh)] hover:scale-105 transition-transform rounded-sm">
+                                    <a href="/sponsors" class="px-10 py-5 bg-brand-orange text-black font-black uppercase tracking-widest text-[min(3cqw,5cqh)] hover:scale-105 transition-transform rounded-sm mt-2">
                                         SUPPORT THE TEAM
                                     </a>
                                 </div>
@@ -379,6 +382,8 @@ const getSlotClasses = (slot: string) => {
                         ))}
                       </div>
                     ))}
+                    
+                    <JourneySVG />
                 </div>
             </div>
 		</div>

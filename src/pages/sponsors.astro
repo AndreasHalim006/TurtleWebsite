@@ -7,6 +7,8 @@ import SponsorHero from '../components/sponsors/SponsorHero.astro';
 import SponsorAssembly from '../components/sponsors/SponsorAssembly.astro';
 import SponsorCTA from '../components/sponsors/SponsorCTA.astro';
 
+const pageGradient = ['#FF8900', '#FF3300'];
+
 const allSponsors = await getCollection('sponsors', ({ data }) => data.active === true);
 const allCategories = await getCollection('sponsorCategories');
 const sortedCategories = allCategories.sort((a, b) => a.data.order - b.data.order);
@@ -42,7 +44,7 @@ const sponsorLogoUrls = Array.from(
 );
 ---
 
-<BaseLayout title="ARISTURTLE | Partners" description="The official partners and sponsors supporting Aristurtle Racing Team." forceCompact={true}>
+<BaseLayout title="ARISTURTLE | Partners" description="The official partners and sponsors supporting Aristurtle Racing Team." pageColors={pageGradient}>
   <Fragment slot="head">
     {sponsorLogoUrls.map((logo) => (
       <link rel="preload" as="image" href={logo} fetchpriority="low" />
@@ -51,11 +53,15 @@ const sponsorLogoUrls = Array.from(
 
   <div class="sponsors-page min-h-screen overflow-clip bg-[var(--void)] text-[var(--foreground)] selection:bg-[var(--brand-orange)] selection:text-[var(--brand-emerald)] max-md:overflow-visible">
     <TargetCursor client:only="react" targetSelector=".honeycomb-slot.is-active[href]" spinDuration={2.6} hoverDuration={0.18} />
-
-    <SponsorHero totalSponsors={totalSponsors} totalTiers={tiers.length} />
+    <div class="sticky top-0 w-full h-[100svh] z-0">
+      <SponsorHero totalSponsors={totalSponsors} totalTiers={tiers.length} />
+    </div>
     
-    <SponsorAssembly tiers={tierData} />
+    <div class="relative z-10 bg-[var(--void)] w-full">
+      <SponsorAssembly tiers={tierData} />
+    </div>
 
     <SponsorCTA />
+    </div>
   </div>
 </BaseLayout>
