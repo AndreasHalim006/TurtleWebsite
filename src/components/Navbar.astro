@@ -37,7 +37,7 @@ const socialItems = [
           data-force-compact={forceCompact}
           class:list={[
             "h-auto transition-all duration-1000 brightness-0 invert",
-            forceCompact ? "w-[200px]" : "w-[400px] md:w-[550px] lg:w-[700px]"
+            forceCompact ? "w-[150px] md:w-[200px]" : "w-[280px] sm:w-[350px] md:w-[550px] lg:w-[700px]"
           ]}
         />
       </a>
@@ -78,11 +78,13 @@ const socialItems = [
   const mm = gsap.matchMedia();
 
   mm.add({
-    // Accessibility: respects reduced motion preference
+    isMobile: "(max-width: 767px)",
+    isDesktop: "(min-width: 768px)",
     reduceMotion: "(prefers-reduced-motion: reduce)",
     noPreference: "(prefers-reduced-motion: no-preference)"
   }, (context) => {
-    const { reduceMotion } = context.conditions;
+    const { isMobile, reduceMotion } = context.conditions as any;
+    const targetWidth = isMobile ? "150px" : "200px";
 
     if (!forceCompact) {
         // LOGO DISCRETE SWITCH (Snaps when exiting Hero)
@@ -91,7 +93,7 @@ const socialItems = [
             start: "bottom 50%", 
             onEnter: () => {
                 gsap.to(logo, { 
-                width: "200px", 
+                width: targetWidth, 
                 duration: reduceMotion ? 0 : 0.6, 
                 ease: "luxe" 
                 });

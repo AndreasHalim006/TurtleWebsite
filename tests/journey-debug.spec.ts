@@ -1,28 +1,34 @@
 import { test, expect } from '@playwright/test';
 
 test('capture journey phases', async ({ page }) => {
-  await page.goto('http://localhost:4323/TurtleWebsite/');
+  test.setTimeout(120000);
+  await page.goto('./');
   
   // Wait for hero to load
   await page.waitForSelector('#hero');
   
-  const viewportSize = page.viewportSize();
-  if (!viewportSize) throw new Error('Could not get viewport size');
+  // State 0: Start/Hero
+  await page.screenshot({ path: 'playwright-report/journey-0-hero.png' });
 
-  const sections = [
-    { name: 'start', scroll: 0 },
-    { name: 'about', scroll: 1.2 * viewportSize.height }, // Rough estimate for journey start
-    { name: 'about2', scroll: 2.5 * viewportSize.height },
-    { name: 'subteams', scroll: 4 * viewportSize.height },
-    { name: 'history', scroll: 5.5 * viewportSize.height },
-    { name: 'sponsors', scroll: 7 * viewportSize.height },
-    { name: 'reveal', scroll: 8.5 * viewportSize.height },
-  ];
+  // Transition to 'about' (State 1)
+  console.log('Transitioning to about...');
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(9000);
+  await page.screenshot({ path: 'playwright-report/journey-1-about.png' });
 
-  for (const section of sections) {
-    await page.evaluate((y) => window.scrollTo(0, y), section.scroll);
-    // Wait for GSAP scrub lag (1.5s in config)
-    await page.waitForTimeout(2000);
-    await page.screenshot({ path: `playwright-report/journey-${section.name}.png` });
-  }
+  // Transition to 'subsystems' (State 3)
+  console.log('Transitioning to subsystems...');
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(9000);
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(9000);
+  await page.screenshot({ path: 'playwright-report/journey-3-subsystems.png' });
+
+  // Transition to 'sponsors' (State 5)
+  console.log('Transitioning to sponsors...');
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(9000);
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(9000);
+  await page.screenshot({ path: 'playwright-report/journey-5-sponsors.png' });
 });

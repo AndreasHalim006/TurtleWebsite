@@ -155,7 +155,14 @@ const getSlotClasses = (slot: string) => {
                         {station.windows.map((win) => (
                           <HUDWindow 
                             id={win.id}
-                            class:list={["pointer-events-auto", win.slot ? getSlotClasses(win.slot) : ""]}
+                            class:list={[
+                                "pointer-events-auto", 
+                                win.slot ? getSlotClasses(win.slot) : "",
+                                win.content.toLowerCase() === 'hyperspeed' ? 'max-md:hidden' : '',
+                                win.content.toLowerCase() === 'vision-node' ? 'max-md:hidden' : '',
+                                win.content.toLowerCase() === 'history-main-header' ? 'max-md:hidden' : '',
+                                win.content.toLowerCase() === 'history-stats-panel' ? 'max-md:hidden' : ''
+                            ]}
                             noPadding={win.noPadding}
                             noBorder={win.noBorder}
                             noRounding={win.noRounding}
@@ -1078,5 +1085,58 @@ const getSlotClasses = (slot: string) => {
     }
     html::-webkit-scrollbar, body::-webkit-scrollbar {
         display: none; /* Chrome, Safari, Opera */
+    }
+
+    @media (max-width: 767px) {
+        /* Allow station container to stack its HUD windows vertically */
+        [id^="station-"] {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 1.5rem !important;
+            padding: 8vh 1.5rem 2rem 1.5rem !important; /* Spacing to prevent overlap with the header/logo */
+            pointer-events: auto !important;
+            overflow-y: auto !important;
+        }
+
+        /* Make HUD windows responsive block containers */
+        .hud-window-container {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            width: 90vw !important;
+            height: auto !important;
+            min-height: fit-content !important;
+        }
+
+        /* Ensure inner container has suitable height and responsive padding */
+        .hud-window-container > div {
+            position: relative !important;
+            height: auto !important;
+            min-height: fit-content !important;
+            border-radius: 16px !important;
+        }
+
+        /* Ensure text size doesn't collapse to zero due to height: auto */
+        .hud-window-container p,
+        .hud-window-container span:not(.text-brand-orange) {
+            font-size: 1rem !important;
+            line-height: 1.4 !important;
+        }
+        
+        /* Acrostic letters should remain reasonably large */
+        .acrostic-item span.text-brand-orange {
+            font-size: 2.2rem !important;
+        }
+        .acrostic-item span:not(.text-brand-orange) {
+            font-size: 1.1rem !important;
+        }
+
+        /* Sponsors CTA support button text size */
+        .hud-window-container a {
+            font-size: 0.9rem !important;
+            padding: 0.8rem 1.5rem !important;
+        }
     }
 </style>

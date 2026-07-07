@@ -26,12 +26,12 @@ const isRounded = !noBorder && !noRounding;
     <!-- Solid Black Background & Content (z-10) -->
     <div class:list={[
         "absolute inset-0 bg-transparent overflow-hidden z-10",
-        isRounded && "rounded-[30px] md:rounded-[40px]",
+        isRounded && "rounded-[20px] md:rounded-[40px]",
         !noBorder && "shadow-[0_0_40px_rgba(0,0,0,0.5)]"
     ]}>
         <div class:list={[
             "relative w-full h-full flex flex-col",
-            noPadding ? "p-0" : "p-6 md:p-10"
+            noPadding ? "p-0" : "p-4 md:p-10"
         ]}>
             <slot />
         </div>
@@ -41,12 +41,11 @@ const isRounded = !noBorder && !noRounding;
     {!noBorder && (
         <svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible z-20" preserveAspectRatio="none">
             <rect 
-                class="hud-frame-path"
+                class:list={["hud-frame-path", noRounding ? "no-round" : "rounded-corners"]}
                 x="0" y="0" width="100%" height="100%" 
                 fill="none" 
                 stroke="#ff8900" 
                 stroke-width="9" 
-                rx={noRounding ? "0" : "40"} ry={noRounding ? "0" : "40"}
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 vector-effect="non-scaling-stroke"
@@ -58,5 +57,19 @@ const isRounded = !noBorder && !noRounding;
 <style is:global>
     .hud-frame-path {
         filter: drop-shadow(0 0 8px rgba(255, 137, 0, 0.3));
+    }
+    .rounded-corners {
+        rx: 20px;
+        ry: 20px;
+    }
+    @media (min-width: 768px) {
+        .rounded-corners {
+            rx: 40px;
+            ry: 40px;
+        }
+    }
+    .no-round {
+        rx: 0px;
+        ry: 0px;
     }
 </style>

@@ -68,10 +68,10 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
   <div class="w-full max-w-[1800px] mx-auto px-6 lg:px-12 xl:px-24 flex flex-col py-16 gap-24">
 
     {/* Description and Specs */}
-    <div class="flex flex-col lg:flex-row items-start justify-between gap-16">
+    <div class="grid grid-cols-1 lg:grid-cols-12 items-start justify-between gap-16">
       
       {/* Description */}
-      <div class="w-full lg:w-5/12 flex flex-col">
+      <div class="w-full lg:col-span-5 flex flex-col">
         <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] mb-6">About the Car</h3>
         <p class="font-jura text-gray-300 text-lg lg:text-xl leading-relaxed text-justify">
           {car.description}
@@ -79,15 +79,15 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
       </div>
 
       {/* Tech Specs (Bento Grid) */}
-      <div class="w-full lg:w-7/12 flex flex-col">
+      <div class="w-full lg:col-span-7 flex flex-col">
         <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] mb-6">Technical Specifications</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {car.specs.map(spec => {
             // Attempt to bold numbers for emphasis
             const boldedSpec = spec.replace(/(\d+(?:\.\d+)?\s*[a-zA-Z%/"\\]*)/g, '<strong class="text-white text-lg">$1</strong>');
             return (
-              <div class="glow-card bg-[#141414] border border-gray-800 p-6 rounded flex items-center justify-center text-center hover:border-[--brand-orange]/50 transition-colors">
-                <span class="font-jura text-gray-400 text-sm lg:text-base leading-snug" set:html={boldedSpec} />
+              <div class="glow-card bg-[#141414] border border-gray-800 p-4 md:p-6 rounded flex items-center justify-center text-center hover:border-[--brand-orange]/50 transition-colors">
+                <span class="font-jura text-gray-400 text-xs md:text-sm lg:text-base leading-snug" set:html={boldedSpec} />
               </div>
             );
           })}
@@ -99,7 +99,7 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
   {car.gallery && car.gallery.length > 1 && (
     <div class="mt-16 w-full pt-8 border-t border-gray-800">
       <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] text-center mb-12">Gallery</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
         {car.gallery.slice(1).map(imgFile => {
            const imgPath = `/src/images/garage/gallery/${imgFile}`;
            const imgAsset = galleryImages[imgPath];

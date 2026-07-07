@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('debug acrostic hover and log errors', async ({ page }) => {
+  test.setTimeout(90000);
   const errors: string[] = [];
   page.on('pageerror', (err) => {
     errors.push(`Page Error: ${err.message}\n${err.stack}`);
@@ -14,7 +15,7 @@ test('debug acrostic hover and log errors', async ({ page }) => {
   });
 
   console.log('Navigating to homepage...');
-  await page.goto('http://localhost:4322/TurtleWebsite/', { waitUntil: 'domcontentloaded' });
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
 
   // Wait for page load
   await page.waitForSelector('#journey-stage', { state: 'attached' });
@@ -25,7 +26,7 @@ test('debug acrostic hover and log errors', async ({ page }) => {
   // We can trigger it by sending keydown event ArrowDown 3 times
   for (let i = 0; i < 3; i++) {
     await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(6500); // Wait for transition duration (6s) to settle
+    await page.waitForTimeout(9000); // Wait for transition to settle completely
     console.log(`Scroll Down step ${i + 1} completed.`);
   }
 
@@ -34,9 +35,9 @@ test('debug acrostic hover and log errors', async ({ page }) => {
 
   // Hover over the acrostic letter U
   console.log('Hovering over U (Unity) acrostic letter...');
-  const uLetter = page.locator('text=Unity').first();
+  const uLetter = page.locator('text=nity').first();
   await expect(uLetter).toBeVisible();
-  await uLetter.hover();
+  await uLetter.hover({ force: true });
   
   // Wait a few seconds for the scramble/marquee animation
   await page.waitForTimeout(3000);

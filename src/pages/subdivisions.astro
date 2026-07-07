@@ -249,7 +249,7 @@ const subdivisions: Subdivision[] = [
                 {subdivisions.map((sub, i) => (
                     <a
                         href={`#${sub.id}`}
-                        class="group flex flex-col items-center gap-5 p-6 md:p-8 border border-white/10 bg-brand-midnight hover:border-[var(--brand-orange)] transition-colors duration-300"
+                        class="group flex flex-col items-center gap-4 p-4 md:p-8 border border-white/10 bg-brand-midnight hover:border-[var(--brand-orange)] transition-colors duration-300"
                     >
                         <span class="text-[var(--brand-orange)] font-bold text-sm tracking-widest uppercase opacity-50 group-hover:opacity-100 transition-opacity">
                             {String(i + 1).padStart(2, '0')}
@@ -271,7 +271,7 @@ const subdivisions: Subdivision[] = [
                         {String(index + 1).padStart(2, '0')}
                     </span>
                     <div>
-                        <h2 class="text-4xl md:text-7xl font-black uppercase tracking-tight text-white">
+                        <h2 class="text-3xl sm:text-4xl md:text-7xl font-black uppercase tracking-tight text-white">
                             {sub.name}
                         </h2>
                         <p class="text-base md:text-xl text-[var(--brand-orange)] font-light uppercase tracking-widest mt-3">
@@ -318,7 +318,7 @@ const subdivisions: Subdivision[] = [
                 {sub.subteams && (
                     <div class={`grid grid-cols-1 ${sub.subteams.length <= 3 ? 'md:grid-cols-' + sub.subteams.length : sub.subteams.length === 4 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-10 md:gap-14`}>
                         {sub.subteams.map((st) => (
-                            <div class="sub-card glow-card bg-brand-midnight p-12 md:p-16 border border-white/10 hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
+                            <div class="sub-card glow-card bg-brand-midnight p-6 md:p-16 border border-white/10 hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
                                 <h3 class="text-xl md:text-2xl font-bold uppercase tracking-wider text-white mb-8 group-hover:text-[var(--brand-orange)] transition-colors duration-300">
                                     {st.name}
                                 </h3>
