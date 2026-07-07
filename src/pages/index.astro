@@ -146,7 +146,7 @@ const getSlotClasses = (slot: string) => {
 			<div id="hero-parallax-wrapper" class="relative w-full max-w-[1800px] mx-auto h-full flex z-10 px-[6vw] pb-[5vh] pt-[5vh]"></div>
 		</section>
 
-		<div id="journey-container" class="relative w-full h-[100vh]">
+		<div id="journey-container" class="relative w-full h-[100vh] max-md:hidden">
             <div id="journey-viewport" class="sticky top-0 left-0 w-full h-screen overflow-hidden bg-void z-10">
                 <div id="journey-stage" class="absolute top-0 left-0 will-change-transform origin-top-left">
 
@@ -396,7 +396,104 @@ const getSlotClasses = (slot: string) => {
             </div>
 		</div>
 
-        <div id="footer-container" class="fixed top-0 left-0 w-full h-screen z-50 flex flex-col justify-end bg-brand-midnight pointer-events-none">
+		<!-- MOBILE VERSION (Native Scrolling Fallback Layout) -->
+		<div class="md:hidden flex flex-col w-full bg-void text-white relative z-10 px-6 py-20 gap-24">
+            
+            <!-- ABOUT SECTION -->
+            <section id="mobile-about" class="flex flex-col gap-8 border-b border-white/10 pb-16">
+                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// ABOUT US</h2>
+                <p class="font-jura text-xl leading-relaxed text-gray-300 text-justify">
+                    Aristotle University Racing Team Electric & Driverless, also known as <span class="italic text-brand-orange">Aristurtle</span>, is the student research team of the Aristotle University of Thessaloniki that designs, develops, and builds electric race cars.
+                </p>
+                <div class="bg-brand-midnight border border-gray-800 p-6 rounded-lg">
+                    <p class="text-xs text-brand-orange uppercase tracking-wider mb-3 font-bold font-jura">// OUR VISION</p>
+                    <p class="font-jura text-base text-gray-300 leading-relaxed text-justify">
+                        Our vision is to contribute to research around innovative technologies and to promote electric mobility in Greece and abroad by materializing high-level pioneering products.
+                    </p>
+                </div>
+            </section>
+
+            <!-- MISSION SECTION & SUBTEAMS -->
+            <section id="mobile-mission" class="flex flex-col gap-8 border-b border-white/10 pb-16">
+                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// OUR MISSION</h2>
+                <p class="font-jura text-xl leading-relaxed text-gray-300 text-justify">
+                    To inspire the next generation of engineers through the development of high-performance electric racing vehicles and driverless technologies.
+                </p>
+                <div class="flex flex-col gap-6 mt-4">
+                    <h3 class="text-base font-bold uppercase tracking-wider text-white font-jura">// SUBDIVISIONS</h3>
+                    <div class="grid grid-cols-1 gap-4">
+                        {subteams.map(sub => (
+                            <div class="bg-brand-midnight border border-gray-800 p-6 rounded-lg">
+                                <h4 class="text-brand-orange font-bold uppercase text-base mb-2 font-jura">{sub.text}</h4>
+                                <p class="font-jura text-gray-400 text-sm leading-relaxed text-justify">{sub.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <!-- SUBSYSTEMS SECTION (ACROSTIC) -->
+            <section id="mobile-subsystems" class="flex flex-col gap-8 border-b border-white/10 pb-16">
+                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// VALUES & SUBSYSTEMS</h2>
+                <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+                    {[
+                      { letter: 'A', rest: 'utonomous' },
+                      { letter: 'R', rest: 'esearch' },
+                      { letter: 'I', rest: 'nitiative' },
+                      { letter: 'S', rest: 'ustainability' },
+                      { letter: 'T', rest: 'rack record' },
+                      { letter: 'U', rest: 'nity' },
+                      { letter: 'R', rest: 'eturn' },
+                      { letter: 'T', rest: 'alent' },
+                      { letter: 'L', rest: 'earning' },
+                      { letter: 'E', rest: 'xcellence' }
+                    ].map((item) => (
+                      <div class="flex items-baseline gap-2">
+                        <span class="text-brand-orange text-3xl font-black font-jura">{item.letter}</span>
+                        <span class="text-white text-base font-bold tracking-tight uppercase font-jura">{item.rest}</span>
+                      </div>
+                    ))}
+                </div>
+            </section>
+
+            <!-- HISTORY SECTION -->
+            <section id="mobile-history" class="flex flex-col gap-8 border-b border-white/10 pb-16">
+                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// OUR HISTORY</h2>
+                <p class="font-jura text-xl leading-relaxed text-gray-300 text-justify">
+                    Founded in 2013, Aristurtle has evolved from a group of visionaries into a premier Formula Student powerhouse, building <span class="text-brand-orange">8 electric race cars</span> and pioneering autonomous racing in the Balkans.
+                </p>
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                    <div class="bg-brand-midnight border border-gray-800 p-5 rounded text-center">
+                        <p class="text-3xl font-black text-brand-orange font-jura">2013</p>
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-jura">FOUNDED</p>
+                    </div>
+                    <div class="bg-brand-midnight border border-gray-800 p-5 rounded text-center">
+                        <p class="text-3xl font-black text-brand-orange font-jura">8</p>
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-jura">CARS BUILT</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SPONSORS SECTION -->
+            <section id="mobile-sponsors" class="flex flex-col gap-8 pb-10">
+                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// PARTNERS</h2>
+                <div class="flex flex-col gap-6 items-center text-center">
+                    <p class="font-jura text-lg leading-relaxed text-gray-300">
+                        Our success is driven by the support of our <span class="text-brand-orange">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
+                    </p>
+                    <a href={baseUrl + "sponsors"} class="px-8 py-4 bg-brand-orange text-black font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform rounded-sm font-jura mt-2">
+                        SUPPORT THE TEAM
+                    </a>
+                </div>
+            </section>
+
+            <!-- MOBILE STATIC FOOTER -->
+            <div class="w-full pt-8 border-t border-white/10">
+                <Footer />
+            </div>
+		</div>
+
+        <div id="footer-container" class="fixed top-0 left-0 w-full h-screen z-50 flex flex-col justify-end bg-brand-midnight pointer-events-none max-md:hidden">
             <div class="pointer-events-auto">
                 <Footer />
             </div>
@@ -452,10 +549,12 @@ const getSlotClasses = (slot: string) => {
 		const mm = gsap.matchMedia();
 
 		mm.add({
+			isDesktop: "(min-width: 768px)",
 			reduceMotion: "(prefers-reduced-motion: reduce)",
 			noPreference: "(prefers-reduced-motion: no-preference)"
 		}, (context) => {
-			const reduceMotion = (context.conditions as Record<string, boolean> | undefined)?.reduceMotion ?? false;
+			const { isDesktop, reduceMotion } = context.conditions as any;
+			if (!isDesktop) return;
             
             const stage = document.querySelector('#journey-stage');
             const pathMain = document.querySelector('#journey-path-main');
