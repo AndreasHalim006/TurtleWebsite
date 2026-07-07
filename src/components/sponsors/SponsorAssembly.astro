@@ -68,7 +68,7 @@ const tierCount = tiers.length;
       <p class="text-[var(--brand-orange)] text-[clamp(0.65rem,0.58rem+0.2vw,0.82rem)] font-bold tracking-[0.48em] leading-relaxed uppercase">// ACTIVE_TIER</p>
       <h2 id="active-tier-title" class="text-white text-[clamp(2.25rem,5vw,5.8rem)] font-bold leading-[0.88] uppercase">{tiers[0]?.title}</h2>
       
-      <nav class="flex flex-wrap items-center gap-4 mt-2 mb-3 pointer-events-auto" aria-label="Micro tier index">
+      <nav class="flex flex-col items-start gap-1.5 mt-4 mb-4 pointer-events-auto" aria-label="Micro tier index">
         {tiers.map((tier, index) => (
           <a 
             href={`#tier-step-${tier.id}`}
