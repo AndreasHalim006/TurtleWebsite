@@ -186,6 +186,21 @@ const TargetCursor = ({
     const moveHandler = e => moveCursor(e.clientX, e.clientY);
     window.addEventListener('mousemove', moveHandler);
 
+    let isHiddenByMenu = false;
+    const menuHoverHandler = (e) => {
+      const isOverMenu = e.target.closest('#main-nav, .sm-scope, .staggered-menu-panel, .sm-toggle');
+      if (isOverMenu && !isHiddenByMenu) {
+        isHiddenByMenu = true;
+        gsap.to(cursorRef.current, { autoAlpha: 0, duration: 0.2, overwrite: 'auto' });
+        document.body.style.cursor = '';
+      } else if (!isOverMenu && isHiddenByMenu) {
+        isHiddenByMenu = false;
+        gsap.to(cursorRef.current, { autoAlpha: 1, duration: 0.2, overwrite: 'auto' });
+        if (hideDefaultCursor) document.body.style.cursor = 'none';
+      }
+    };
+    window.addEventListener('mouseover', menuHoverHandler, { passive: true });
+
     const scrollHandler = () => {
       if (!activeTarget || !cursorRef.current) return;
       const mouseX = gsap.getProperty(cursorRef.current, 'x');
@@ -315,6 +330,7 @@ const TargetCursor = ({
       }
       window.removeEventListener('mousemove', moveHandler);
       window.removeEventListener('mouseover', enterHandler);
+      window.removeEventListener('mouseover', menuHoverHandler);
       window.removeEventListener('scroll', scrollHandler);
       window.removeEventListener('mousedown', mouseDownHandler);
       window.removeEventListener('mouseup', mouseUpHandler);

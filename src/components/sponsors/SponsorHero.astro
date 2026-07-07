@@ -13,43 +13,4 @@ const { totalSponsors, totalTiers } = Astro.props;
   
   <BlindsHero title="PARTNERS" description="The technical, industrial, academic, and media partners powering Aristurtle on and off track." gradientColors={['#FF8900', '#FF3300']} />
 
-  <!-- Sponsor CTA Button -->
-  <div class="absolute bottom-12 left-12 md:left-auto md:right-[500px] z-30">
-      <a 
-        href="mailto:contact@aristurtle.gr" 
-        class="inline-flex min-h-[3.25rem] w-full md:w-auto items-center justify-center border border-[rgba(255,137,0,0.72)] hover:border-white px-5 text-[0.72rem] font-bold tracking-[0.24em] uppercase transition-all duration-200 ease-out bg-[var(--brand-orange)] text-[#050505] hover:-translate-y-[2px]"
-      >
-        <span class="mr-3">Become a Partner</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-90">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </a>
-  </div>
-  <div 
-    class="hero-reveal hidden md:flex absolute right-[clamp(1.25rem,4vw,4rem)] bottom-[clamp(1.25rem,4vw,3rem)] gap-4 text-white/62 text-[0.68rem] font-bold tracking-[0.28em] uppercase opacity-0 translate-y-6 motion-reduce:opacity-100 motion-reduce:translate-y-0" 
-    aria-label={`${totalSponsors} active partners across ${totalTiers} tiers`}
-  >
-    <span>{String(totalTiers).padStart(2, '0')} tiers</span>
-    <span>{String(totalSponsors).padStart(2, '0')} partners</span>
-  </div>
 </section>
-
-<script>
-  import { gsap } from 'gsap';
-
-  const initHeroAnimations = () => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) return;
-
-    gsap.to('.hero-reveal', {
-      y: 0,
-      opacity: 1,
-      duration: 1,
-      stagger: 0.08,
-      // Removed hardcoded ease to fall back to the global LUXE_EASE defined in BaseLayout
-    });
-  };
-
-  // Run on mount
-  initHeroAnimations();
-</script>
