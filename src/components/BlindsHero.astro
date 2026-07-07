@@ -40,13 +40,16 @@ const {
         />
     </div>
 
-    <!-- Page Title & Small Description (Bottom Right) -->
-    <div class="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-20 text-right flex flex-col items-end pointer-events-none">
-        <h1 class="font-black uppercase tracking-tight text-white text-4xl md:text-6xl lg:text-[5rem] leading-none mb-2 drop-shadow-lg">
+    <!-- Vignette legibility overlay -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-[#0A0A0A]/20 to-transparent z-10 pointer-events-none"></div>
+
+    <!-- Page Title & Small Description -->
+    <div class="absolute bottom-12 left-[6vw] right-[6vw] md:left-auto md:right-12 md:bottom-12 z-20 text-left items-start md:text-right md:items-end flex flex-col pointer-events-none">
+        <h1 class="font-black uppercase tracking-tight text-white text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] leading-none mb-2 drop-shadow-lg font-jura">
             {title}
         </h1>
         {description && (
-            <p class="font-sans text-sm md:text-base text-gray-300 max-w-[300px] md:max-w-[400px] leading-relaxed drop-shadow-md">
+            <p class="font-jura text-sm md:text-base text-gray-300 max-w-lg md:max-w-[400px] leading-relaxed drop-shadow-md">
                 {description}
             </p>
         )}
