@@ -67,6 +67,21 @@ const tierCount = tiers.length;
     <header class="assembly-hud absolute left-[clamp(1.25rem,4vw,4rem)] top-[clamp(4rem,8vh,6rem)] z-10 grid max-w-[min(30rem,36vw)] gap-2.5 pointer-events-none xl:max-w-[28rem] max-md:hidden motion-reduce:hidden" aria-live="polite">
       <p class="text-[var(--brand-orange)] text-[clamp(0.65rem,0.58rem+0.2vw,0.82rem)] font-bold tracking-[0.48em] leading-relaxed uppercase">// ACTIVE_TIER</p>
       <h2 id="active-tier-title" class="text-white text-[clamp(2.25rem,5vw,5.8rem)] font-bold leading-[0.88] uppercase">{tiers[0]?.title}</h2>
+      
+      <nav class="flex items-center gap-2 mt-1 mb-2 pointer-events-auto" aria-label="Micro tier index">
+        {tiers.map((tier, index) => (
+          <a 
+            href={`#tier-step-${tier.id}`}
+            class:list={[
+              'micro-tier-link relative block h-[2px] transition-all duration-300',
+              index === 0 ? 'w-6 bg-[var(--brand-orange)]' : 'w-2 bg-white/20 hover:bg-white/60'
+            ]}
+            data-micro-link={index}
+            aria-label={`Go to ${tier.title} tier`}
+          ></a>
+        ))}
+      </nav>
+
       <p id="active-tier-count" class="text-white/58 text-[0.72rem] font-bold tracking-[0.26em] uppercase">{tiers[0]?.sponsors.length ?? 0} partners indexed</p>
     </header>
 
@@ -240,6 +255,7 @@ const tierCount = tiers.length;
     const activeLayer = document.querySelector<HTMLElement>('.honeycomb-active-layer');
     const steps = gsap.utils.toArray<HTMLElement>('.tier-step');
     const railLinks = gsap.utils.toArray<HTMLElement>('[data-tier-link]');
+    const microLinks = gsap.utils.toArray<HTMLElement>('[data-micro-link]');
     const title = document.querySelector<HTMLElement>('#active-tier-title');
     const count = document.querySelector<HTMLElement>('#active-tier-count');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -287,6 +303,15 @@ const tierCount = tiers.length;
         } else {
           link.classList.remove('is-active', 'border-[var(--brand-orange)]', 'text-white', '-translate-x-[0.35rem]');
           link.classList.add('border-white/15');
+        }
+      });
+      microLinks.forEach((link, linkIndex) => {
+        if(linkIndex === index) {
+          link.classList.add('w-6', 'bg-[var(--brand-orange)]');
+          link.classList.remove('w-2', 'bg-white/20');
+        } else {
+          link.classList.remove('w-6', 'bg-[var(--brand-orange)]');
+          link.classList.add('w-2', 'bg-white/20');
         }
       });
     };
@@ -362,7 +387,8 @@ const tierCount = tiers.length;
       }
 
       slots.sort((a, b) => a.dist - b.dist);
-      slots.forEach((slot, index) => createIdleHex(idleFragment, slot, index));
+      // Background idle hexagons removed per user request
+      // slots.forEach((slot, index) => createIdleHex(idleFragment, slot, index));
 
       for (let i = 0; i < maxSponsorCount; i++) {
         const active = createActiveSlot(activeFragment);
