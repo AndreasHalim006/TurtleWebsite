@@ -68,17 +68,20 @@ const tierCount = tiers.length;
       <p class="text-[var(--brand-orange)] text-[clamp(0.65rem,0.58rem+0.2vw,0.82rem)] font-bold tracking-[0.48em] leading-relaxed uppercase">// ACTIVE_TIER</p>
       <h2 id="active-tier-title" class="text-white text-[clamp(2.25rem,5vw,5.8rem)] font-bold leading-[0.88] uppercase">{tiers[0]?.title}</h2>
       
-      <nav class="flex items-center gap-2 mt-1 mb-2 pointer-events-auto" aria-label="Micro tier index">
+      <nav class="flex flex-wrap items-center gap-4 mt-2 mb-3 pointer-events-auto" aria-label="Micro tier index">
         {tiers.map((tier, index) => (
           <a 
             href={`#tier-step-${tier.id}`}
             class:list={[
-              'micro-tier-link relative block h-[2px] transition-all duration-300',
-              index === 0 ? 'w-6 bg-[var(--brand-orange)]' : 'w-2 bg-white/20 hover:bg-white/60'
+              'micro-tier-link group flex items-center gap-2 transition-all duration-300',
+              index === 0 ? 'is-active' : ''
             ]}
             data-micro-link={index}
             aria-label={`Go to ${tier.title} tier`}
-          ></a>
+          >
+            <span class="block w-[2px] transition-all duration-300 h-2 bg-white/20 group-hover:bg-white/60 group-[.is-active]:h-4 group-[.is-active]:bg-[var(--brand-orange)]"></span>
+            <span class="text-[0.65rem] font-bold tracking-[0.15em] uppercase transition-colors duration-300 text-white/30 group-hover:text-white/60 group-[.is-active]:text-white">{tier.title}</span>
+          </a>
         ))}
       </nav>
 
@@ -307,11 +310,9 @@ const tierCount = tiers.length;
       });
       microLinks.forEach((link, linkIndex) => {
         if(linkIndex === index) {
-          link.classList.add('w-6', 'bg-[var(--brand-orange)]');
-          link.classList.remove('w-2', 'bg-white/20');
+          link.classList.add('is-active');
         } else {
-          link.classList.remove('w-6', 'bg-[var(--brand-orange)]');
-          link.classList.add('w-2', 'bg-white/20');
+          link.classList.remove('is-active');
         }
       });
     };
