@@ -445,11 +445,12 @@ const tierCount = tiers.length;
 
       if (previous.length) {
         activeTimeline.to(previous.map((slot) => slot.el), {
+          x: (i) => previous[i].rawX,
+          y: (i) => previous[i].rawY,
           scale: IDLE_SCALE,
           autoAlpha: 0,
           duration: immediate ? 0 : 0.34,
           stagger: immediate ? 0 : { each: 0.008, from: 'center' },
-          // Removed hardcoded ease
           onComplete: () => {
             previous.forEach((slot) => {
               resetSlot(slot);
@@ -460,18 +461,36 @@ const tierCount = tiers.length;
       }
 
       activeTimeline.add(() => {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const centerX = vw / 2;
+        const centerY = vh / 2;
+
         selected.forEach((slot, slotIndex) => {
           slot.activeScale = activeScale;
-          slot.x = selectedGeometry[slotIndex].x;
-          slot.y = selectedGeometry[slotIndex].y;
+          const rawX = selectedGeometry[slotIndex].x;
+          const rawY = selectedGeometry[slotIndex].y;
+          
+          slot.rawX = rawX;
+          slot.rawY = rawY;
+          
+          const cx = rawX + geometry.w / 2;
+          const cy = rawY + geometry.h / 2;
+          
+          const newCx = centerX + (cx - centerX) * activeScale;
+          const newCy = centerY + (cy - centerY) * activeScale;
+          
+          slot.targetX = newCx - geometry.w / 2;
+          slot.targetY = newCy - geometry.h / 2;
+
           prepareSlot(slot, tier.sponsors[slotIndex]);
           gsap.set(slot.el, {
-            x: slot.x,
-            y: slot.y,
+            x: immediate ? slot.targetX : rawX,
+            y: immediate ? slot.targetY : rawY,
             width: geometry.w,
             height: geometry.h,
             scale: immediate ? activeScale : ACTIVE_SEED_SCALE,
-            autoAlpha: 1,
+            autoAlpha: immediate ? 1 : 0,
           });
           gsap.set(slot.img, { opacity: 1, scale: 1 });
         });
@@ -485,10 +504,12 @@ const tierCount = tiers.length;
       activeTimeline.to(
         selected.map((slot) => slot.el),
         {
+          x: (i) => selected[i].targetX,
+          y: (i) => selected[i].targetY,
           scale: activeScale,
+          autoAlpha: 1,
           duration: growDuration,
           stagger: immediate ? 0 : { each: waveStep, from: 0 },
-          // Removed hardcoded ease
           overwrite: true,
         },
         'hexGrow'
