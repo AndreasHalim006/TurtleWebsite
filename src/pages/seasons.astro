@@ -4,7 +4,7 @@ import SeasonSection from '../components/seasons/SeasonSection.astro';
 import BlindsHero from '../components/BlindsHero.astro';
 import { getCollection } from 'astro:content';
 
-const pageGradient = ['#FF8900', '#FFB732'];
+const pageGradient = ['#9FFF10', '#00F3CB'];
 
 const seasons = await getCollection('seasons');
 seasons.sort((a, b) => a.data.order - b.data.order);

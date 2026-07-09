@@ -53,7 +53,7 @@ export default function MagnetLines({
       key={i}
       className="block origin-center"
       style={{
-        backgroundColor: lineColor,
+        background: lineColor,
         width: lineWidth,
         height: lineHeight,
         '--rotate': `${baseAngle}deg`,

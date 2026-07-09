@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-orange: #ff8900;
+  --color-brand-primary-1: #9FFF10;
+  --color-brand-primary-2: #00F3CB;
+  --color-brand-secondary: #9400D8;
+  --color-brand-orange: var(--color-brand-primary-1);
   --color-brand-emerald: #0A0A0A;
   --color-brand-midnight: #141414;
   --color-off-white: #F9F8F6;
@@ -184,7 +187,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Gradient text */
 .gradient-text {
-  background: var(--page-gradient, linear-gradient(to right, var(--color-brand-orange), #FF5500));
+  background: var(--page-gradient, linear-gradient(to right, var(--color-brand-primary-1), var(--color-brand-primary-2)));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -202,7 +205,7 @@ h1, h2, h3, h4, h5, h6 {
   height: 2px;
   bottom: -4px;
   left: 0;
-  background: var(--page-gradient, linear-gradient(to right, var(--color-brand-orange), #FF5500));
+  background: var(--page-gradient, linear-gradient(to right, var(--color-brand-primary-1), var(--color-brand-primary-2)));
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);

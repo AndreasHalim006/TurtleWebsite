@@ -135,7 +135,7 @@ function MenuItem({ id, id: itemID, link, text, image, speed, textColor, marquee
       <div
         className="absolute inset-0 overflow-hidden pointer-events-none z-20 translate-y-[101%]"
         ref={marqueeRef}
-        style={{ backgroundColor: marqueeBgColor }}
+        style={{ background: marqueeBgColor }}
       >
         <div className="h-full w-fit flex items-center gap-[4vw]" ref={marqueeInnerRef}>
           {[...Array(repetitions)].map((_, idx) => (

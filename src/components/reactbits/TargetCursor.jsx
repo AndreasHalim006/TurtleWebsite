@@ -357,7 +357,7 @@ const TargetCursor = ({
     >
       <div
         ref={dotRef}
-        className="absolute top-1/2 left-1/2 w-1.5 h-1.5 bg-brand-orange rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_#ff8900]"
+        className="absolute top-1/2 left-1/2 w-1.5 h-1.5 bg-brand-orange rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_var(--color-brand-primary-1)]"
         style={{ willChange: 'transform' }}
       />
 
@@ -372,7 +372,7 @@ const TargetCursor = ({
             className="target-cursor-corner absolute top-1/2 left-1/2 w-6 h-6 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
           >
                 <svg viewBox="0 0 20 20" className="w-full h-full fill-none stroke-brand-orange stroke-[3]">
-                    <path d="M12,3.1 L8,10 L12,16.9" style={{ filter: 'drop-shadow(0 0 5px #ff8900)' }} />
+                    <path d="M12,3.1 L8,10 L12,16.9" style={{ filter: 'drop-shadow(0 0 5px var(--color-brand-primary-1))' }} />
                 </svg>
           </div>
         ))}

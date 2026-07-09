@@ -13,7 +13,7 @@ const {
 	title = "ARISTURTLE | Formula Student Team",
 	description = "Official website of ARISTURTLE, the high-performance Formula Student racing team from Aristotle University of Thessaloniki.",
 	forceCompact = false,
-	pageColors = ['#ff8900', '#ff5500']
+	pageColors = ['#9FFF10', '#00F3CB']
 } = Astro.props;
 
 const baseUrl = import.meta.env.BASE_URL;
@@ -136,7 +136,10 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 
 <style is:global>
 	:root {
-		--brand-orange: #ff8900;
+		--brand-primary-1: #9FFF10;
+		--brand-primary-2: #00F3CB;
+		--brand-secondary: #9400D8;
+		--brand-orange: var(--brand-primary-1);
 		--brand-emerald: #0A0A0A;
 		--brand-midnight: #141414;
 		--off-white: #F9F8F6;
