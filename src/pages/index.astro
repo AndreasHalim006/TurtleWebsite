@@ -547,8 +547,16 @@ const getSlotClasses = (slot: string) => {
 		document.body.appendChild(errDiv);
 	});
 
+	let mm: any = null;
+
 	const initJourney = () => {
-		const mm = gsap.matchMedia();
+		if (mm) {
+			mm.revert();
+			mm = null;
+		}
+		if (!document.getElementById('journey-container')) return;
+
+		mm = gsap.matchMedia();
 
 		mm.add({
 			isDesktop: "(min-width: 768px)",
@@ -1171,6 +1179,17 @@ const getSlotClasses = (slot: string) => {
 	} else {
 		initJourney();
 	}
+
+	document.addEventListener('astro:page-load', () => {
+		initJourney();
+	});
+
+	document.addEventListener('astro:before-swap', () => {
+		if (mm) {
+			mm.revert();
+			mm = null;
+		}
+	});
 </script>
 
 <style is:global>
