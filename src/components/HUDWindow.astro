@@ -8,9 +8,10 @@ interface Props {
     noRounding?: boolean;
     style?: any;
     gradientType?: 'blue-to-green' | 'green-to-blue';
+    gradientDirection?: 'diagonal' | 'vertical';
 }
 
-const { id, class: className, noPadding = false, noBorder = false, noRounding = false, style = {}, gradientType = 'blue-to-green' } = Astro.props;
+const { id, class: className, noPadding = false, noBorder = false, noRounding = false, style = {}, gradientType = 'blue-to-green', gradientDirection = 'diagonal' } = Astro.props;
 
 // If the window is borderless, force the corners to be sharp.
 const isRounded = !noBorder && !noRounding;
@@ -43,7 +44,13 @@ const gradId = `hud-grad-${id || Math.random().toString(36).substring(2, 9)}`;
     {!noBorder && (
         <svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible z-20" preserveAspectRatio="none">
             <defs>
-                <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient 
+                    id={gradId} 
+                    x1="0%" 
+                    y1="0%" 
+                    x2={gradientDirection === 'vertical' ? "0%" : "100%"} 
+                    y2="100%"
+                >
                     {gradientType === 'blue-to-green' ? (
                         <>
                             <stop offset="0%" stop-color="var(--brand-primary-2, #00F3CB)" />

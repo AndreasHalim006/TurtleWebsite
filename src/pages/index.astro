@@ -83,7 +83,7 @@ const JOURNEY_CONFIG = [
     id: "sponsors",
     p: 0.9,
     windows: [
-      { id: "w-fh5g", w: "93.9vw", h: "29.2vh", x: "2.5%", y: "13.7%", content: "sponsors-hero-title", noBorder: false, gradientType: "green-to-blue" },
+      { id: "w-fh5g", w: "93.9vw", h: "29.2vh", x: "2.5%", y: "13.7%", content: "sponsors-hero-title", noBorder: false, gradientType: "green-to-blue", gradientDirection: "vertical" },
       { id: "w-5cmn", w: "28.3vw", h: "45.9vh", x: "67.9%", y: "49.6%", content: "sponsors-call-to-action", noBorder: true },
       { id: "w-i6cd", w: "43.2vw", h: "45.9vh", x: "2.4%", y: "49.0%", content: "sponsors-partnership-text", noBorder: true }
     ]
@@ -167,6 +167,7 @@ const getSlotClasses = (slot: string) => {
                             noBorder={win.noBorder}
                             noRounding={win.noRounding}
                             gradientType={win.gradientType as any}
+                            gradientDirection={win.gradientDirection as any}
                             style={{ 
                                 width: win.w, 
                                 height: win.h,
