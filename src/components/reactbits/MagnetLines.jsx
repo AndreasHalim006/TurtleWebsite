@@ -1,5 +1,22 @@
 import { useRef, useEffect } from 'react';
 
+const interpolateColor = (color1, color2, factor) => {
+  const parseHex = (hex) => {
+    const c = hex.replace('#', '');
+    return {
+      r: parseInt(c.substring(0, 2), 16),
+      g: parseInt(c.substring(2, 4), 16),
+      b: parseInt(c.substring(4, 6), 16),
+    };
+  };
+  const c1 = parseHex(color1);
+  const c2 = parseHex(color2);
+  const r = Math.round(c1.r + factor * (c2.r - c1.r));
+  const g = Math.round(c1.g + factor * (c2.g - c1.g));
+  const b = Math.round(c1.b + factor * (c2.b - c1.b));
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
 export default function MagnetLines({
   rows = 9,
   columns = 9,
@@ -9,7 +26,8 @@ export default function MagnetLines({
   lineHeight = '6vmin',
   baseAngle = -10,
   className = '',
-  style = {}
+  style = {},
+  gradientColors = null
 }) {
   const containerRef = useRef(null);
 
@@ -48,20 +66,30 @@ export default function MagnetLines({
   }, [rows, columns]);
 
   const total = rows * columns;
-  const spans = Array.from({ length: total }, (_, i) => (
-    <span
-      key={i}
-      className="block origin-center"
-      style={{
-        background: lineColor,
-        width: lineWidth,
-        height: lineHeight,
-        '--rotate': `${baseAngle}deg`,
-        transform: 'rotate(var(--rotate))',
-        willChange: 'transform'
-      }}
-    />
-  ));
+  const spans = Array.from({ length: total }, (_, i) => {
+    let currentLineColor = lineColor;
+    if (gradientColors && gradientColors.length >= 2) {
+      const row = Math.floor(i / columns);
+      const col = i % columns;
+      const maxDist = (rows - 1) + (columns - 1);
+      const factor = maxDist > 0 ? (row + col) / maxDist : 0;
+      currentLineColor = interpolateColor(gradientColors[0], gradientColors[1], factor);
+    }
+    return (
+      <span
+        key={i}
+        className="block origin-center"
+        style={{
+          background: currentLineColor,
+          width: lineWidth,
+          height: lineHeight,
+          '--rotate': `${baseAngle}deg`,
+          transform: 'rotate(var(--rotate))',
+          willChange: 'transform'
+        }}
+      />
+    );
+  });
 
   return (
     <div

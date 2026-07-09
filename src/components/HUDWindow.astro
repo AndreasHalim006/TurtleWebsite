@@ -7,12 +7,14 @@ interface Props {
     noBorder?: boolean;
     noRounding?: boolean;
     style?: any;
+    gradientType?: 'blue-to-green' | 'green-to-blue';
 }
 
-const { id, class: className, noPadding = false, noBorder = false, noRounding = false, style = {} } = Astro.props;
+const { id, class: className, noPadding = false, noBorder = false, noRounding = false, style = {}, gradientType = 'blue-to-green' } = Astro.props;
 
 // If the window is borderless, force the corners to be sharp.
 const isRounded = !noBorder && !noRounding;
+const gradId = `hud-grad-${id || Math.random().toString(36).substring(2, 9)}`;
 ---
 
 <div 
@@ -41,16 +43,25 @@ const isRounded = !noBorder && !noRounding;
     {!noBorder && (
         <svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible z-20" preserveAspectRatio="none">
             <defs>
-                <linearGradient id="hud-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="var(--brand-primary-1, #9FFF10)" />
-                    <stop offset="100%" stop-color="var(--brand-primary-2, #00F3CB)" />
+                <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+                    {gradientType === 'blue-to-green' ? (
+                        <>
+                            <stop offset="0%" stop-color="var(--brand-primary-2, #00F3CB)" />
+                            <stop offset="100%" stop-color="var(--brand-primary-1, #9FFF10)" />
+                        </>
+                    ) : (
+                        <>
+                            <stop offset="0%" stop-color="var(--brand-primary-1, #9FFF10)" />
+                            <stop offset="100%" stop-color="var(--brand-primary-2, #00F3CB)" />
+                        </>
+                    )}
                 </linearGradient>
             </defs>
             <rect 
                 class:list={["hud-frame-path", noRounding ? "no-round" : "rounded-corners"]}
                 x="0" y="0" width="100%" height="100%" 
                 fill="none" 
-                stroke="url(#hud-grad)" 
+                stroke={`url(#${gradId})`} 
                 stroke-width="9" 
                 stroke-linecap="round"
                 stroke-linejoin="round"

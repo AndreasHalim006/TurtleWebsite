@@ -83,7 +83,7 @@ const JOURNEY_CONFIG = [
     id: "sponsors",
     p: 0.9,
     windows: [
-      { id: "w-fh5g", w: "93.9vw", h: "29.2vh", x: "2.5%", y: "13.7%", content: "sponsors-hero-title", noBorder: false },
+      { id: "w-fh5g", w: "93.9vw", h: "29.2vh", x: "2.5%", y: "13.7%", content: "sponsors-hero-title", noBorder: false, gradientType: "green-to-blue" },
       { id: "w-5cmn", w: "28.3vw", h: "45.9vh", x: "67.9%", y: "49.6%", content: "sponsors-call-to-action", noBorder: true },
       { id: "w-i6cd", w: "43.2vw", h: "45.9vh", x: "2.4%", y: "49.0%", content: "sponsors-partnership-text", noBorder: true }
     ]
@@ -166,6 +166,7 @@ const getSlotClasses = (slot: string) => {
                             noPadding={win.noPadding}
                             noBorder={win.noBorder}
                             noRounding={win.noRounding}
+                            gradientType={win.gradientType as any}
                             style={{ 
                                 width: win.w, 
                                 height: win.h,
@@ -348,7 +349,7 @@ const getSlotClasses = (slot: string) => {
                                     rows={18}
                                     columns={5}
                                     containerSize="100%"
-                                    lineColor="var(--brand-orange)"
+                                    gradientColors={['#00F3CB', '#9FFF10']}
                                     lineWidth="0.8cqw"
                                     lineHeight="6cqh"
                                     baseAngle={45}
@@ -364,7 +365,7 @@ const getSlotClasses = (slot: string) => {
 
                               {(win.content.toLowerCase() === 'sponsors-partnership-text') && (
                                 <p class="font-sans text-white text-[min(5.5cqw,15cqh)] leading-[1.15] uppercase tracking-tighter font-bold text-left" style="text-wrap: balance;">
-                                  Our success is driven by the support of our <span class="text-brand-orange">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
+                                  Our success is driven by the support of our <span class="text-[var(--brand-primary-2)]">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
                                 </p>
                               )}
 
@@ -374,7 +375,7 @@ const getSlotClasses = (slot: string) => {
                                         <span class="block">JOIN OUR MISSION.</span>
                                         <span class="block">BECOME A SPONSOR.</span>
                                     </p>
-                                    <a href={baseUrl + "sponsors"} class="px-10 py-5 bg-brand-orange text-black font-black uppercase tracking-widest text-[min(3cqw,5cqh)] hover:scale-105 transition-transform rounded-sm mt-2">
+                                    <a href={baseUrl + "sponsors"} class="px-10 py-5 bg-[var(--brand-primary-2)] text-black font-black uppercase tracking-widest text-[min(3cqw,5cqh)] hover:scale-105 transition-transform rounded-sm mt-2">
                                         SUPPORT THE TEAM
                                     </a>
                                 </div>
@@ -479,9 +480,9 @@ const getSlotClasses = (slot: string) => {
                 <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// PARTNERS</h2>
                 <div class="flex flex-col gap-6 items-center text-center">
                     <p class="font-jura text-lg leading-relaxed text-gray-300">
-                        Our success is driven by the support of our <span class="text-brand-orange">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
+                        Our success is driven by the support of our <span class="text-[var(--brand-primary-2)]">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
                     </p>
-                    <a href={baseUrl + "sponsors"} class="px-8 py-4 bg-brand-orange text-black font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform rounded-sm font-jura mt-2">
+                    <a href={baseUrl + "sponsors"} class="px-8 py-4 bg-[var(--brand-primary-2)] text-black font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform rounded-sm font-jura mt-2">
                         SUPPORT THE TEAM
                     </a>
                 </div>
