@@ -10,7 +10,6 @@ import FuzzyText from '../components/reactbits/FuzzyText.jsx';
 import MagnetLines from '../components/reactbits/MagnetLines.jsx';
 import BounceCards from '../components/reactbits/BounceCards.jsx';
 import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
-import Footer from '../components/Footer.astro';
 
 // Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
 const heroVideo = '/TurtleWebsite/videos/hero.mp4';
@@ -489,17 +488,7 @@ const getSlotClasses = (slot: string) => {
                 </div>
             </section>
 
-            <!-- MOBILE STATIC FOOTER -->
-            <div class="w-full pt-8 border-t border-white/10">
-                <Footer />
-            </div>
 		</div>
-
-        <div id="footer-container" class="fixed top-0 left-0 w-full h-screen z-50 flex flex-col justify-end bg-brand-midnight pointer-events-none max-md:hidden">
-            <div class="pointer-events-auto">
-                <Footer />
-            </div>
-        </div>
 	</div>
 </BaseLayout>
 
@@ -637,8 +626,9 @@ const getSlotClasses = (slot: string) => {
                 };
 
                 const getCameraParamsForState = (stateIndex: number) => {
-                    const pos = getStationPos(stateIndex);
-                    const scale = stateIndex === 7 ? 0.06 : 1.0;
+                    const isOutro = stateIndex === 6;
+                    const pos = getStationPos(isOutro ? 7 : stateIndex);
+                    const scale = isOutro ? 0.06 : 1.0;
                     return {
                         x: -pos.x * scale + window.innerWidth / 2,
                         y: -pos.y * scale + window.innerHeight / 2,
@@ -667,7 +657,6 @@ const getSlotClasses = (slot: string) => {
 
                 gsap.set(pathMain, { drawSVG: "0%" });
                 gsap.set(otherPaths, { drawSVG: "0%" });
-                gsap.set('#footer-container', { yPercent: 100 });
 
                 // Starting label — camera at path origin, nothing drawn yet
                 journeyTimeline.addLabel("journey-start");
@@ -751,47 +740,35 @@ const getSlotClasses = (slot: string) => {
                     lastP = wp.p;
                 });
 
-                const remainingDuration = (1 - lastP) * 10;
+                const remainingDuration = (1 - lastP) * 30;
                 const lastStation = document.querySelector(waypoints[waypoints.length - 1].id);
                 const finalTracker = { progress: lastP };
 
-                const startValFinal = lastP;
-                const endValFinal = 1;
-                const startPosFinal = getStationPos(6); // Sponsors
                 const endPosFinal = getStationPos(7); // Outro center
 
                 journeyTimeline
-                    .to(lastStation, { autoAlpha: 0, duration: 0.5 }, "+=0.5")
-                    // Pre-draw the rest of the line while off-screen to avoid raster thrashing during scale animation
-                    .set(pathMain, { drawSVG: "100%" })
-                    .set(otherPaths, { drawSVG: "100%" })
+                    .to(lastStation, { autoAlpha: 0, duration: 1.5 }, "+=1.5")
+                    // 1. Draw the path completely over 3.0 seconds (starts stationary)
                     .to(finalTracker, {
                         progress: 1,
                         ease: "none",
-                        duration: remainingDuration * 0.5,
+                        duration: remainingDuration,
                         onUpdate: function() {
                             const p = finalTracker.progress;
-                            const s = (p - startValFinal) / (endValFinal - startValFinal || 1);
-
-                            // Outro zoom-out: scale S goes from 1.0 -> 0.06
-                            const S = 1.0 + (0.06 - 1.0) * s;
-                            const px = startPosFinal.x + (endPosFinal.x - startPosFinal.x) * s;
-                            const py = startPosFinal.y + (endPosFinal.y - startPosFinal.y) * s;
-                            gsap.set(stage, {
-                                x: -px * S + window.innerWidth / 2,
-                                y: -py * S + window.innerHeight / 2,
-                                scale: S,
-                                force3D: true
-                            });
-
-                            // Compensate stroke width so lines don't vanish due to massive scale down
-                            gsap.set('#journey-svg g', { strokeWidth: 15 + (80 - 15) * s });
+                            gsap.set(pathMain, { drawSVG: `${p * 100}%` });
+                            gsap.set(otherPaths, { drawSVG: `${Math.min(p / 0.9, 1) * 100}%` });
                         }
                     })
-                    .addLabel("outro")
-                    // Slide down lightweight footer over the canvas instead of moving the heavy canvas
-                    .to('#footer-container', { yPercent: 0, duration: 15, ease: "none" })
-                    .addLabel("footer");
+                    // 2. Zoom out and center the stage, starting 1.5 seconds into the drawing (50% overlap)
+                    .to(stage, {
+                        x: -endPosFinal.x * 0.06 + window.innerWidth / 2,
+                        y: -endPosFinal.y * 0.06 + window.innerHeight / 2,
+                        scale: 0.06,
+                        force3D: true,
+                        ease: "none",
+                        duration: remainingDuration * 0.5
+                    }, `-=${remainingDuration * 0.5}`)
+                    .addLabel("outro");
 
                 // CINEMATIC SECTION SCROLL STATE MACHINE
                 let currentStateIndex = 0;
@@ -804,8 +781,7 @@ const getSlotClasses = (slot: string) => {
                     { name: 'subsystems', label: 'station-subsystems-active', scrollY: 0 },
                     { name: 'history', label: 'station-history-active', scrollY: 0 },
                     { name: 'sponsors', label: 'station-sponsors-active', scrollY: 0 },
-                    { name: 'outro', label: 'outro', scrollY: 0 },
-                    { name: 'footer', label: 'footer', scrollY: 0 }
+                    { name: 'outro', label: 'outro', scrollY: 0 }
                 ];
 
                 const updateScrollYPositions = () => {
@@ -829,8 +805,8 @@ const getSlotClasses = (slot: string) => {
 
                     console.log(`Cinematic Scroll: Transitioning ${currentState.name} (${currentState.scrollY}px) -> ${targetState.name} (${targetState.scrollY}px)`);
 
-                    const isFooterTransition = targetIndex === 7 || currentStateIndex === 7;
-                    const transitionDuration = reduceMotion ? 0 : (isFooterTransition ? 1.5 : 6.0);
+                    const isOutroTransition = targetIndex === 6 || currentStateIndex === 6;
+                    const transitionDuration = reduceMotion ? 0 : (isOutroTransition ? 2.5 : 6.0);
                     const scrollDuration = reduceMotion ? 0 : 4.0;
 
                     const isReturningToHero = currentStateIndex === 1 && targetIndex === 0;
@@ -853,6 +829,45 @@ const getSlotClasses = (slot: string) => {
                     // Overlap slightly with the end of the scroll (50% of duration) to eliminate empty time
                     const delayTimeline = (isLeavingHero && !reduceMotion) ? scrollDuration * 0.5 : 0;
 
+                     if (currentStateIndex === 6 && targetIndex < 6) {
+                        // 1. Close menu immediately
+                        const toggleBtn = document.querySelector('.sm-toggle') as HTMLElement;
+                        if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'true') {
+                            toggleBtn.click();
+                        }
+                        
+                        // 2. Animate logo back to compact size
+                        const logo = document.getElementById('nav-logo');
+                        const isMobile = window.innerWidth < 768;
+                        gsap.to(logo, { 
+                            width: isMobile ? "150px" : "200px", 
+                            duration: 0.6, 
+                            ease: "luxe" 
+                        });
+
+                        // 3. Clear non-scaling stroke immediately
+                        const pathMain = document.querySelector('#journey-path-main');
+                        const otherPaths = document.querySelectorAll('.other-car-paths path');
+                        pathMain?.removeAttribute('vector-effect');
+                        (pathMain as HTMLElement).style.strokeWidth = '';
+                        otherPaths.forEach(path => {
+                            path.removeAttribute('vector-effect');
+                            (path as HTMLElement).style.strokeWidth = '';
+                        });
+                    }
+
+                    if (targetIndex === 6) {
+                        // Set non-scaling stroke for outro zoom
+                        const pathMain = document.querySelector('#journey-path-main');
+                        const otherPaths = document.querySelectorAll('.other-car-paths path');
+                        pathMain?.setAttribute('vector-effect', 'non-scaling-stroke');
+                        (pathMain as HTMLElement).style.strokeWidth = '2.5px';
+                        otherPaths.forEach(path => {
+                            path.setAttribute('vector-effect', 'non-scaling-stroke');
+                            (path as HTMLElement).style.strokeWidth = '2.5px';
+                        });
+                    }
+
                     // 2. Play journey timeline to the corresponding label anchor using GSAP native tweenTo
                     if (targetState.label) {
                         journeyTimeline.tweenTo(targetState.label, {
@@ -863,6 +878,26 @@ const getSlotClasses = (slot: string) => {
                                 currentStateIndex = targetIndex;
                                 isAnimating = false;
                                 console.log(`Cinematic Scroll: Arrived at ${targetState.name}`);
+                                if (targetIndex === 6) {
+                                    // 1. Animate logo to large size
+                                    const logo = document.getElementById('nav-logo');
+                                    gsap.to(logo, { 
+                                        width: () => {
+                                            if (window.innerWidth < 640) return "280px";
+                                            if (window.innerWidth < 768) return "350px";
+                                            if (window.innerWidth < 1024) return "550px";
+                                            return "700px";
+                                        }, 
+                                        duration: 0.8, 
+                                        ease: "luxe" 
+                                    });
+                                    
+                                    // 2. Open menu
+                                    const toggleBtn = document.querySelector('.sm-toggle') as HTMLElement;
+                                    if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'false') {
+                                        toggleBtn.click();
+                                    }
+                                }
                             }
                         });
                     } else {
