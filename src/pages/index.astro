@@ -678,6 +678,8 @@ const getSlotClasses = (slot: string) => {
                     const endVal = wp.p;
                     const startPos = getStationPos(index);
                     const endPos = getStationPos(index + 1);
+                    const startScale = getCameraParamsForState(index).scale;
+                    const endScale = getCameraParamsForState(index + 1).scale;
 
                     journeyTimeline.to(segmentTracker, {
                         progress: wp.p,
@@ -690,8 +692,9 @@ const getSlotClasses = (slot: string) => {
                             gsap.set(otherPaths, { drawSVG: `${Math.min(p / 0.9, 1) * 100}%` });
 
                             // Cinematic zoom out-in centered trajectory
-                            // Scale S: goes from 1.0 -> 0.4 -> 1.0 in the middle of travel (s = 0.5)
-                            const S = 1.0 - 2.4 * s * (1.0 - s);
+                            // Scale S: dips relative to the interpolated target scale
+                            const targetScale = startScale + (endScale - startScale) * s;
+                            const S = targetScale * (1.0 - 2.4 * s * (1.0 - s));
                             const px = startPos.x + (endPos.x - startPos.x) * s;
                             const py = startPos.y + (endPos.y - startPos.y) * s;
                             gsap.set(stage, {
