@@ -615,13 +615,13 @@ const getSlotClasses = (slot: string) => {
 
                 // CAMERA HELPERS FOR DECOUPLED SMOOTH TRANSITIONS
                 const getStationPos = (stateIndex: number) => {
-                    // 0 = hero (path origin), 1 = journey-start (also path origin)
-                    if (stateIndex <= 1) {
+                    // 0 = hero (path origin)
+                    if (stateIndex === 0) {
                         return getTransformedPos(0);
-                    } else if (stateIndex >= 2 && stateIndex <= 6) {
-                        const wp = waypoints[stateIndex - 2];
+                    } else if (stateIndex >= 1 && stateIndex <= 5) {
+                        const wp = waypoints[stateIndex - 1];
                         return getTransformedPos(wp.p);
-                    } else if (stateIndex === 7) {
+                    } else if (stateIndex === 6) {
                         return { x: stageWidth / 2, y: stageHeight / 2 };
                     }
                     return { x: 0, y: 0 };
@@ -629,7 +629,7 @@ const getSlotClasses = (slot: string) => {
 
                 const getCameraParamsForState = (stateIndex: number) => {
                     const isOutro = stateIndex === 6;
-                    const pos = getStationPos(isOutro ? 7 : stateIndex);
+                    const pos = getStationPos(stateIndex);
                     
                     // Calculate responsive scale based on a 1920x960 baseline canvas (2:1 aspect ratio)
                     const baseScale = Math.min(window.innerWidth / 1920, window.innerHeight / 960);
@@ -676,8 +676,8 @@ const getSlotClasses = (slot: string) => {
 
                     const startVal = lastP;
                     const endVal = wp.p;
-                    const startPos = getStationPos(index + 1);
-                    const endPos = getStationPos(index + 2);
+                    const startPos = getStationPos(index);
+                    const endPos = getStationPos(index + 1);
 
                     journeyTimeline.to(segmentTracker, {
                         progress: wp.p,
@@ -750,7 +750,7 @@ const getSlotClasses = (slot: string) => {
                 const lastStation = document.querySelector(waypoints[waypoints.length - 1].id);
                 const finalTracker = { progress: lastP };
 
-                const endPosFinal = getStationPos(7); // Outro center
+                const endPosFinal = getStationPos(6); // Outro center
 
                 journeyTimeline
                     .to(lastStation, { autoAlpha: 0, duration: 1.5 }, "+=1.5")
