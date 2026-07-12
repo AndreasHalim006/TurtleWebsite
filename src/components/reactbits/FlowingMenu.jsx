@@ -121,8 +121,13 @@ function MenuItem({ id, id: itemID, link, text, image, speed, textColor, marquee
     <div
       className="flex-1 relative overflow-hidden flex items-center justify-center"
       ref={itemRef}
-      style={{ boxShadow: isFirst ? 'none' : `inset 0  1px 0 0 ${borderColor}` }}
     >
+      {!isFirst && (
+        <div 
+          className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none" 
+          style={{ backgroundColor: borderColor }} 
+        />
+      )}
       <a
         className="flex items-center justify-center w-full h-full relative cursor-pointer uppercase no-underline font-semibold text-[4vh] z-10"
         href={link}
