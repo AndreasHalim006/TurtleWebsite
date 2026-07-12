@@ -73,7 +73,7 @@ const JOURNEY_CONFIG = [
     id: "history",
     p: 0.7598072031061722,
     windows: [
-      { id: "w-62se", w: "21.4%", h: "80.0%", x: "76.2%", y: "17.1%", content: "history-stats-panel", noBorder: false, noPadding: true, noRounding: true, borderColor: "var(--brand-primary-2)" },
+      { id: "w-62se", w: "21.4%", h: "56.0%", x: "76.2%", y: "29.1%", content: "history-stats-panel", noBorder: false, noPadding: true, noRounding: true, borderColor: "var(--brand-primary-2)" },
       { id: "w-ygxs", w: "68%", h: "45%", x: "2.9%", y: "3.0%", content: "history-main-header", noBorder: true },
       { id: "w-smmv", w: "37.2%", h: "46.2%", x: "3.3%", y: "49.0%", content: "history-narrative", noBorder: true }
     ]
@@ -569,12 +569,35 @@ const getSlotClasses = (slot: string) => {
                 const scaleFactor = 6; 
                 const stageWidth = 1774 * scaleFactor;
                 const stageHeight = 887 * scaleFactor;
-                const OUTRO_SCALE = 0.08;
+                const LOGO_ASPECT_RATIO = 262.6 / 978.84;
 
-                const getOutroCenterX = () => {
-                    if (window.innerWidth <= 1024) return window.innerWidth / 2;
-                    const menuWidth = Math.min(460, Math.max(260, window.innerWidth * 0.4));
-                    return (window.innerWidth - menuWidth) / 2;
+                const getOutroFrame = () => {
+                    const edgeGap = 24;
+                    const isFullWidthMenu = window.innerWidth <= 1024;
+                    const menuWidth = isFullWidthMenu
+                        ? 0
+                        : Math.min(460, Math.max(260, window.innerWidth * 0.4));
+                    const logoWidth = window.innerWidth < 640
+                        ? 280
+                        : window.innerWidth < 768
+                            ? 350
+                            : window.innerWidth < 1024
+                                ? 550
+                                : 700;
+                    const logoBottom = window.innerHeight * 0.02 + logoWidth * LOGO_ASPECT_RATIO;
+                    const left = edgeGap;
+                    const right = window.innerWidth - menuWidth - edgeGap;
+                    const top = Math.min(logoBottom + edgeGap, window.innerHeight * 0.45);
+                    const bottom = window.innerHeight - edgeGap;
+                    const availableWidth = Math.max(right - left, 1);
+                    const availableHeight = Math.max(bottom - top, 1);
+                    const scale = Math.min(availableWidth / stageWidth, availableHeight / stageHeight);
+
+                    return {
+                        centerX: isFullWidthMenu ? window.innerWidth / 2 : left + availableWidth / 2,
+                        centerY: top + availableHeight / 2,
+                        scale
+                    };
                 };
 
                 gsap.set(stage, { width: stageWidth, height: stageHeight });
@@ -643,11 +666,11 @@ const getSlotClasses = (slot: string) => {
                     
                     // Calculate responsive scale based on a 1920x960 baseline canvas (2:1 aspect ratio)
                     const baseScale = Math.min(window.innerWidth / 1920, window.innerHeight / 960);
-                    
-                    const scale = isOutro ? OUTRO_SCALE : baseScale;
+                    const outroFrame = isOutro ? getOutroFrame() : null;
+                    const scale = outroFrame?.scale ?? baseScale;
                     return {
-                        x: -pos.x * scale + (isOutro ? getOutroCenterX() : window.innerWidth / 2),
-                        y: -pos.y * scale + window.innerHeight / 2,
+                        x: -pos.x * scale + (outroFrame?.centerX ?? window.innerWidth / 2),
+                        y: -pos.y * scale + (outroFrame?.centerY ?? window.innerHeight / 2),
                         scale: scale
                     };
                 };
@@ -780,9 +803,15 @@ const getSlotClasses = (slot: string) => {
                     })
                     // 2. Zoom out and center the stage, starting 1.5 seconds into the drawing (50% overlap)
                     .to(stage, {
-                        x: () => -endPosFinal.x * OUTRO_SCALE + getOutroCenterX(),
-                        y: () => -endPosFinal.y * OUTRO_SCALE + window.innerHeight / 2,
-                        scale: OUTRO_SCALE,
+                        x: () => {
+                            const frame = getOutroFrame();
+                            return -endPosFinal.x * frame.scale + frame.centerX;
+                        },
+                        y: () => {
+                            const frame = getOutroFrame();
+                            return -endPosFinal.y * frame.scale + frame.centerY;
+                        },
+                        scale: () => getOutroFrame().scale,
                         force3D: true,
                         ease: "none",
                         duration: remainingDuration * 0.5
