@@ -966,7 +966,7 @@ const getSlotClasses = (slot: string) => {
                             document.getElementById('journey-svg')?.classList.add('outro-lines-final');
                             outroStrokeTween?.kill();
                             outroStrokeTween = gsap.to(outroPaths, {
-                                strokeWidth: "3.5px",
+                                strokeWidth: "6px",
                                 duration: reduceMotion ? 0 : 0.5,
                                 ease: "luxe",
                                 overwrite: true
@@ -1333,6 +1333,8 @@ const getSlotClasses = (slot: string) => {
     #journey-svg.outro-lines-final path {
         stroke-dasharray: none !important;
         stroke-dashoffset: 0 !important;
+        stroke-width: 6px !important;
+        vector-effect: non-scaling-stroke;
     }
 
     h1, h2, h3, h4 { letter-spacing: -0.04em; font-weight: 300; }
