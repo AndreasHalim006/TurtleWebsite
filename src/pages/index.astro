@@ -346,15 +346,18 @@ const getSlotClasses = (slot: string) => {
 
                               {(win.content.toLowerCase() === 'history-stats-panel') && (
                                 <div class="w-full h-full flex items-center justify-center pointer-events-auto">
-                                  <Cubes
-                                    client:load
-                                    gridSize={6}
-                                    maxAngle={45}
-                                    radius={3}
-                                    borderStyle="2px dashed var(--brand-primary-2)"
-                                    autoAnimate={true}
-                                    rippleOnClick={true}
-                                  />
+                                  <div class="relative w-full">
+                                    <div class="pointer-events-none absolute -inset-[4%] border-2 border-[var(--brand-primary-2)]" aria-hidden="true"></div>
+                                    <Cubes
+                                      client:load
+                                      gridSize={6}
+                                      maxAngle={45}
+                                      radius={3}
+                                      borderStyle="2px dashed var(--brand-primary-2)"
+                                      autoAnimate={true}
+                                      rippleOnClick={true}
+                                    />
+                                  </div>
                                 </div>
                               )}
 
@@ -781,6 +784,7 @@ const getSlotClasses = (slot: string) => {
                 // CINEMATIC SECTION SCROLL STATE MACHINE
                 let currentStateIndex = 0;
                 let isAnimating = false;
+                let activeStateTween: gsap.core.Tween | null = null;
 
                 const STATES = [
                     { name: 'hero', label: null, scrollY: 0 },
@@ -805,6 +809,15 @@ const getSlotClasses = (slot: string) => {
                 const goToState = (targetIndex: number) => {
                     if (targetIndex < 0 || targetIndex >= STATES.length) return;
                     if (isAnimating) return;
+
+                    // A station may be visually settled while its eased tween still has an
+                    // imperceptible tail. Complete that tail before starting another tween.
+                    const previousStateTween = activeStateTween;
+                    if (previousStateTween?.isActive()) {
+                        previousStateTween.progress(1);
+                    }
+                    previousStateTween?.kill();
+                    activeStateTween = null;
                     isAnimating = true;
 
                     const targetState = STATES[targetIndex];
@@ -878,34 +891,52 @@ const getSlotClasses = (slot: string) => {
 
                     // 2. Play journey timeline to the corresponding label anchor using GSAP native tweenTo
                     if (targetState.label) {
-                        journeyTimeline.tweenTo(targetState.label, {
+                        const targetTime = journeyTimeline.labels[targetState.label];
+                        const startTime = journeyTimeline.time();
+                        const travelDistance = Math.max(Math.abs(targetTime - startTime), 0.001);
+                        let stateSettled = false;
+
+                        const settleState = () => {
+                            if (stateSettled) return;
+                            stateSettled = true;
+                            currentStateIndex = targetIndex;
+                            isAnimating = false;
+                            console.log(`Cinematic Scroll: Arrived at ${targetState.name}`);
+                            if (targetIndex === 6) {
+                                // 1. Animate logo to large size
+                                const logo = document.getElementById('nav-logo');
+                                gsap.to(logo, {
+                                    width: () => {
+                                        if (window.innerWidth < 640) return "280px";
+                                        if (window.innerWidth < 768) return "350px";
+                                        if (window.innerWidth < 1024) return "550px";
+                                        return "700px";
+                                    },
+                                    duration: 0.8,
+                                    ease: "luxe"
+                                });
+
+                                // 2. Open menu
+                                const toggleBtn = document.querySelector('.sm-toggle') as HTMLElement;
+                                if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'false') {
+                                    toggleBtn.click();
+                                }
+                            }
+                        };
+
+                        activeStateTween = journeyTimeline.tweenTo(targetState.label, {
                             delay: delayTimeline,
                             duration: transitionDuration,
                             ease: isLeavingHero ? "power2.inOut" : "luxe",
-                            onComplete: () => {
-                                currentStateIndex = targetIndex;
-                                isAnimating = false;
-                                console.log(`Cinematic Scroll: Arrived at ${targetState.name}`);
-                                if (targetIndex === 6) {
-                                    // 1. Animate logo to large size
-                                    const logo = document.getElementById('nav-logo');
-                                    gsap.to(logo, { 
-                                        width: () => {
-                                            if (window.innerWidth < 640) return "280px";
-                                            if (window.innerWidth < 768) return "350px";
-                                            if (window.innerWidth < 1024) return "550px";
-                                            return "700px";
-                                        }, 
-                                        duration: 0.8, 
-                                        ease: "luxe" 
-                                    });
-                                    
-                                    // 2. Open menu
-                                    const toggleBtn = document.querySelector('.sm-toggle') as HTMLElement;
-                                    if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'false') {
-                                        toggleBtn.click();
-                                    }
+                            onUpdate: () => {
+                                const remainingRatio = Math.abs(targetTime - journeyTimeline.time()) / travelDistance;
+                                if (remainingRatio <= 0.005) {
+                                    settleState();
                                 }
+                            },
+                            onComplete: () => {
+                                settleState();
+                                activeStateTween = null;
                             }
                         });
                     } else {
@@ -1038,6 +1069,8 @@ const getSlotClasses = (slot: string) => {
 
                 // Store cleanup for later (do NOT return early — code below still needs to run)
                 cleanupJourney = () => {
+                    activeStateTween?.kill();
+                    activeStateTween = null;
                     window.removeEventListener('wheel', wheelHandler, { capture: true });
                     window.removeEventListener('touchstart', touchStartHandler, { capture: true });
                     window.removeEventListener('touchmove', touchMoveHandler, { capture: true });

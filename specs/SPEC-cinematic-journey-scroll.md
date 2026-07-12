@@ -19,7 +19,8 @@ Replace the continuous, scroll-scrubbed journey on the home page with a cinemati
 3. **Transition Input Lock**:
    - When a transition starts, an `isAnimating` lock is set to `true`.
    - During the transition, all scroll and gesture inputs are ignored (preventing multiple jumps or momentum queueing).
-   - Once the transition settles and the station's HUD windows are fully revealed, `isAnimating` is set to `false`, allowing the next scroll input.
+   - Once the journey playhead is within 0.5% of the target station, the station is considered visually settled and `isAnimating` is set to `false`, allowing the next scroll input without waiting for the imperceptible easing tail.
+   - If a new gesture arrives during that easing tail, the previous tween is completed and killed before the next station tween begins, preventing overlapping playhead tweens.
 4. **Smooth Programmatic Timeline Animations**:
    - The `journeyTimeline` is set to `paused: true`.
    - The internal timeline travel segments use linear easing (`ease: "none"`) to map progress linearly to the playhead, preventing velocity spiking in the middle of transitions.
