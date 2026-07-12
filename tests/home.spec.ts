@@ -31,3 +31,25 @@ test('home page cinematic module is visible on mobile', async ({ page }) => {
   await expect(page.locator('#journey-stage')).toBeAttached();
   await expect(page.locator('#hero')).toBeVisible();
 });
+
+test('first desktop scroll advances without being reset or leaving input locked', async ({ page }) => {
+  test.setTimeout(30_000);
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+  await page.mouse.wheel(0, 120);
+  await expect.poll(() => page.evaluate(() => window.scrollY), { timeout: 6_000 })
+    .toBeGreaterThan(500);
+
+  await page.waitForTimeout(8_000);
+  const settledScrollY = await page.evaluate(() => window.scrollY);
+  expect(settledScrollY).toBeGreaterThan(500);
+  const aboutStation = page.locator('#station-about');
+  await expect(aboutStation).toHaveCSS('opacity', '1');
+
+  await page.mouse.wheel(0, 120);
+  await expect.poll(
+    () => aboutStation.evaluate((element) => Number(getComputedStyle(element).opacity)),
+    { timeout: 2_000 }
+  ).toBeLessThan(1);
+});

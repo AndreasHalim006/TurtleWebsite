@@ -3,8 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 const devServerCommand =
   process.platform === 'win32'
-    ? 'cmd /c "set ASTRO_TELEMETRY_DISABLED=1&& npm.cmd run dev -- --host 127.0.0.1 --port 4321"'
-    : 'ASTRO_TELEMETRY_DISABLED=1 npm run dev -- --host 127.0.0.1 --port 4321';
+    ? 'cmd /c "set ASTRO_TELEMETRY_DISABLED=1&& pnpm.cmd run dev -- --host 127.0.0.1 --port 4321"'
+    : 'ASTRO_TELEMETRY_DISABLED=1 pnpm run dev -- --host 127.0.0.1 --port 4321';
 
 /**
  * Read environment variables from file.

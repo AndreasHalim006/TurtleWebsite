@@ -39,6 +39,9 @@ Replace the continuous, scroll-scrubbed journey on the home page with a cinemati
    - Interactive components within stations (e.g. Subteam hovers, Acrostic hovers, and CTA links) remain fully clickable/hoverable once the transition settles.
 7. **Accessibility fallback**:
    - Respect `prefers-reduced-motion`. In reduced motion mode, standard scrolling should be used, or transitions must be instantaneous.
+8. **Stable first interaction**:
+   - Homepage initialization must not programmatically reset the viewport to `y = 0` after input listeners are active.
+   - A scroll-down gesture issued immediately after the page becomes interactive advances from `hero` to `about`, remains at the journey viewport after the transition, and releases the input lock for the next gesture.
 
 ## Out Of Scope
 - Redesigning the layout of the HUD windows or station content.
@@ -50,8 +53,9 @@ Replace the continuous, scroll-scrubbed journey on the home page with a cinemati
 - `npm run build`
 
 ## Verification Protocol
-1. Verify build completes successfully with `npm run build`.
+1. Verify build completes successfully with `pnpm run build`.
 2. Manual/browser inspection at different viewport sizes:
+   - Scroll immediately after the page becomes interactive and verify the viewport does not jump back to the Hero.
    - Verify scroll-down from Hero moves viewport to Journey viewport and plays the first station transition.
    - Verify scroll-up from About goes back to Hero.
    - Verify fast, repeated scrolling during a transition does not cause double-transitions or skip stations.

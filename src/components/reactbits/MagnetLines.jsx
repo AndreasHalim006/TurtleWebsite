@@ -25,6 +25,7 @@ export default function MagnetLines({
   lineWidth = '1vmin',
   lineHeight = '6vmin',
   baseAngle = -10,
+  safeInset = '8%',
   className = '',
   style = {},
   gradientColors = null
@@ -35,7 +36,7 @@ export default function MagnetLines({
     const container = containerRef.current;
     if (!container) return;
 
-    const items = container.querySelectorAll('span');
+    const items = container.querySelectorAll('[data-magnet-line]');
 
     const onPointerMove = pointer => {
       items.forEach(item => {
@@ -78,11 +79,14 @@ export default function MagnetLines({
     return (
       <span
         key={i}
+        data-magnet-line
         className="block origin-center"
         style={{
           background: currentLineColor,
           width: lineWidth,
           height: lineHeight,
+          maxWidth: '18%',
+          maxHeight: '62%',
           '--rotate': `${baseAngle}deg`,
           transform: 'rotate(var(--rotate))',
           willChange: 'transform'
@@ -100,6 +104,9 @@ export default function MagnetLines({
         gridTemplateRows: `repeat(${rows}, 1fr)`,
         width: containerSize || '100%',
         height: containerSize || '100%',
+        padding: safeInset,
+        overflow: 'hidden',
+        boxSizing: 'border-box',
         ...style
       }}
     >

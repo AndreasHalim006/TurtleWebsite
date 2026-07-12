@@ -352,8 +352,9 @@ const getSlotClasses = (slot: string) => {
                                     columns={5}
                                     containerSize="100%"
                                     gradientColors={['#00F3CB', '#9FFF10']}
-                                    lineWidth="0.8cqw"
-                                    lineHeight="6cqh"
+                                    lineWidth="4px"
+                                    lineHeight="36px"
+                                    safeInset="9%"
                                     baseAngle={45}
                                   />
                                 </div>
@@ -1028,14 +1029,6 @@ const getSlotClasses = (slot: string) => {
                     gsap.set(stage, { x: currentCam.x, y: currentCam.y, scale: currentCam.scale });
                 };
 
-                const loadHandler = () => {
-                    const lenis = (window as any).lenis;
-                    if (lenis) {
-                        lenis.scrollTo(0, { duration: 0 });
-                        lenis.start();
-                    }
-                };
-
                 // Register capturing phase listeners
                 window.addEventListener('wheel', wheelHandler, { capture: true, passive: false });
                 window.addEventListener('touchstart', touchStartHandler, { capture: true, passive: true });
@@ -1044,16 +1037,6 @@ const getSlotClasses = (slot: string) => {
                 window.addEventListener('keydown', keydownHandler, { capture: true });
                 window.addEventListener('mousedown', mousedownHandler, { capture: true });
                 window.addEventListener('resize', resizeHandler);
-                window.addEventListener('load', loadHandler);
-
-                // Initial reset run to guarantee start conditions
-                setTimeout(() => {
-                    const lenis = (window as any).lenis;
-                    if (lenis) {
-                        lenis.scrollTo(0, { duration: 0 });
-                        lenis.start();
-                    }
-                }, 50);
 
                 // Store cleanup for later (do NOT return early — code below still needs to run)
                 cleanupJourney = () => {
@@ -1064,7 +1047,6 @@ const getSlotClasses = (slot: string) => {
                     window.removeEventListener('keydown', keydownHandler, { capture: true });
                     window.removeEventListener('mousedown', mousedownHandler, { capture: true });
                     window.removeEventListener('resize', resizeHandler);
-                    window.removeEventListener('load', loadHandler);
                 };
             }
 
