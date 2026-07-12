@@ -46,8 +46,9 @@ Replace the continuous, scroll-scrubbed journey on the home page with a cinemati
 9. **Outro menu framing**:
    - Above 1024px, the final full-car view uses the black canvas left of the menu panel, whose width follows `clamp(260px, 40vw, 460px)`.
    - The available frame begins below the expanded 700px-wide logo using its real `978.84:262.6` aspect ratio, and ends 24px before the left, bottom, and menu edges.
-   - Outro scale is calculated as the smaller of the available-width and available-height scale factors for the full `10644 × 5322` journey stage, making the car as large as possible without crossing any bound.
-   - The car is centered within that calculated safe frame rather than the full viewport.
+   - Outro scale is calculated from the union of the actual transformed SVG path bounds, rather than the full `10644 × 5322` stage, so blank viewBox space does not affect visual centering or scale.
+   - The measured car bounds are centered within the calculated safe frame and scaled as large as possible without crossing any bound.
+   - Outro paths use a `1.25px` non-scaling stroke so the complete wireframe remains visible without the noisy overlap produced by the former `2.5px` stroke.
    - At 1024px and below, where the menu becomes full-width, the outro remains centered in the viewport.
 
 ## Out Of Scope

@@ -570,6 +570,45 @@ const getSlotClasses = (slot: string) => {
                 const stageWidth = 1774 * scaleFactor;
                 const stageHeight = 887 * scaleFactor;
                 const LOGO_ASPECT_RATIO = 262.6 / 978.84;
+                let cachedCarBounds: { x: number; y: number; width: number; height: number } | null = null;
+
+                const getCarBounds = () => {
+                    if (cachedCarBounds) return cachedCarBounds;
+                    const svg = document.querySelector('#journey-svg') as SVGSVGElement | null;
+                    const paths = svg?.querySelectorAll('path');
+                    if (!svg || !paths?.length) {
+                        return { x: 0, y: 0, width: stageWidth, height: stageHeight };
+                    }
+
+                    let minX = Number.POSITIVE_INFINITY;
+                    let minY = Number.POSITIVE_INFINITY;
+                    let maxX = Number.NEGATIVE_INFINITY;
+                    let maxY = Number.NEGATIVE_INFINITY;
+
+                    paths.forEach((path) => {
+                        const box = path.getBBox();
+                        const matrix = path.getCTM();
+                        if (!matrix) return;
+                        const corners = [
+                            new DOMPoint(box.x, box.y),
+                            new DOMPoint(box.x + box.width, box.y),
+                            new DOMPoint(box.x, box.y + box.height),
+                            new DOMPoint(box.x + box.width, box.y + box.height)
+                        ];
+                        corners.forEach((corner) => {
+                            const point = corner.matrixTransform(matrix);
+                            minX = Math.min(minX, point.x);
+                            minY = Math.min(minY, point.y);
+                            maxX = Math.max(maxX, point.x);
+                            maxY = Math.max(maxY, point.y);
+                        });
+                    });
+
+                    cachedCarBounds = Number.isFinite(minX)
+                        ? { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
+                        : { x: 0, y: 0, width: stageWidth, height: stageHeight };
+                    return cachedCarBounds;
+                };
 
                 const getOutroFrame = () => {
                     const edgeGap = 24;
@@ -591,11 +630,14 @@ const getSlotClasses = (slot: string) => {
                     const bottom = window.innerHeight - edgeGap;
                     const availableWidth = Math.max(right - left, 1);
                     const availableHeight = Math.max(bottom - top, 1);
-                    const scale = Math.min(availableWidth / stageWidth, availableHeight / stageHeight);
+                    const carBounds = getCarBounds();
+                    const scale = Math.min(availableWidth / carBounds.width, availableHeight / carBounds.height);
 
                     return {
                         centerX: isFullWidthMenu ? window.innerWidth / 2 : left + availableWidth / 2,
                         centerY: top + availableHeight / 2,
+                        carCenterX: carBounds.x + carBounds.width / 2,
+                        carCenterY: carBounds.y + carBounds.height / 2,
                         scale
                     };
                 };
@@ -662,16 +704,23 @@ const getSlotClasses = (slot: string) => {
 
                 const getCameraParamsForState = (stateIndex: number) => {
                     const isOutro = stateIndex === 6;
+                    if (isOutro) {
+                        const frame = getOutroFrame();
+                        return {
+                            x: -frame.carCenterX * frame.scale + frame.centerX,
+                            y: -frame.carCenterY * frame.scale + frame.centerY,
+                            scale: frame.scale
+                        };
+                    }
+
                     const pos = getStationPos(stateIndex);
                     
                     // Calculate responsive scale based on a 1920x960 baseline canvas (2:1 aspect ratio)
                     const baseScale = Math.min(window.innerWidth / 1920, window.innerHeight / 960);
-                    const outroFrame = isOutro ? getOutroFrame() : null;
-                    const scale = outroFrame?.scale ?? baseScale;
                     return {
-                        x: -pos.x * scale + (outroFrame?.centerX ?? window.innerWidth / 2),
-                        y: -pos.y * scale + (outroFrame?.centerY ?? window.innerHeight / 2),
-                        scale: scale
+                        x: -pos.x * baseScale + window.innerWidth / 2,
+                        y: -pos.y * baseScale + window.innerHeight / 2,
+                        scale: baseScale
                     };
                 };
 
@@ -786,8 +835,6 @@ const getSlotClasses = (slot: string) => {
                 const lastStation = document.querySelector(waypoints[waypoints.length - 1].id);
                 const finalTracker = { progress: lastP };
 
-                const endPosFinal = getStationPos(6); // Outro center
-
                 journeyTimeline
                     .to(lastStation, { autoAlpha: 0, duration: 1.5 }, "+=1.5")
                     // 1. Draw the path completely over 3.0 seconds (starts stationary)
@@ -805,11 +852,11 @@ const getSlotClasses = (slot: string) => {
                     .to(stage, {
                         x: () => {
                             const frame = getOutroFrame();
-                            return -endPosFinal.x * frame.scale + frame.centerX;
+                            return -frame.carCenterX * frame.scale + frame.centerX;
                         },
                         y: () => {
                             const frame = getOutroFrame();
-                            return -endPosFinal.y * frame.scale + frame.centerY;
+                            return -frame.carCenterY * frame.scale + frame.centerY;
                         },
                         scale: () => getOutroFrame().scale,
                         force3D: true,
@@ -919,10 +966,10 @@ const getSlotClasses = (slot: string) => {
                         const pathMain = document.querySelector('#journey-path-main');
                         const otherPaths = document.querySelectorAll('.other-car-paths path');
                         pathMain?.setAttribute('vector-effect', 'non-scaling-stroke');
-                        (pathMain as HTMLElement).style.strokeWidth = '2.5px';
+                        (pathMain as HTMLElement).style.strokeWidth = '1.25px';
                         otherPaths.forEach(path => {
                             path.setAttribute('vector-effect', 'non-scaling-stroke');
-                            (path as HTMLElement).style.strokeWidth = '2.5px';
+                            (path as HTMLElement).style.strokeWidth = '1.25px';
                         });
                     }
 
