@@ -85,8 +85,6 @@ export default function MagnetLines({
           background: currentLineColor,
           width: lineWidth,
           height: lineHeight,
-          maxWidth: '18%',
-          maxHeight: '62%',
           '--rotate': `${baseAngle}deg`,
           transform: 'rotate(var(--rotate))',
           willChange: 'transform'

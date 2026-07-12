@@ -9,9 +9,9 @@ Keep the interactive line field in the right side of the History station visuall
 
 ## Acceptance Criteria
 1. The History line field retains its 18-row, 5-column interactive layout and cyan-to-lime color progression.
-2. The field has a proportional safety inset on all four sides; no line begins at the component boundary.
-3. Each rotating line is capped relative to its grid cell, so its diagonal footprint cannot extend beyond the safety inset.
-4. The field remains fully contained when its parent is resized; it does not rely on viewport-level `cqw` or `cqh` line dimensions.
+2. The right panel displays its rounded cyan-to-lime HUD border, with the complete border inset inside the surrounding car outline.
+3. The dashes retain the larger visual scale of the original field while a proportional safety inset keeps their rotating endpoints inside the panel border.
+4. The field and border remain fully contained when their parent is resized; they do not rely on viewport-level `cqw` or `cqh` line dimensions.
 5. Other homepage stations and journey camera/path geometry are unchanged.
 
 ## Verification
