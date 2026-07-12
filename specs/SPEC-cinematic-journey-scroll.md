@@ -43,6 +43,10 @@ Replace the continuous, scroll-scrubbed journey on the home page with a cinemati
 8. **Stable first interaction**:
    - Homepage initialization must not programmatically reset the viewport to `y = 0` after input listeners are active.
    - A scroll-down gesture issued immediately after the page becomes interactive advances from `hero` to `about`, remains at the journey viewport after the transition, and releases the input lock for the next gesture.
+9. **Outro menu framing**:
+   - Above 1024px, the final full-car view is centered within the black canvas left of the menu panel, whose width follows `clamp(260px, 40vw, 460px)`.
+   - The outro car scale is `0.08`, keeping the complete car drawing inside that black canvas while presenting it larger than the previous `0.06` framing.
+   - At 1024px and below, where the menu becomes full-width, the outro remains centered in the viewport.
 
 ## Out Of Scope
 - Redesigning the layout of the HUD windows or station content.

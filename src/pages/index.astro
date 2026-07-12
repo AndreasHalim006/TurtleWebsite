@@ -73,7 +73,7 @@ const JOURNEY_CONFIG = [
     id: "history",
     p: 0.7598072031061722,
     windows: [
-      { id: "w-62se", w: "18.4%", h: "72.0%", x: "77.7%", y: "21.1%", content: "history-stats-panel", noBorder: false, noPadding: true, borderColor: "var(--brand-primary-2)" },
+      { id: "w-62se", w: "21.4%", h: "80.0%", x: "76.2%", y: "17.1%", content: "history-stats-panel", noBorder: false, noPadding: true, noRounding: true, borderColor: "var(--brand-primary-2)" },
       { id: "w-ygxs", w: "68%", h: "45%", x: "2.9%", y: "3.0%", content: "history-main-header", noBorder: true },
       { id: "w-smmv", w: "37.2%", h: "46.2%", x: "3.3%", y: "49.0%", content: "history-narrative", noBorder: true }
     ]
@@ -347,15 +347,17 @@ const getSlotClasses = (slot: string) => {
 
                               {(win.content.toLowerCase() === 'history-stats-panel') && (
                                 <div class="w-full h-full flex items-center justify-center pointer-events-auto">
-                                  <Cubes
-                                    client:load
-                                    gridSize={6}
-                                    maxAngle={45}
-                                    radius={3}
-                                    borderStyle="2px dashed var(--brand-primary-2)"
-                                    autoAnimate={true}
-                                    rippleOnClick={true}
-                                  />
+                                  <div class="w-[78%]">
+                                    <Cubes
+                                      client:load
+                                      gridSize={6}
+                                      maxAngle={45}
+                                      radius={3}
+                                      borderStyle="2px dashed var(--brand-primary-2)"
+                                      autoAnimate={true}
+                                      rippleOnClick={true}
+                                    />
+                                  </div>
                                 </div>
                               )}
 
@@ -567,6 +569,14 @@ const getSlotClasses = (slot: string) => {
                 const scaleFactor = 6; 
                 const stageWidth = 1774 * scaleFactor;
                 const stageHeight = 887 * scaleFactor;
+                const OUTRO_SCALE = 0.08;
+
+                const getOutroCenterX = () => {
+                    if (window.innerWidth <= 1024) return window.innerWidth / 2;
+                    const menuWidth = Math.min(460, Math.max(260, window.innerWidth * 0.4));
+                    return (window.innerWidth - menuWidth) / 2;
+                };
+
                 gsap.set(stage, { width: stageWidth, height: stageHeight });
 
                 // Map of stations from CONFIG
@@ -634,9 +644,9 @@ const getSlotClasses = (slot: string) => {
                     // Calculate responsive scale based on a 1920x960 baseline canvas (2:1 aspect ratio)
                     const baseScale = Math.min(window.innerWidth / 1920, window.innerHeight / 960);
                     
-                    const scale = isOutro ? 0.06 : baseScale;
+                    const scale = isOutro ? OUTRO_SCALE : baseScale;
                     return {
-                        x: -pos.x * scale + window.innerWidth / 2,
+                        x: -pos.x * scale + (isOutro ? getOutroCenterX() : window.innerWidth / 2),
                         y: -pos.y * scale + window.innerHeight / 2,
                         scale: scale
                     };
@@ -770,9 +780,9 @@ const getSlotClasses = (slot: string) => {
                     })
                     // 2. Zoom out and center the stage, starting 1.5 seconds into the drawing (50% overlap)
                     .to(stage, {
-                        x: -endPosFinal.x * 0.06 + window.innerWidth / 2,
-                        y: -endPosFinal.y * 0.06 + window.innerHeight / 2,
-                        scale: 0.06,
+                        x: () => -endPosFinal.x * OUTRO_SCALE + getOutroCenterX(),
+                        y: () => -endPosFinal.y * OUTRO_SCALE + window.innerHeight / 2,
+                        scale: OUTRO_SCALE,
                         force3D: true,
                         ease: "none",
                         duration: remainingDuration * 0.5
