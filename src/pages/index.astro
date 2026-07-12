@@ -162,7 +162,8 @@ const getSlotClasses = (slot: string) => {
                                 win.content.toLowerCase() === 'hyperspeed' ? 'max-md:hidden' : '',
                                 win.content.toLowerCase() === 'vision-node' ? 'max-md:hidden' : '',
                                 win.content.toLowerCase() === 'history-main-header' ? 'max-md:hidden' : '',
-                                win.content.toLowerCase() === 'history-stats-panel' ? 'max-md:hidden' : ''
+                                win.content.toLowerCase() === 'history-stats-panel' ? 'max-md:hidden' : '',
+                                ['mission-pillars-interactive', 'history-stats-panel'].includes(win.content.toLowerCase()) ? 'hud-window-heavy' : ''
                             ]}
                             noPadding={win.noPadding}
                             noBorder={win.noBorder}
@@ -239,7 +240,7 @@ const getSlotClasses = (slot: string) => {
                               {(win.content.toLowerCase() === 'mission-pillars-interactive') && (
                                 <div class="h-full">
                                     <FlowingMenu 
-                                        client:load 
+                                        client:visible
                                         items={subteams.map(s => ({ ...s, link: '#' }))}
                                         speed={20}
                                         marqueeBgColor="var(--brand-orange)"
@@ -349,7 +350,7 @@ const getSlotClasses = (slot: string) => {
                                 <div class="w-full h-full flex items-center justify-center pointer-events-auto">
                                   <div class="w-[78%]">
                                     <Cubes
-                                      client:load
+                                      client:visible
                                       gridSize={6}
                                       maxAngle={45}
                                       radius={3}
@@ -748,26 +749,48 @@ const getSlotClasses = (slot: string) => {
 
                     if (stationEl) {
                         const allWindows = stationEl.querySelectorAll('.hud-window');
-                        const allFrames = stationEl.querySelectorAll('.hud-frame-path');
+                        const lightWindows = Array.from(allWindows).filter(window => !window.classList.contains('hud-window-heavy'));
+                        const heavyWindows = Array.from(allWindows).filter(window => window.classList.contains('hud-window-heavy'));
+                        const lightFrames = lightWindows.flatMap(window => Array.from(window.querySelectorAll('.hud-frame-path')));
+                        const heavyFrames = heavyWindows.flatMap(window => Array.from(window.querySelectorAll('.hud-frame-path')));
 
                         journeyTimeline.to(stationEl, { autoAlpha: 1, duration: 0.1 });
 
-                        if (allFrames.length > 0) {
-                            journeyTimeline.fromTo(allFrames, { drawSVG: "0%" }, { 
+                        if (lightFrames.length > 0) {
+                            journeyTimeline.fromTo(lightFrames, { drawSVG: "0%" }, {
                                 drawSVG: "100%", 
-                                duration: 1, 
-                                stagger: 0.15,
-                                ease: "power2.inOut" 
+                                duration: 0.45,
+                                stagger: 0.05,
+                                ease: "luxe"
                             });
                         }
 
-                        journeyTimeline.to(allWindows, { 
+                        journeyTimeline.to(lightWindows, {
                             autoAlpha: 1, 
                             scale: 1, 
-                            duration: 0.6, 
-                            stagger: 0.15, 
-                            ease: "luxe" 
-                        }, "-=0.8");
+                            duration: 0.4,
+                            stagger: 0.06,
+                            ease: "luxe"
+                        }, lightFrames.length > 0 ? "-=0.4" : "<");
+
+                        if (heavyFrames.length > 0) {
+                            journeyTimeline.fromTo(heavyFrames, { drawSVG: "0%" }, {
+                                drawSVG: "100%",
+                                duration: 0.4,
+                                stagger: 0.05,
+                                ease: "luxe"
+                            }, ">-=0.1");
+                        }
+
+                        if (heavyWindows.length > 0) {
+                            journeyTimeline.to(heavyWindows, {
+                                autoAlpha: 1,
+                                scale: 1,
+                                duration: 0.4,
+                                stagger: 0.05,
+                                ease: "luxe"
+                            }, heavyFrames.length > 0 ? "-=0.35" : ">+=0.1");
+                        }
 
                         // Labeled anchor for stopping programmatic scrolls
                         journeyTimeline.addLabel(`station-${wp.id.replace('#station-', '')}-active`);
@@ -776,8 +799,9 @@ const getSlotClasses = (slot: string) => {
                         journeyTimeline.to({}, { duration: 0.1 }); 
 
                         journeyTimeline.to(allWindows, { autoAlpha: 0, scale: 0.8, duration: 0.5, stagger: 0.05 });
+                        const allFrames = [...lightFrames, ...heavyFrames];
                         if (allFrames.length > 0) {
-                            journeyTimeline.to(allFrames, { 
+                            journeyTimeline.to(allFrames, {
                                 drawSVG: "0%", 
                                 duration: 0.8, 
                                 stagger: 0.05,
