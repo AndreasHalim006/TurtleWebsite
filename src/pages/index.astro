@@ -943,6 +943,33 @@ const getSlotClasses = (slot: string) => {
                         const startTime = journeyTimeline.time();
                         const travelDistance = Math.max(Math.abs(targetTime - startTime), 0.001);
                         let stateSettled = false;
+                        let outroPathsFinalized = false;
+
+                        const finalizeOutroPaths = () => {
+                            if (targetIndex !== 6 || outroPathsFinalized) return;
+                            outroPathsFinalized = true;
+
+                            // This must run after tweenTo's final timeline update. DrawSVG
+                            // otherwise writes its dash styles back during the easing tail.
+                            const outroPaths = [
+                                document.querySelector('#journey-path-main'),
+                                ...document.querySelectorAll('.other-car-paths path')
+                            ].filter((path): path is SVGPathElement => path instanceof SVGPathElement);
+                            gsap.set(outroPaths, { drawSVG: "100%" });
+                            outroPaths.forEach((path) => {
+                                path.style.removeProperty('stroke-dasharray');
+                                path.style.removeProperty('stroke-dashoffset');
+                                path.removeAttribute('stroke-dasharray');
+                                path.removeAttribute('stroke-dashoffset');
+                            });
+                            outroStrokeTween?.kill();
+                            outroStrokeTween = gsap.to(outroPaths, {
+                                strokeWidth: "3.5px",
+                                duration: reduceMotion ? 0 : 0.5,
+                                ease: "luxe",
+                                overwrite: true
+                            });
+                        };
 
                         const settleState = () => {
                             if (stateSettled) return;
@@ -951,27 +978,6 @@ const getSlotClasses = (slot: string) => {
                             isAnimating = false;
                             console.log(`Cinematic Scroll: Arrived at ${targetState.name}`);
                             if (targetIndex === 6) {
-                                // DrawSVG uses dash styles while animating. Remove them once
-                                // the full car is drawn so every final path is continuous.
-                                const outroPaths = [
-                                    document.querySelector('#journey-path-main'),
-                                    ...document.querySelectorAll('.other-car-paths path')
-                                ].filter((path): path is SVGPathElement => path instanceof SVGPathElement);
-                                gsap.set(outroPaths, { drawSVG: "100%" });
-                                outroPaths.forEach((path) => {
-                                    path.style.removeProperty('stroke-dasharray');
-                                    path.style.removeProperty('stroke-dashoffset');
-                                    path.removeAttribute('stroke-dasharray');
-                                    path.removeAttribute('stroke-dashoffset');
-                                });
-                                outroStrokeTween?.kill();
-                                outroStrokeTween = gsap.to(outroPaths, {
-                                    strokeWidth: "3.5px",
-                                    duration: reduceMotion ? 0 : 0.5,
-                                    ease: "luxe",
-                                    overwrite: true
-                                });
-
                                 // 1. Animate logo to large size
                                 const logo = document.getElementById('nav-logo');
                                 gsap.to(logo, {
@@ -1005,6 +1011,7 @@ const getSlotClasses = (slot: string) => {
                             },
                             onComplete: () => {
                                 settleState();
+                                finalizeOutroPaths();
                                 activeStateTween = null;
                             }
                         });

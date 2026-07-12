@@ -48,7 +48,7 @@ Replace the continuous, scroll-scrubbed journey on the home page with a cinemati
    - The available frame begins below the expanded 700px-wide logo using its real `978.84:262.6` aspect ratio, and ends 24px before the left, bottom, and menu edges.
    - Outro scale uses the full `10644 × 5322` stage bounds, preserving the approved car position and visual framing.
    - Outro paths retain the visible `2.5px` non-scaling stroke.
-   - When the outro settles, DrawSVG dash-array and dash-offset styles are cleared from every car path so the final wireframe renders as continuous, consistent lines.
+   - Only after the outro timeline tween truly completes, DrawSVG dash-array and dash-offset styles are cleared from every car path so no final easing update can restore them and chop the wireframe.
    - After that cleanup, all car paths animate together from `2.5px` to `3.5px` over `0.5s` with the luxe ease; reduced-motion mode applies `3.5px` immediately.
    - Leaving the outro kills the stroke-emphasis tween before restoring the journey stroke behavior.
    - At 1024px and below, where the menu becomes full-width, the outro remains centered in the viewport.
