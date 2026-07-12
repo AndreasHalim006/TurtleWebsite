@@ -7,7 +7,7 @@ import HUDWindow from '../components/HUDWindow.astro';
 import RotatingText from '../components/reactbits/RotatingText.jsx';
 import FlowingMenu from '../components/reactbits/FlowingMenu.jsx';
 import FuzzyText from '../components/reactbits/FuzzyText.jsx';
-import MagnetLines from '../components/reactbits/MagnetLines.jsx';
+import Cubes from '../components/reactbits/Cubes.jsx';
 import BounceCards from '../components/reactbits/BounceCards.jsx';
 import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
 
@@ -73,7 +73,7 @@ const JOURNEY_CONFIG = [
     id: "history",
     p: 0.7598072031061722,
     windows: [
-      { id: "w-62se", w: "18.4%", h: "72.0%", x: "77.7%", y: "21.1%", content: "history-stats-panel", noBorder: false, noPadding: true, gradientType: "blue-to-green", gradientDirection: "vertical" },
+      { id: "w-62se", w: "18.4%", h: "72.0%", x: "77.7%", y: "21.1%", content: "history-stats-panel", noBorder: true, noPadding: true },
       { id: "w-ygxs", w: "68%", h: "45%", x: "2.9%", y: "3.0%", content: "history-main-header", noBorder: true },
       { id: "w-smmv", w: "37.2%", h: "46.2%", x: "3.3%", y: "49.0%", content: "history-narrative", noBorder: true }
     ]
@@ -346,16 +346,18 @@ const getSlotClasses = (slot: string) => {
 
                               {(win.content.toLowerCase() === 'history-stats-panel') && (
                                 <div class="w-full h-full flex items-center justify-center pointer-events-auto">
-                                  <MagnetLines
+                                  <Cubes
                                     client:load
-                                    rows={18}
-                                    columns={5}
-                                    containerSize="100%"
-                                    gradientColors={['#00F3CB', '#9FFF10']}
-                                    lineWidth="5px"
-                                    lineHeight="52px"
-                                    safeInset="7%"
-                                    baseAngle={45}
+                                    gridSize={6}
+                                    maxAngle={50}
+                                    radius={3}
+                                    cellGap={{ row: 5, col: 5 }}
+                                    borderStyle="1px solid rgba(0, 243, 203, 0.72)"
+                                    faceColor="#0A0A0A"
+                                    rippleColor="#9FFF10"
+                                    rippleSpeed={1.5}
+                                    autoAnimate={true}
+                                    rippleOnClick={true}
                                   />
                                 </div>
                               )}
