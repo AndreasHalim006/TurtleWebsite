@@ -570,45 +570,6 @@ const getSlotClasses = (slot: string) => {
                 const stageWidth = 1774 * scaleFactor;
                 const stageHeight = 887 * scaleFactor;
                 const LOGO_ASPECT_RATIO = 262.6 / 978.84;
-                let cachedCarBounds: { x: number; y: number; width: number; height: number } | null = null;
-
-                const getCarBounds = () => {
-                    if (cachedCarBounds) return cachedCarBounds;
-                    const svg = document.querySelector('#journey-svg') as SVGSVGElement | null;
-                    const paths = svg?.querySelectorAll('path');
-                    if (!svg || !paths?.length) {
-                        return { x: 0, y: 0, width: stageWidth, height: stageHeight };
-                    }
-
-                    let minX = Number.POSITIVE_INFINITY;
-                    let minY = Number.POSITIVE_INFINITY;
-                    let maxX = Number.NEGATIVE_INFINITY;
-                    let maxY = Number.NEGATIVE_INFINITY;
-
-                    paths.forEach((path) => {
-                        const box = path.getBBox();
-                        const matrix = path.getCTM();
-                        if (!matrix) return;
-                        const corners = [
-                            new DOMPoint(box.x, box.y),
-                            new DOMPoint(box.x + box.width, box.y),
-                            new DOMPoint(box.x, box.y + box.height),
-                            new DOMPoint(box.x + box.width, box.y + box.height)
-                        ];
-                        corners.forEach((corner) => {
-                            const point = corner.matrixTransform(matrix);
-                            minX = Math.min(minX, point.x);
-                            minY = Math.min(minY, point.y);
-                            maxX = Math.max(maxX, point.x);
-                            maxY = Math.max(maxY, point.y);
-                        });
-                    });
-
-                    cachedCarBounds = Number.isFinite(minX)
-                        ? { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
-                        : { x: 0, y: 0, width: stageWidth, height: stageHeight };
-                    return cachedCarBounds;
-                };
 
                 const getOutroFrame = () => {
                     const edgeGap = 24;
@@ -630,14 +591,11 @@ const getSlotClasses = (slot: string) => {
                     const bottom = window.innerHeight - edgeGap;
                     const availableWidth = Math.max(right - left, 1);
                     const availableHeight = Math.max(bottom - top, 1);
-                    const carBounds = getCarBounds();
-                    const scale = Math.min(availableWidth / carBounds.width, availableHeight / carBounds.height);
+                    const scale = Math.min(availableWidth / stageWidth, availableHeight / stageHeight);
 
                     return {
                         centerX: isFullWidthMenu ? window.innerWidth / 2 : left + availableWidth / 2,
                         centerY: top + availableHeight / 2,
-                        carCenterX: carBounds.x + carBounds.width / 2,
-                        carCenterY: carBounds.y + carBounds.height / 2,
                         scale
                     };
                 };
@@ -706,9 +664,10 @@ const getSlotClasses = (slot: string) => {
                     const isOutro = stateIndex === 6;
                     if (isOutro) {
                         const frame = getOutroFrame();
+                        const pos = getStationPos(stateIndex);
                         return {
-                            x: -frame.carCenterX * frame.scale + frame.centerX,
-                            y: -frame.carCenterY * frame.scale + frame.centerY,
+                            x: -pos.x * frame.scale + frame.centerX,
+                            y: -pos.y * frame.scale + frame.centerY,
                             scale: frame.scale
                         };
                     }
@@ -834,6 +793,7 @@ const getSlotClasses = (slot: string) => {
                 const remainingDuration = (1 - lastP) * 30;
                 const lastStation = document.querySelector(waypoints[waypoints.length - 1].id);
                 const finalTracker = { progress: lastP };
+                const endPosFinal = getStationPos(6);
 
                 journeyTimeline
                     .to(lastStation, { autoAlpha: 0, duration: 1.5 }, "+=1.5")
@@ -852,11 +812,11 @@ const getSlotClasses = (slot: string) => {
                     .to(stage, {
                         x: () => {
                             const frame = getOutroFrame();
-                            return -frame.carCenterX * frame.scale + frame.centerX;
+                            return -endPosFinal.x * frame.scale + frame.centerX;
                         },
                         y: () => {
                             const frame = getOutroFrame();
-                            return -frame.carCenterY * frame.scale + frame.centerY;
+                            return -endPosFinal.y * frame.scale + frame.centerY;
                         },
                         scale: () => getOutroFrame().scale,
                         force3D: true,
@@ -966,10 +926,10 @@ const getSlotClasses = (slot: string) => {
                         const pathMain = document.querySelector('#journey-path-main');
                         const otherPaths = document.querySelectorAll('.other-car-paths path');
                         pathMain?.setAttribute('vector-effect', 'non-scaling-stroke');
-                        (pathMain as HTMLElement).style.strokeWidth = '1.25px';
+                        (pathMain as HTMLElement).style.strokeWidth = '2.5px';
                         otherPaths.forEach(path => {
                             path.setAttribute('vector-effect', 'non-scaling-stroke');
-                            (path as HTMLElement).style.strokeWidth = '1.25px';
+                            (path as HTMLElement).style.strokeWidth = '2.5px';
                         });
                     }
 
@@ -987,6 +947,20 @@ const getSlotClasses = (slot: string) => {
                             isAnimating = false;
                             console.log(`Cinematic Scroll: Arrived at ${targetState.name}`);
                             if (targetIndex === 6) {
+                                // DrawSVG uses dash styles while animating. Remove them once
+                                // the full car is drawn so every final path is continuous.
+                                const outroPaths = [
+                                    document.querySelector('#journey-path-main'),
+                                    ...document.querySelectorAll('.other-car-paths path')
+                                ].filter((path): path is SVGPathElement => path instanceof SVGPathElement);
+                                gsap.set(outroPaths, { drawSVG: "100%" });
+                                outroPaths.forEach((path) => {
+                                    path.style.removeProperty('stroke-dasharray');
+                                    path.style.removeProperty('stroke-dashoffset');
+                                    path.removeAttribute('stroke-dasharray');
+                                    path.removeAttribute('stroke-dashoffset');
+                                });
+
                                 // 1. Animate logo to large size
                                 const logo = document.getElementById('nav-logo');
                                 gsap.to(logo, {
