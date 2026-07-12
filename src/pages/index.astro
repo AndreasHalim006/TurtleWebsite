@@ -898,6 +898,7 @@ const getSlotClasses = (slot: string) => {
                      if (currentStateIndex === 6 && targetIndex < 6) {
                         outroStrokeTween?.kill();
                         outroStrokeTween = null;
+                        document.getElementById('journey-svg')?.classList.remove('outro-lines-final');
 
                         // 1. Close menu immediately
                         const toggleBtn = document.querySelector('.sm-toggle') as HTMLElement;
@@ -962,6 +963,7 @@ const getSlotClasses = (slot: string) => {
                                 path.removeAttribute('stroke-dasharray');
                                 path.removeAttribute('stroke-dashoffset');
                             });
+                            document.getElementById('journey-svg')?.classList.add('outro-lines-final');
                             outroStrokeTween?.kill();
                             outroStrokeTween = gsap.to(outroPaths, {
                                 strokeWidth: "3.5px",
@@ -1328,6 +1330,11 @@ const getSlotClasses = (slot: string) => {
 </script>
 
 <style is:global>
+    #journey-svg.outro-lines-final path {
+        stroke-dasharray: none !important;
+        stroke-dashoffset: 0 !important;
+    }
+
     h1, h2, h3, h4 { letter-spacing: -0.04em; font-weight: 300; }
 	.ease-expo { transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
