@@ -829,6 +829,7 @@ const getSlotClasses = (slot: string) => {
                 let currentStateIndex = 0;
                 let isAnimating = false;
                 let activeStateTween: gsap.core.Tween | null = null;
+                let outroStrokeTween: gsap.core.Tween | null = null;
 
                 const STATES = [
                     { name: 'hero', label: null, scrollY: 0 },
@@ -895,6 +896,9 @@ const getSlotClasses = (slot: string) => {
                     const delayTimeline = (isLeavingHero && !reduceMotion) ? scrollDuration * 0.5 : 0;
 
                      if (currentStateIndex === 6 && targetIndex < 6) {
+                        outroStrokeTween?.kill();
+                        outroStrokeTween = null;
+
                         // 1. Close menu immediately
                         const toggleBtn = document.querySelector('.sm-toggle') as HTMLElement;
                         if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'true') {
@@ -959,6 +963,13 @@ const getSlotClasses = (slot: string) => {
                                     path.style.removeProperty('stroke-dashoffset');
                                     path.removeAttribute('stroke-dasharray');
                                     path.removeAttribute('stroke-dashoffset');
+                                });
+                                outroStrokeTween?.kill();
+                                outroStrokeTween = gsap.to(outroPaths, {
+                                    strokeWidth: "3.5px",
+                                    duration: reduceMotion ? 0 : 0.5,
+                                    ease: "luxe",
+                                    overwrite: true
                                 });
 
                                 // 1. Animate logo to large size
@@ -1129,6 +1140,8 @@ const getSlotClasses = (slot: string) => {
                 cleanupJourney = () => {
                     activeStateTween?.kill();
                     activeStateTween = null;
+                    outroStrokeTween?.kill();
+                    outroStrokeTween = null;
                     window.removeEventListener('wheel', wheelHandler, { capture: true });
                     window.removeEventListener('touchstart', touchStartHandler, { capture: true });
                     window.removeEventListener('touchmove', touchMoveHandler, { capture: true });
