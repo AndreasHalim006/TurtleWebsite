@@ -9,9 +9,10 @@ interface Props {
     style?: any;
     gradientType?: 'blue-to-green' | 'green-to-blue';
     gradientDirection?: 'diagonal' | 'vertical';
+    borderColor?: string;
 }
 
-const { id, class: className, noPadding = false, noBorder = false, noRounding = false, style = {}, gradientType = 'blue-to-green', gradientDirection = 'diagonal' } = Astro.props;
+const { id, class: className, noPadding = false, noBorder = false, noRounding = false, style = {}, gradientType = 'blue-to-green', gradientDirection = 'diagonal', borderColor } = Astro.props;
 
 // If the window is borderless, force the corners to be sharp.
 const isRounded = !noBorder && !noRounding;
@@ -68,7 +69,7 @@ const gradId = `hud-grad-${id || Math.random().toString(36).substring(2, 9)}`;
                 class:list={["hud-frame-path", noRounding ? "no-round" : "rounded-corners"]}
                 x="0" y="0" width="100%" height="100%" 
                 fill="none" 
-                stroke={`url(#${gradId})`} 
+                stroke={borderColor || `url(#${gradId})`} 
                 stroke-width="9" 
                 stroke-linecap="round"
                 stroke-linejoin="round"
