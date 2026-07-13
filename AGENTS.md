@@ -45,16 +45,16 @@ This file serves as the definitive source of truth for workflow, design, and tec
 
 Run from repository root:
 ```bash
-npm install
-npm run dev
-npm run build
-npm run preview
+pnpm install
+pnpm run dev
+pnpm run build
+pnpm run preview
 ```
 
 ## 7. Verification Protocol
 
 Do NOT claim completion without verification. Minimum verification for UI work:
-1. `npm run build`
+1. `pnpm run build`
 2. Browser-level inspection (check for console errors).
 
 **Browser Verification Order:**

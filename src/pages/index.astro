@@ -10,10 +10,6 @@ import FuzzyText from '../components/reactbits/FuzzyText.jsx';
 import Cubes from '../components/reactbits/Cubes.jsx';
 import BounceCards from '../components/reactbits/BounceCards.jsx';
 import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
-
-// Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
-const heroVideo = '/TurtleWebsite/videos/hero.mp4';
-const baseUrl = '/TurtleWebsite/';
 import protergiaLogo from '../images/powered_by_protergia.png';
 
 import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
@@ -23,6 +19,10 @@ import teamPhoto4 from '../images/Untitled-7 1.jpg';
 import teamPhoto5 from '../images/Untitled-12 3.jpg';
 import teamPhoto6 from '../images/team.png';
 import teamPhoto7 from '../images/IMG_8908.jpg';
+
+// Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
+const baseUrl = import.meta.env.BASE_URL;
+const heroVideo = `${baseUrl}videos/hero.mp4`;
 
 const subteams = [
     { id: 'st1', text: 'Chassis & Composites', image: teamPhoto1.src, desc: 'Designing the structural skeleton and optimizing carbon fiber layups for maximum rigidity and minimum weight.' },
@@ -509,37 +509,39 @@ const getSlotClasses = (slot: string) => {
 	CustomEase.create("luxe", "0.16, 1, 0.3, 1");
 
 	// Catch errors and display them on screen to help diagnose client-side issues
-	window.addEventListener('error', (e) => {
-		console.error("Global script error caught:", e);
-		const errDiv = document.createElement('div');
-		errDiv.style.position = 'fixed';
-		errDiv.style.top = '10px';
-		errDiv.style.left = '10px';
-		errDiv.style.background = 'red';
-		errDiv.style.color = 'white';
-		errDiv.style.zIndex = '999999';
-		errDiv.style.padding = '10px';
-		errDiv.style.fontSize = '14px';
-		errDiv.style.fontFamily = 'monospace';
-		errDiv.innerHTML = `JS ERROR: ${e.message} at ${e.filename}:${e.lineno}`;
-		document.body.appendChild(errDiv);
-	});
+	if (import.meta.env.DEV) {
+		window.addEventListener('error', (e) => {
+			console.error("Global script error caught:", e);
+			const errDiv = document.createElement('div');
+			errDiv.style.position = 'fixed';
+			errDiv.style.top = '10px';
+			errDiv.style.left = '10px';
+			errDiv.style.background = 'red';
+			errDiv.style.color = 'white';
+			errDiv.style.zIndex = '999999';
+			errDiv.style.padding = '10px';
+			errDiv.style.fontSize = '14px';
+			errDiv.style.fontFamily = 'monospace';
+			errDiv.innerHTML = `JS ERROR: ${e.message} at ${e.filename}:${e.lineno}`;
+			document.body.appendChild(errDiv);
+		});
 
-	window.addEventListener('unhandledrejection', (e) => {
-		console.error("Promise rejection caught:", e.reason);
-		const errDiv = document.createElement('div');
-		errDiv.style.position = 'fixed';
-		errDiv.style.top = '10px';
-		errDiv.style.left = '10px';
-		errDiv.style.background = 'red';
-		errDiv.style.color = 'white';
-		errDiv.style.zIndex = '999999';
-		errDiv.style.padding = '10px';
-		errDiv.style.fontSize = '14px';
-		errDiv.style.fontFamily = 'monospace';
-		errDiv.innerHTML = `Promise Error: ${e.reason}`;
-		document.body.appendChild(errDiv);
-	});
+		window.addEventListener('unhandledrejection', (e) => {
+			console.error("Promise rejection caught:", e.reason);
+			const errDiv = document.createElement('div');
+			errDiv.style.position = 'fixed';
+			errDiv.style.top = '10px';
+			errDiv.style.left = '10px';
+			errDiv.style.background = 'red';
+			errDiv.style.color = 'white';
+			errDiv.style.zIndex = '999999';
+			errDiv.style.padding = '10px';
+			errDiv.style.fontSize = '14px';
+			errDiv.style.fontFamily = 'monospace';
+			errDiv.innerHTML = `Promise Error: ${e.reason}`;
+			document.body.appendChild(errDiv);
+		});
+	}
 
 	let mm: any = null;
 
