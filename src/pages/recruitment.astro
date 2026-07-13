@@ -4,9 +4,10 @@ import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import BlindsHero from '../components/BlindsHero.astro';
 
-const pageGradient = ['#9FFF10', '#00F3CB'];
-
 import heroImage from '../images/IMG_8908.jpg';
+
+const pageGradient = ['#9FFF10', '#00F3CB'];
+const baseUrl = import.meta.env.BASE_URL;
 
 const subdivisions = [
     {
@@ -121,7 +122,7 @@ const benefits = [
                             </p>
                         </div>
                         
-                        <a href={`/subdivisions#${sub.id}`} class="gradient-underline inline-flex items-center text-[var(--brand-orange)] font-bold text-sm tracking-widest uppercase hover:text-white transition-colors group/btn w-fit">
+                        <a href={`${baseUrl}subdivisions#${sub.id}`} class="gradient-underline inline-flex items-center text-[var(--brand-orange)] font-bold text-sm tracking-widest uppercase hover:text-white transition-colors group/btn w-fit">
                             Learn More 
                             <svg class="w-4 h-4 ml-2 transform group-hover/btn:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
