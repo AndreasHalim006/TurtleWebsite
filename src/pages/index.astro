@@ -21,7 +21,7 @@ import teamPhoto6 from '../images/team.png';
 import teamPhoto7 from '../images/IMG_8908.jpg';
 
 // Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const heroVideo = `${baseUrl}videos/hero.mp4`;
 
 const subteams = [
@@ -36,6 +36,22 @@ const subteams = [
     { id: 'st9', text: 'IT & Software', image: teamPhoto2.src, desc: "Building digital infrastructure and telemetry systems to support real-time engineering decisions." },
     { id: 'st10', text: 'Operations', image: teamPhoto3.src, desc: "Managing logistics, sponsorships, and team coordination to ensure seamless racing program execution." }
 ];
+
+const getSubteamLink = (subteamId: string) => {
+    const mapping: Record<string, string> = {
+        st1: 'mechanical',
+        st2: 'mechanical',
+        st3: 'mechanical',
+        st4: 'mechanical',
+        st5: 'powertrain',
+        st6: 'vehicle-dynamics',
+        st7: 'electronics',
+        st8: 'driverless',
+        st9: 'it-software',
+        st10: 'operations'
+    };
+    return `${baseUrl}subdivisions#${mapping[subteamId] || ''}`;
+};
 
 /**
  * JOURNEY TUNING SYSTEM
@@ -241,7 +257,7 @@ const getSlotClasses = (slot: string) => {
                                 <div class="h-full">
                                     <FlowingMenu 
                                         client:visible
-                                        items={subteams.map(s => ({ ...s, link: '#' }))}
+                                        items={subteams.map(s => ({ ...s, link: getSubteamLink(s.id) }))}
                                         speed={20}
                                         marqueeBgColor="var(--brand-orange)"
                                         marqueeTextColor="#000"

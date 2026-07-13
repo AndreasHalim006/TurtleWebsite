@@ -7,7 +7,7 @@ import BlindsHero from '../components/BlindsHero.astro';
 import heroImage from '../images/IMG_8908.jpg';
 
 const pageGradient = ['#9FFF10', '#00F3CB'];
-const baseUrl = import.meta.env.BASE_URL;
+const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 
 const subdivisions = [
     {
