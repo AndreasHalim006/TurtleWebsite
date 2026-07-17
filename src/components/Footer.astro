@@ -59,12 +59,17 @@ const currentYear = new Date().getFullYear();
             <div class="flex flex-col gap-4">
                 <h3 class="font-sans text-sm font-bold uppercase tracking-widest text-brand-orange mb-2">Stay Updated</h3>
                 <p class="font-sans text-sm text-gray-400 font-bold tracking-tight mb-2">Subscribe to our newsletter for the latest team updates and race results.</p>
-                <form class="flex w-full" onsubmit="event.preventDefault();">
-                    <input type="email" placeholder="YOUR EMAIL" class="w-full bg-[#111] border border-[#333] border-r-0 px-4 py-3 font-sans text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-orange" required />
-                    <button type="submit" class="bg-brand-orange text-black px-6 font-sans font-black uppercase text-sm hover:bg-white transition-colors">
-                        Join
-                    </button>
-                </form>
+                <div id="newsletter-container">
+                    <form class="flex w-full" id="newsletter-form">
+                        <input type="email" placeholder="YOUR EMAIL" class="w-full bg-[#111] border border-[#333] border-r-0 px-4 py-3 font-sans text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-orange" required />
+                        <button type="submit" class="bg-brand-orange text-black px-6 font-sans font-black uppercase text-sm hover:bg-white transition-colors">
+                            Join
+                        </button>
+                    </form>
+                    <p id="newsletter-success" class="font-sans text-sm text-brand-orange uppercase font-bold tracking-wider hidden mt-2">
+                        ✓ Thank you for subscribing!
+                    </p>
+                </div>
             </div>
 
         </div>
@@ -77,3 +82,15 @@ const currentYear = new Date().getFullYear();
         </div>
     </div>
 </footer>
+
+<script>
+    const form = document.getElementById('newsletter-form');
+    const successMsg = document.getElementById('newsletter-success');
+    if (form && successMsg) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            form.classList.add('hidden');
+            successMsg.classList.remove('hidden');
+        });
+    }
+</script>

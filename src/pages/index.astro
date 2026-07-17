@@ -524,6 +524,12 @@ const getSlotClasses = (slot: string) => {
 
 	CustomEase.create("luxe", "0.16, 1, 0.3, 1");
 
+	const log = (...args: any[]) => {
+		if (import.meta.env.DEV) {
+			console.log(...args);
+		}
+	};
+
 	// Catch errors and display them on screen to help diagnose client-side issues
 	if (import.meta.env.DEV) {
 		window.addEventListener('error', (e) => {
@@ -889,7 +895,7 @@ const getSlotClasses = (slot: string) => {
                     for (let i = 1; i < STATES.length; i++) {
                         STATES[i].scrollY = targetY;
                     }
-                    console.log("Cinematic Scroll: Scroll Y positions initialized:", STATES.map(s => `${s.name}: ${s.scrollY}`));
+                    log("Cinematic Scroll: Scroll Y positions initialized:", STATES.map(s => `${s.name}: ${s.scrollY}`));
                 };
                 updateScrollYPositions();
 
@@ -911,7 +917,7 @@ const getSlotClasses = (slot: string) => {
                     const currentState = STATES[currentStateIndex];
                     const lenis = (window as any).lenis;
 
-                    console.log(`Cinematic Scroll: Transitioning ${currentState.name} (${currentState.scrollY}px) -> ${targetState.name} (${targetState.scrollY}px)`);
+                    log(`Cinematic Scroll: Transitioning ${currentState.name} (${currentState.scrollY}px) -> ${targetState.name} (${targetState.scrollY}px)`);
 
                     const isOutroTransition = targetIndex === 6 || currentStateIndex === 6;
                     const transitionDuration = reduceMotion ? 0 : (isOutroTransition ? 2.5 : 6.0);
@@ -1020,7 +1026,7 @@ const getSlotClasses = (slot: string) => {
                             stateSettled = true;
                             currentStateIndex = targetIndex;
                             isAnimating = false;
-                            console.log(`Cinematic Scroll: Arrived at ${targetState.name}`);
+                            log(`Cinematic Scroll: Arrived at ${targetState.name}`);
                             if (targetIndex === 6) {
                                 // 1. Animate logo to large size
                                 const logo = document.getElementById('nav-logo');
@@ -1071,12 +1077,12 @@ const getSlotClasses = (slot: string) => {
                                     setTimeout(() => {
                                         currentStateIndex = targetIndex;
                                         isAnimating = false;
-                                        console.log(`Cinematic Scroll: Returned to ${targetState.name}`);
+                                        log(`Cinematic Scroll: Returned to ${targetState.name}`);
                                     }, scrollDuration * 0.5 * 1000);
                                 } else {
                                     currentStateIndex = targetIndex;
                                     isAnimating = false;
-                                    console.log(`Cinematic Scroll: Returned to ${targetState.name}`);
+                                    log(`Cinematic Scroll: Returned to ${targetState.name}`);
                                 }
                             }
                         });
@@ -1324,11 +1330,11 @@ const getSlotClasses = (slot: string) => {
             };
 
             const acrosticItems = document.querySelectorAll('.acrostic-item');
-            console.log(`[Acrostic] Found ${acrosticItems.length} acrostic items`);
+            log(`[Acrostic] Found ${acrosticItems.length} acrostic items`);
             acrosticItems.forEach((item) => {
                 item.addEventListener('mouseenter', () => {
                     const id = item.getAttribute('data-id');
-                    console.log(`[Acrostic] Hover on item: ${id}`);
+                    log(`[Acrostic] Hover on item: ${id}`);
                     if (id) {
                         if (id === currentAcrosticId) return;
                         currentAcrosticId = id;
