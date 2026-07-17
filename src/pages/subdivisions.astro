@@ -6,19 +6,39 @@ import BlindsHero from '../components/BlindsHero.astro';
 
 const pageGradient = ['#9FFF10', '#00F3CB'];
 
-// Team photos — reuse the same images referenced in the home page
-import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
-import teamPhoto2 from '../images/Aristurtle_photo_2-1_2.jpg';
-import teamPhoto3 from '../images/Aristurtle_photo_3-1_2.jpg';
-import teamPhoto4 from '../images/Untitled-7 1.jpg';
-import teamPhoto5 from '../images/Untitled-12 3.jpg';
-import teamPhoto6 from '../images/team.png';
-import teamPhoto7 from '../images/IMG_8908.jpg';
+// PDF-derived images
+import mechanicalAerodynamics from '../assets/subdivisions/mechanical_aerodynamics.png';
+import mechanicalChassis from '../assets/subdivisions/mechanical_chassis.png';
+import mechanicalSuspension from '../assets/subdivisions/mechanical_suspension.png';
+import mechanicalDrivetrain from '../assets/subdivisions/mechanical_drivetrain.png';
+
+import powertrain1 from '../assets/subdivisions/powertrain_1.png';
+import powertrain2 from '../assets/subdivisions/powertrain_2.png';
+
+import electronics1 from '../assets/subdivisions/electronics_1.png';
+import electronics2 from '../assets/subdivisions/electronics_2.png';
+
+import it1 from '../assets/subdivisions/it_1.jpg';
+import it2 from '../assets/subdivisions/it_2.png';
+
+import vehicledynamics1 from '../assets/subdivisions/vehicledynamics_1.png';
+import vehicledynamics2 from '../assets/subdivisions/vehicledynamics_2.png';
+import vehicledynamics3 from '../assets/subdivisions/vehicledynamics_3.png';
+
+import driverlessPerception from '../assets/subdivisions/driverless_perception.png';
+import driverlessSlam from '../assets/subdivisions/driverless_slam.png';
+import driverlessPathplanning from '../assets/subdivisions/driverless_pathplanning.png';
+import driverlessSimulation from '../assets/subdivisions/driverless_simulation.png';
+
+import operationsGraphic from '../assets/subdivisions/operations_graphic.png';
+import operationsResources from '../assets/subdivisions/operations_resources.png';
+import operationsFilm from '../assets/subdivisions/operations_film.png';
 
 interface SubTeam {
     name: string;
     description: string;
     bullets?: string[];
+    image?: ImageMetadata;
 }
 
 interface Subdivision {
@@ -27,6 +47,7 @@ interface Subdivision {
     tagline: string;
     description: string;
     image: ImageMetadata;
+    images?: ImageMetadata[];
     subteams?: SubTeam[];
     bullets?: string[];
 }
@@ -37,7 +58,7 @@ const subdivisions: Subdivision[] = [
         name: 'Mechanical',
         tagline: 'The backbone of the car',
         description: 'The Mechanical subdivision encompasses the core physical systems of the race car — from the aerodynamic package that generates downforce, to the carbon-fiber monocoque chassis, the suspension geometry, and the drivetrain that delivers power to the wheels.',
-        image: teamPhoto1,
+        image: mechanicalChassis,
         subteams: [
             {
                 name: 'Aerodynamics',
@@ -47,6 +68,7 @@ const subdivisions: Subdivision[] = [
                     'Computational Fluid Dynamics (CFD) analysis for airflow studies',
                     'Practical validation of simulation data through on-track experiments',
                 ],
+                image: mechanicalAerodynamics,
             },
             {
                 name: 'Chassis & Composites',
@@ -58,6 +80,7 @@ const subdivisions: Subdivision[] = [
                     'Research and experiments on composite materials',
                     'Design of the seat and driving position with a focus on comfort, accessibility, and driver safety',
                 ],
+                image: mechanicalChassis,
             },
             {
                 name: 'Suspension',
@@ -70,6 +93,7 @@ const subdivisions: Subdivision[] = [
                     'Topology optimization of hubs (uprights & wheel hubs) to reduce unsprung mass',
                     'Setup and tuning of the suspension during testing sessions',
                 ],
+                image: mechanicalSuspension,
             },
             {
                 name: 'Drivetrain',
@@ -81,6 +105,7 @@ const subdivisions: Subdivision[] = [
                     'Management of manufacturing methods and part production',
                     'Experimental validation of the transmission through dedicated test rigs',
                 ],
+                image: mechanicalDrivetrain,
             },
         ],
     },
@@ -89,7 +114,8 @@ const subdivisions: Subdivision[] = [
         name: 'Powertrain',
         tagline: 'High-voltage power delivery',
         description: 'The Powertrain subdivision is responsible for the high-voltage systems, specifically the electrical drive systems of the vehicle. These systems broadly include the Energy Accumulator, the Inverters, and the Electric Motors. The role of the Powertrain system in an electric race car is pivotal for its performance. Team members must address challenges by developing innovative and effective solutions for the design, integration, and construction of systems that comply with the strict Formula Student regulations — always aiming to minimize weight and optimize overall vehicle performance.',
-        image: teamPhoto5,
+        image: powertrain1,
+        images: [powertrain1, powertrain2],
         bullets: [
             'Analysis and modeling of the electrical and thermal behavior of the Accumulator',
             'Electrical and mechanical design and construction of the Accumulator segments and battery connections',
@@ -105,7 +131,8 @@ const subdivisions: Subdivision[] = [
         name: 'Electronics & Embedded',
         tagline: 'Low-voltage nervous system',
         description: 'The Low Voltage subdivision is responsible for all low-voltage systems, which play a critical role in the functionality, safety, and performance of the single-seater. The team develops, designs, and implements systems that manage communication, control, and interaction of all critical subsystems of the car — combining schematic and PCB design, embedded software development, and electrical construction and maintenance to ensure smooth and effective operation of the vehicle\'s entire electrical system.',
-        image: teamPhoto7,
+        image: electronics2,
+        images: [electronics1, electronics2],
         bullets: [
             'Design, simulation, and manufacturing of Printed Circuit Boards (PCBs)',
             'Microcontroller programming',
@@ -117,41 +144,26 @@ const subdivisions: Subdivision[] = [
         ],
     },
     {
-        id: 'it-software',
-        name: 'IT & Software Development',
-        tagline: 'Digital infrastructure architect',
-        description: 'The IT subdivision is the architect of Aristurtle\'s digital ecosystem. Our mission is the integration of cutting-edge technologies that optimize workflows across the entire team and transform the massive volume of vehicle data into a competitive advantage. Through the continuous evolution of our digital infrastructure, IT ensures that the team stays at the forefront of technology, enabling engineers to make immediate and accurate data-driven decisions.',
-        image: teamPhoto2,
-        bullets: [
-            'Design and maintenance of the central server and cloud infrastructure',
-            'Development of custom webapps such as the Telemetry system (real-time processing and visualization of vehicle data), Team Radio, Online Inventory, and more',
-            'Data Engineering for secure storage and rapid processing of massive data volumes, creating reliable databases that feed analyses across the team',
-            'Creation of automation and AI agent flows for intelligent data processing and simplification of complex procedures, acting as digital assistants for the team',
-            'Development and technical management of the official website, ensuring the team\'s digital presence',
-        ],
-    },
-    {
         id: 'vehicle-dynamics',
         name: 'Vehicle Dynamics & Control',
         tagline: 'Performance through physics',
         description: 'The Vehicle Dynamics & Controls subdivision is responsible for studying the dynamic behavior of the single-seater and defining the design targets for the entire team. Through advanced simulations and custom control algorithms, the team optimizes track performance, ensuring absolute vehicle handling.',
-        image: teamPhoto6,
+        image: vehicledynamics1,
         subteams: [
             {
-                name: 'Master the Track',
-                description: 'Analyze the dynamic behavior of the single-seater on track and unlock its peak performance through understanding the physical forces that act upon it.',
-            },
-            {
-                name: 'Bridge the Gap',
-                description: 'Develop the team\'s custom Lap Time Simulator, combining advanced mathematical analyses with real-world track data to predict vehicle behavior.',
+                name: 'Track Analysis & Simulation',
+                description: 'Analyze the dynamic behavior of the single-seater on track and unlock its peak performance. Develop the team\'s custom Lap Time Simulator, combining advanced mathematical analyses with real-world track data to predict vehicle behavior.',
+                image: vehicledynamics1,
             },
             {
                 name: 'The Math Behind the Speed',
                 description: 'Create complex mathematical models for tires, suspension, and aerodynamics, laying the foundations for the ideal car setup.',
+                image: vehicledynamics3,
             },
             {
                 name: 'Harness the Power',
                 description: 'Design and integrate top-tier control systems such as Torque Vectoring and Traction Control, defining the ultimate driving experience and precise vehicle handling.',
+                image: vehicledynamics2,
             },
         ],
     },
@@ -160,7 +172,7 @@ const subdivisions: Subdivision[] = [
         name: 'Driverless',
         tagline: 'Autonomous racing intelligence',
         description: 'The Autonomous System subdivision is responsible for converting our vehicle into a fully autonomous race car through software development, sensor installation, and machine learning algorithms. Our goal is an autonomous racing vehicle equipped with a powerful computing unit and advanced sensors, capable of completing the competition courses at maximum possible speed.',
-        image: teamPhoto3,
+        image: driverlessPerception,
         subteams: [
             {
                 name: 'Perception',
@@ -170,6 +182,7 @@ const subdivisions: Subdivision[] = [
                     'Neural network training',
                     'Algorithm application and optimization',
                 ],
+                image: driverlessPerception,
             },
             {
                 name: 'State Estimation & SLAM',
@@ -179,15 +192,33 @@ const subdivisions: Subdivision[] = [
                     'Control and optimization techniques',
                     'Application of stochastic methods and vehicle dynamics',
                 ],
+                image: driverlessSlam,
             },
             {
                 name: 'Path Planning & Control',
                 description: 'One of the most critical elements in autonomous driving is determining the optimal path the vehicle must follow within the track. This is achieved through path planning by implementing algorithms that aim to chart a trajectory for the car to follow. Equally important is control, which ensures the car faithfully follows the computed path through various controllers that continuously adjust speed and steering.',
+                image: driverlessPathplanning,
             },
             {
                 name: 'Simulation',
                 description: 'The development of a simulation system for a Formula Student Driverless team involves creating a digital environment that realistically represents the track, the car, and its sensors — with the goal of testing and optimizing autonomous driving algorithms. Through the simulator, the team can develop, test, and optimize the perception, localization, trajectory planning, and control subsystems in a controlled and realistic simulated environment.',
+                image: driverlessSimulation,
             },
+        ],
+    },
+    {
+        id: 'it-software',
+        name: 'IT & Software Development',
+        tagline: 'Digital infrastructure architect',
+        description: 'The IT subdivision is the architect of Aristurtle\'s digital ecosystem. Our mission is the integration of cutting-edge technologies that optimize workflows across the entire team and transform the massive volume of vehicle data into a competitive advantage. Through the continuous evolution of our digital infrastructure, IT ensures that the team stays at the forefront of technology, enabling engineers to make immediate and accurate data-driven decisions.',
+        image: it1,
+        images: [it1, it2],
+        bullets: [
+            'Design and maintenance of the central server and cloud infrastructure',
+            'Development of custom webapps such as the Telemetry system (real-time processing and visualization of vehicle data), Team Radio, Online Inventory, and more',
+            'Data Engineering for secure storage and rapid processing of massive data volumes, creating reliable databases that feed analyses across the team',
+            'Creation of automation and AI agent flows for intelligent data processing and simplification of complex procedures, acting as digital assistants for the team',
+            'Development and technical management of the official website, ensuring the team\'s digital presence',
         ],
     },
     {
@@ -195,27 +226,22 @@ const subdivisions: Subdivision[] = [
         name: 'Operations',
         tagline: 'Business & communications core',
         description: 'The Operations subdivision is the business and communications nucleus of Aristurtle. Connecting the engineering work with the market, it is responsible for securing resources, promoting our public image, and managing all non-technical processes.',
-        image: teamPhoto4,
+        image: operationsGraphic,
         subteams: [
             {
-                name: 'Economic Resources',
-                description: 'Sourcing sponsorships (financial & material) and maintaining B2B relationships with partners.',
-            },
-            {
-                name: 'Business Plan',
-                description: 'Market research and development of the business model (pitch) for competitions.',
+                name: 'Business Plan & Economic Resources',
+                description: 'Sourcing sponsorships (financial & material) and maintaining B2B relationships with partners. Perform market research and develop the business model (pitch) for competitions.',
+                image: operationsResources,
             },
             {
                 name: 'Film & Photography',
                 description: 'Full audiovisual coverage (capture and post-production) of team activities, from daily life at Ikiskos to race events.',
+                image: operationsFilm,
             },
             {
-                name: 'Graphic Design',
-                description: 'Design of the visual identity, production of promotional material, and curation of the car\'s livery.',
-            },
-            {
-                name: 'Social Media',
-                description: 'Management of our digital presence, content strategy, and daily audience engagement across social platforms.',
+                name: 'Graphic Design & Social Media',
+                description: 'Design the visual identity, produce promotional material, and curate the car\'s livery. Manage our digital presence, content strategy, and daily audience engagement across social platforms.',
+                image: operationsGraphic,
             },
         ],
     },
@@ -228,14 +254,14 @@ const subdivisions: Subdivision[] = [
         <BlindsHero title="SUBDIVISIONS" description="The seven specialized pillars of Aristurtle. Explore the teams that build our success." gradientColors={pageGradient} />
     </div>
 
-    <div class="bg-[var(--brand-emerald)] w-full min-h-screen text-white relative z-10">
+    <div class="bg-brand-emerald w-full min-h-screen text-white relative z-10">
     <div class="subdivisions-container py-20 md:py-32 w-full max-w-[1800px] mx-auto overflow-hidden">
 
         <!-- INTRO -->
         <header class="sub-reveal flex flex-col items-start w-full">
             <h2 class="text-3xl md:text-5xl font-bold uppercase mb-8">The Teams Behind The Car</h2>
-            <div class="h-1 w-32 bg-[var(--brand-orange)] mb-10 mt-2"></div>
-            <p class="text-xl md:text-3xl text-gray-400 font-light max-w-4xl leading-relaxed md:leading-loose">
+            <div class="h-1 w-32 bg-brand-orange mb-10 mt-2"></div>
+            <p class="text-xl md:text-3xl text-gray-200 font-normal max-w-4xl leading-relaxed md:leading-loose">
                 Our team is structured into specialized subdivisions, each focused on a critical aspect of designing, building, and racing our electric and autonomous single-seater.
             </p>
         </header>
@@ -249,9 +275,9 @@ const subdivisions: Subdivision[] = [
                 {subdivisions.map((sub, i) => (
                     <a
                         href={`#${sub.id}`}
-                        class="group flex flex-col items-center gap-4 p-4 md:p-8 border border-white/10 bg-brand-midnight hover:border-[var(--brand-orange)] transition-colors duration-300"
+                        class="group flex flex-col items-center gap-4 p-4 md:p-8 border border-white/10 bg-brand-midnight hover:border-brand-orange transition-colors duration-300"
                     >
-                        <span class="text-[var(--brand-orange)] font-bold text-sm tracking-widest uppercase opacity-50 group-hover:opacity-100 transition-opacity">
+                        <span class="text-brand-orange font-bold text-sm tracking-widest uppercase opacity-50 group-hover:opacity-100 transition-opacity">
                             {String(i + 1).padStart(2, '0')}
                         </span>
                         <span class="text-white text-sm md:text-base font-semibold uppercase tracking-wider text-center leading-tight">
@@ -267,70 +293,88 @@ const subdivisions: Subdivision[] = [
             <section id={sub.id} class="sub-section relative mb-40 md:mb-72">
                 <!-- Section header with number + name -->
                 <div class="sub-reveal flex items-baseline gap-6 md:gap-10 mb-16 md:mb-28">
-                    <span class="text-[var(--brand-orange)] font-black text-6xl md:text-9xl leading-none opacity-30">
+                    <span class="text-brand-orange font-black text-6xl md:text-9xl leading-none opacity-30">
                         {String(index + 1).padStart(2, '0')}
                     </span>
                     <div>
                         <h2 class="text-3xl sm:text-4xl md:text-7xl font-black uppercase tracking-tight text-white">
                             {sub.name}
                         </h2>
-                        <p class="text-base md:text-xl text-[var(--brand-orange)] font-light uppercase tracking-widest mt-3">
+                        <p class="text-base md:text-xl text-brand-orange font-light uppercase tracking-widest mt-3">
                             {sub.tagline}
                         </p>
                     </div>
                 </div>
 
-                <!-- Image + description block -->
-                <div class="sub-reveal grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 mb-20 md:mb-32">
-                    <div class="relative overflow-hidden aspect-[16/10] bg-brand-midnight">
-                        <Image
-                            src={sub.image}
-                            alt={`${sub.name} subdivision`}
-                            class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
-                            widths={[400, 800, 1200]}
-                            sizes="(max-width: 1024px) 100vw, 50vw"
-                        />
-                        <div class="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent opacity-60"></div>
+                {/* Subdivision Content: Has subteams vs does not have subteams */}
+                {sub.subteams ? (
+                    <div>
+                        {/* Subdivision Intro Description */}
+                        <div class="sub-reveal max-w-5xl mb-24">
+                            <p class="text-gray-100 font-normal leading-relaxed md:leading-loose text-lg md:text-2xl">
+                                {sub.description}
+                            </p>
+                        </div>
+
+                        {/* Alternating Subteams Section */}
+                        <div class="space-y-24 md:space-y-36">
+                            {sub.subteams.map((st, i) => (
+                                <div class="sub-reveal grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+                                    {/* Image Container - Staggered Left/Right */}
+                                    <div class={`relative overflow-hidden aspect-[16/10] bg-brand-midnight border border-white/10 hover:border-brand-orange transition-colors duration-500 group ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+                                        {st.image && (
+                                            <Image
+                                                src={st.image}
+                                                alt={`${st.name} subteam`}
+                                                class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
+                                                widths={[400, 800]}
+                                                sizes="(max-width: 1024px) 100vw, 50vw"
+                                            />
+                                        )}
+                                        <div class="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent opacity-60"></div>
+                                    </div>
+
+                                    {/* Text Content */}
+                                    <div class="flex flex-col justify-center">
+                                        <h3 class="text-2xl md:text-4xl font-bold uppercase tracking-wider text-white mb-6 hover:text-brand-orange transition-colors duration-300">
+                                            {st.name}
+                                        </h3>
+                                        <p class="text-gray-200 font-normal leading-relaxed md:leading-loose text-base md:text-lg">
+                                            {st.description}
+                                        </p>
+                                        {st.bullets && (
+                                            <ul class="mt-8 space-y-4 pt-8 border-t border-white/10">
+                                                {st.bullets.map((bullet) => (
+                                                    <li class="flex items-start gap-4 text-gray-300 font-normal text-sm md:text-base">
+                                                        <span class="text-brand-orange mt-1.5 flex-shrink-0 opacity-80">
+                                                            <svg width="8" height="8" viewBox="0 0 6 6" fill="currentColor"><rect width="6" height="6"/></svg>
+                                                        </span>
+                                                        <span class="leading-relaxed md:leading-loose">{bullet}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-
-                    <div class="flex flex-col justify-center py-4">
-                        <p class="text-gray-300 font-light leading-relaxed md:leading-loose text-lg md:text-2xl">
-                            {sub.description}
-                        </p>
-
-                        {/* Top-level bullets (for subdivisions without sub-teams, e.g. Powertrain) */}
-                        {sub.bullets && (
-                            <ul class="mt-12 space-y-5">
-                                {sub.bullets.map((bullet) => (
-                                    <li class="flex items-start gap-5 text-gray-400 font-light text-base md:text-lg">
-                                        <span class="text-[var(--brand-orange)] mt-1.5 flex-shrink-0">
-                                            <svg width="10" height="10" viewBox="0 0 8 8" fill="currentColor"><rect width="8" height="8"/></svg>
-                                        </span>
-                                        <span class="leading-relaxed md:leading-loose">{bullet}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                </div>
-
-                {/* Sub-teams grid */}
-                {sub.subteams && (
-                    <div class={`grid grid-cols-1 ${sub.subteams.length <= 3 ? 'md:grid-cols-' + sub.subteams.length : sub.subteams.length === 4 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-10 md:gap-14`}>
-                        {sub.subteams.map((st) => (
-                            <div class="sub-card glow-card bg-brand-midnight p-6 md:p-16 border border-white/10 hover:border-[var(--brand-orange)] transition-colors duration-500 group flex flex-col justify-start">
-                                <h3 class="text-xl md:text-2xl font-bold uppercase tracking-wider text-white mb-8 group-hover:text-[var(--brand-orange)] transition-colors duration-300">
-                                    {st.name}
-                                </h3>
-                                <p class="text-gray-400 font-light leading-relaxed md:leading-loose text-base md:text-lg">
-                                    {st.description}
+                ) : (
+                    <div>
+                        {/* Split Text Content for Subdivisions without subteams */}
+                        <div class="sub-reveal grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 mb-16">
+                            <div class="flex flex-col justify-center">
+                                <p class="text-gray-100 font-normal leading-relaxed md:leading-loose text-lg md:text-2xl">
+                                    {sub.description}
                                 </p>
-                                {st.bullets && (
-                                    <ul class="mt-10 space-y-4 pt-10 border-t border-white/10">
-                                        {st.bullets.map((bullet) => (
-                                            <li class="flex items-start gap-4 text-gray-500 font-light text-sm md:text-base">
-                                                <span class="text-[var(--brand-orange)] mt-1.5 flex-shrink-0 opacity-60">
-                                                    <svg width="8" height="8" viewBox="0 0 6 6" fill="currentColor"><rect width="6" height="6"/></svg>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                {sub.bullets && (
+                                    <ul class="space-y-5">
+                                        {sub.bullets.map((bullet) => (
+                                            <li class="flex items-start gap-5 text-gray-200 font-normal text-base md:text-lg">
+                                                <span class="text-brand-orange mt-1.5 flex-shrink-0">
+                                                    <svg width="10" height="10" viewBox="0 0 8 8" fill="currentColor"><rect width="8" height="8"/></svg>
                                                 </span>
                                                 <span class="leading-relaxed md:leading-loose">{bullet}</span>
                                             </li>
@@ -338,7 +382,25 @@ const subdivisions: Subdivision[] = [
                                     </ul>
                                 )}
                             </div>
-                        ))}
+                        </div>
+
+                        {/* Gallery Grid */}
+                        {sub.images && (
+                            <div class="sub-reveal grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {sub.images.map((img) => (
+                                    <div class="relative overflow-hidden aspect-[16/10] bg-brand-midnight border border-white/10 hover:border-brand-orange transition-colors duration-500">
+                                        <Image
+                                            src={img}
+                                            alt={`${sub.name} system`}
+                                            class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
+                                            widths={[400, 800]}
+                                            sizes="(max-width: 768px) 100vw, 50vw"
+                                        />
+                                        <div class="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent opacity-60"></div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -386,28 +448,6 @@ const subdivisions: Subdivision[] = [
                 ease: 'luxe',
                 scrollTrigger: {
                     trigger: element,
-                    start: 'top 85%',
-                    toggleActions: 'play none none reverse',
-                },
-            }
-        );
-    });
-
-    // Staggered card animation
-    document.querySelectorAll('.sub-section').forEach((section) => {
-        const cards = section.querySelectorAll('.sub-card');
-        if (cards.length === 0) return;
-
-        gsap.fromTo(cards,
-            { y: 40, autoAlpha: 0 },
-            {
-                y: 0,
-                autoAlpha: 1,
-                duration: 0.7,
-                ease: 'luxe',
-                stagger: 0.1,
-                scrollTrigger: {
-                    trigger: cards[0],
                     start: 'top 85%',
                     toggleActions: 'play none none reverse',
                 },
