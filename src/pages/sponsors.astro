@@ -8,6 +8,7 @@ import SponsorAssembly from '../components/sponsors/SponsorAssembly.astro';
 import SponsorCTA from '../components/sponsors/SponsorCTA.astro';
 
 const pageGradient = ['#9FFF10', '#00F3CB'];
+const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 
 const allSponsors = await getCollection('sponsors', ({ data }) => data.active === true);
 const allCategories = await getCollection('sponsorCategories');
@@ -23,12 +24,18 @@ const tiers = sortedCategories
     id: category.data.key,
     title: category.data.title,
     description: category.data.description,
-    sponsors: getSponsorsByCategory(category.data.key).map((sponsor) => ({
-      name: sponsor.data.name,
-      logo: sponsor.data.logo,
-      website: sponsor.data.website,
-      alt: sponsor.data.alt || sponsor.data.name,
-    })),
+    sponsors: getSponsorsByCategory(category.data.key).map((sponsor) => {
+      const rawLogo = sponsor.data.logo;
+      const logoUrl = rawLogo.startsWith('http')
+        ? rawLogo
+        : `${baseUrl}${rawLogo.startsWith('/') ? rawLogo.slice(1) : rawLogo}`;
+      return {
+        name: sponsor.data.name,
+        logo: logoUrl,
+        website: sponsor.data.website,
+        alt: sponsor.data.alt || sponsor.data.name,
+      };
+    }),
   }))
   .filter((tier) => tier.sponsors.length > 0);
 
