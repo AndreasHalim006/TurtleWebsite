@@ -1,9 +1,10 @@
 ---
 name: "meky"
-category: gold
+category: "silver"
 order: 12
-logo: "https://aristurtle.gr/wp-content/uploads/2021/05/MEKY-01.jpg"
+logo: "/assets/sponsors/SILVER/meky.webp"
 website: "http://meky.gr/"
 alt: "Partner Logo"
 active: true
 ---
+

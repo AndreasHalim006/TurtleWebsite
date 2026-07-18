@@ -1,9 +1,10 @@
 ---
 name: "melasta"
-category: silver
+category: "silver"
 order: 15
-logo: "https://aristurtle.gr/wp-content/uploads/2023/05/melasta.png"
+logo: "/assets/sponsors/SILVER/melasta.webp"
 website: "https://www.melasta.com/"
 alt: "Partner Logo"
 active: true
 ---
+

@@ -1,9 +1,10 @@
 ---
 name: "gpcolors"
-category: gold
+category: "gold"
 order: 5
-logo: "https://aristurtle.gr/wp-content/uploads/2020/11/Gold-13.png"
+logo: "/assets/sponsors/GOLD/GPcolors.webp"
 website: "https://www.gpcolors.gr/"
 alt: "Partner Logo"
 active: true
 ---
+

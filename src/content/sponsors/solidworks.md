@@ -1,9 +1,10 @@
 ---
 name: "solidworks"
-category: bronze
+category: "bronze"
 order: 2
-logo: "https://aristurtle.gr/wp-content/uploads/2020/12/solidworks.png"
+logo: "/assets/sponsors/bronze/solidworks.webp"
 website: "https://www.solidworks.com/"
 alt: "Partner Logo"
 active: true
 ---
+

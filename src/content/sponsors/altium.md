@@ -1,9 +1,10 @@
 ---
 name: "altium"
-category: bronze
+category: "bronze"
 order: 3
-logo: "https://aristurtle.gr/wp-content/uploads/2020/12/altium.png"
+logo: "/assets/sponsors/bronze/altium.webp"
 website: "https://www.altium.com/"
 alt: "Partner Logo"
 active: true
 ---
+

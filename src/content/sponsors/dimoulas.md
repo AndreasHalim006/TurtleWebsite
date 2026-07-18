@@ -1,9 +1,10 @@
 ---
 name: "dimoulas"
-category: gold
+category: "bronze"
 order: 13
-logo: "https://aristurtle.gr/wp-content/uploads/2020/11/Gold-14.png"
+logo: "/assets/sponsors/bronze/dimoulas.webp"
 website: "http://www.dimoulas.gr/"
 alt: "Partner Logo"
 active: true
 ---
+

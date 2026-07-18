@@ -1,9 +1,10 @@
 ---
 name: "interamerican"
-category: gold
+category: "silver"
 order: 8
-logo: "https://aristurtle.gr/wp-content/uploads/2020/11/Gold-09.png"
+logo: "/assets/sponsors/SILVER/interamerican.webp"
 website: "https://www.interamerican.gr/"
 alt: "Partner Logo"
 active: true
 ---
+

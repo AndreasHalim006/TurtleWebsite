@@ -1,9 +1,10 @@
 ---
 name: "whalegraphics"
-category: silver
+category: "silver"
 order: 13
-logo: "https://aristurtle.gr/wp-content/uploads/2020/11/10.WHALE_.png"
+logo: "/assets/sponsors/SILVER/whale_graphics.webp"
 website: "http://www.whalegraphics.gr/"
 alt: "Partner Logo"
 active: true
 ---
+

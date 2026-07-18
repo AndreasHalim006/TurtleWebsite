@@ -1,9 +1,10 @@
 ---
 name: "ey"
-category: platinum
+category: "platinum"
 order: 4
-logo: "https://aristurtle.gr/wp-content/uploads/2023/02/ey-e1774556330715.png"
+logo: "/assets/sponsors/PLATINUM/ey.webp"
 website: "https://www.ey.com/el_gr"
 alt: "Partner Logo"
 active: true
 ---
+
