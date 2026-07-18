@@ -10,10 +10,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "test:e2e": "playwright test",
-    "test:e2e:headed": "playwright test --headed",
-    "test:e2e:ui": "playwright test --ui"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -35,7 +32,6 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0"
   }
 }

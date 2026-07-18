@@ -1,0 +1,159 @@
+---
+// src/components/Preloader.astro
+---
+
+<div id="preloader-container" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0A0A0A] select-none pointer-events-auto overflow-hidden">
+  <!-- Session Storage check script (runs inline immediately to prevent flash) -->
+  <script is:inline>
+    (function() {
+      if (navigator.webdriver || sessionStorage.getItem('aristurtle-preloader-played') === 'true') {
+        document.getElementById('preloader-container').style.display = 'none';
+      }
+    })();
+  </script>
+
+  <div class="relative w-full max-w-[500px] px-6 flex flex-col gap-6" id="preloader-content">
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b border-white/10 pb-3 text-xs tracking-[0.2em] uppercase text-white/40 font-mono">
+      <span>SYS.BOOT_SEQUENCE</span>
+      <span class="text-[#9FFF10] font-semibold font-jura">ARISTURTLE EV</span>
+    </div>
+
+    <!-- Telemetry Log Window -->
+    <div class="h-[140px] overflow-hidden border border-white/5 bg-white/[0.01] p-4 font-mono text-[10px] leading-relaxed text-white/40 flex flex-col gap-2 justify-end">
+      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] ESTABLISHING CAN-BUS LINK ... OK</div>
+      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] CHECKING INVERTER DC-LINK ... 400V</div>
+      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] DRIVETRAIN CONTROLLERS ACTIVATED ... OK</div>
+      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] READING CHASSIS KINEMATICS ... OK</div>
+      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] SYNCING AUTONOMOUS perception_stack ... ONLINE</div>
+      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] THREE.JS WEBGL CONTEXT ... READY</div>
+    </div>
+
+    <!-- Center Section: Percentage Counter & Progress -->
+    <div class="flex flex-col gap-4">
+      <div class="flex justify-between items-baseline font-jura">
+        <span class="text-xs uppercase tracking-widest text-white/40 font-mono">SYSTEM READY STATE</span>
+        <div class="text-5xl font-light tracking-tight text-white">
+          <span id="preloader-percentage" class="font-jura tabular-nums">00</span><span class="text-xs text-[#9FFF10] ml-1 font-mono">%</span>
+        </div>
+      </div>
+      <!-- Progress Bar Track -->
+      <div class="w-full h-[2px] bg-white/10 relative overflow-hidden">
+        <div id="preloader-bar" class="absolute top-0 left-0 h-full bg-[#9FFF10] w-0"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex justify-between text-[10px] text-white/20 tracking-wider font-mono">
+      <span>LATENCY: <span id="preloader-latency">--</span>ms</span>
+      <span>FSG_2026_CORE_v4.0</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { gsap } from 'gsap';
+  import { CustomEase } from 'gsap/CustomEase';
+
+  // Register CustomEase locally to prevent dependencies loading order issues
+  gsap.registerPlugin(CustomEase);
+  CustomEase.create("luxe", "0.16, 1, 0.3, 1");
+
+  // Client-side initialization
+  if (!navigator.webdriver && sessionStorage.getItem('aristurtle-preloader-played') !== 'true') {
+    const container = document.getElementById('preloader-container');
+    const content = document.getElementById('preloader-content');
+    const percentEl = document.getElementById('preloader-percentage');
+    const barEl = document.getElementById('preloader-bar');
+    const latencyEl = document.getElementById('preloader-latency');
+    const telemetryLines = document.querySelectorAll('.telemetry-line');
+
+    if (container) {
+      // Check prefers-reduced-motion
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        container.style.display = 'none';
+        window.dispatchEvent(new CustomEvent('preloader-complete'));
+      } else {
+        // Stop scroll on Lenis immediately
+        if ((window as any).lenis) {
+          (window as any).lenis.stop();
+        } else {
+          // If Lenis has not booted yet, verify periodically
+          const checkLenis = setInterval(() => {
+            if ((window as any).lenis) {
+              (window as any).lenis.stop();
+              clearInterval(checkLenis);
+            }
+          }, 20);
+          setTimeout(() => clearInterval(checkLenis), 3000);
+        }
+
+        // Set realistic system latency reading
+        if (latencyEl) {
+          latencyEl.textContent = Math.floor(Math.random() * 12 + 6).toString();
+        }
+
+        // Create main timeline
+        const tl = gsap.timeline({
+          onComplete: () => {
+            const triggerExit = () => {
+              sessionStorage.setItem('aristurtle-preloader-played', 'true');
+
+              const exitTl = gsap.timeline({
+                onComplete: () => {
+                  container.style.display = 'none';
+                  if ((window as any).lenis) {
+                    (window as any).lenis.start();
+                  }
+                  window.dispatchEvent(new CustomEvent('preloader-complete'));
+                }
+              });
+
+              exitTl.to(content, {
+                opacity: 0,
+                y: -15,
+                duration: 0.3,
+                ease: 'power2.out'
+              })
+              .to(container, {
+                yPercent: -100,
+                duration: 0.8,
+                ease: 'luxe'
+              }, '-=0.15');
+            };
+
+            // Safety guard: only exit if full page is loaded, otherwise wait for window load event
+            if (document.readyState === 'complete') {
+              triggerExit();
+            } else {
+              window.addEventListener('load', triggerExit);
+            }
+          }
+        });
+
+        // Tween counter percentage from 0 to 100
+        const counterObj = { value: 0 };
+        tl.to(counterObj, {
+          value: 100,
+          duration: 1.8,
+          ease: 'power2.out',
+          onUpdate: () => {
+            const formatted = Math.floor(counterObj.value).toString().padStart(2, '0');
+            if (percentEl) percentEl.textContent = formatted;
+            if (barEl) barEl.style.width = `${counterObj.value}%`;
+          }
+        });
+
+        // Stagger telemetry log lines sequentially during the counter animation
+        tl.to(telemetryLines, {
+          opacity: 1,
+          y: 0,
+          duration: 0.25,
+          stagger: 0.2,
+          ease: 'power1.out'
+        }, 0.1);
+      }
+    }
+  }
+</script>
