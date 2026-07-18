@@ -6,7 +6,12 @@
   <!-- Session Storage check script (runs inline immediately to prevent flash) -->
   <script is:inline>
     (function() {
+      console.log("[Preloader Inline] Checking conditions:", {
+        webdriver: navigator.webdriver,
+        played: sessionStorage.getItem('aristurtle-preloader-played')
+      });
       if (navigator.webdriver || sessionStorage.getItem('aristurtle-preloader-played') === 'true') {
+        console.log("[Preloader Inline] Conditions met to skip loader.");
         document.getElementById('preloader-container').style.display = 'none';
       }
     })();
@@ -59,8 +64,10 @@
   gsap.registerPlugin(CustomEase);
   CustomEase.create("luxe", "0.16, 1, 0.3, 1");
 
+  console.log("[Preloader JS] Script loaded.");
   // Client-side initialization
   if (!navigator.webdriver && sessionStorage.getItem('aristurtle-preloader-played') !== 'true') {
+    console.log("[Preloader JS] Initializing animation.");
     const container = document.getElementById('preloader-container');
     const content = document.getElementById('preloader-content');
     const percentEl = document.getElementById('preloader-percentage');
@@ -71,45 +78,50 @@
     if (container) {
       // Check prefers-reduced-motion
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReducedMotion) {
-        container.style.display = 'none';
-        window.dispatchEvent(new CustomEvent('preloader-complete'));
+      
+      // Stop scroll on Lenis immediately
+      if ((window as any).lenis) {
+        (window as any).lenis.stop();
       } else {
-        // Stop scroll on Lenis immediately
-        if ((window as any).lenis) {
-          (window as any).lenis.stop();
-        } else {
-          // If Lenis has not booted yet, verify periodically
-          const checkLenis = setInterval(() => {
-            if ((window as any).lenis) {
-              (window as any).lenis.stop();
-              clearInterval(checkLenis);
-            }
-          }, 20);
-          setTimeout(() => clearInterval(checkLenis), 3000);
-        }
+        // If Lenis has not booted yet, verify periodically
+        const checkLenis = setInterval(() => {
+          if ((window as any).lenis) {
+            (window as any).lenis.stop();
+            clearInterval(checkLenis);
+          }
+        }, 20);
+        setTimeout(() => clearInterval(checkLenis), 3000);
+      }
 
-        // Set realistic system latency reading
-        if (latencyEl) {
-          latencyEl.textContent = Math.floor(Math.random() * 12 + 6).toString();
-        }
+      // Set realistic system latency reading
+      if (latencyEl) {
+        latencyEl.textContent = Math.floor(Math.random() * 12 + 6).toString();
+      }
 
-        // Create main timeline
-        const tl = gsap.timeline({
-          onComplete: () => {
-            const triggerExit = () => {
-              sessionStorage.setItem('aristurtle-preloader-played', 'true');
+      // Create main timeline
+      const tl = gsap.timeline({
+        onComplete: () => {
+          const triggerExit = () => {
+            sessionStorage.setItem('aristurtle-preloader-played', 'true');
 
-              const exitTl = gsap.timeline({
-                onComplete: () => {
-                  container.style.display = 'none';
-                  if ((window as any).lenis) {
-                    (window as any).lenis.start();
-                  }
-                  window.dispatchEvent(new CustomEvent('preloader-complete'));
+            const exitTl = gsap.timeline({
+              onComplete: () => {
+                container.style.display = 'none';
+                if ((window as any).lenis) {
+                  (window as any).lenis.start();
                 }
-              });
+                window.dispatchEvent(new CustomEvent('preloader-complete'));
+              }
+            });
 
+            if (prefersReducedMotion) {
+              // Fade out container and content directly without any translation motion
+              exitTl.to([content, container], {
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.out'
+              });
+            } else {
               exitTl.to(content, {
                 opacity: 0,
                 y: -15,
@@ -121,39 +133,39 @@
                 duration: 0.8,
                 ease: 'luxe'
               }, '-=0.15');
-            };
-
-            // Safety guard: only exit if full page is loaded, otherwise wait for window load event
-            if (document.readyState === 'complete') {
-              triggerExit();
-            } else {
-              window.addEventListener('load', triggerExit);
             }
-          }
-        });
+          };
 
-        // Tween counter percentage from 0 to 100
-        const counterObj = { value: 0 };
-        tl.to(counterObj, {
-          value: 100,
-          duration: 1.8,
-          ease: 'power2.out',
-          onUpdate: () => {
-            const formatted = Math.floor(counterObj.value).toString().padStart(2, '0');
-            if (percentEl) percentEl.textContent = formatted;
-            if (barEl) barEl.style.width = `${counterObj.value}%`;
+          // Safety guard: only exit if full page is loaded, otherwise wait for window load event
+          if (document.readyState === 'complete') {
+            triggerExit();
+          } else {
+            window.addEventListener('load', triggerExit);
           }
-        });
+        }
+      });
 
-        // Stagger telemetry log lines sequentially during the counter animation
-        tl.to(telemetryLines, {
-          opacity: 1,
-          y: 0,
-          duration: 0.25,
-          stagger: 0.2,
-          ease: 'power1.out'
-        }, 0.1);
-      }
+      // Tween counter percentage from 0 to 100
+      const counterObj = { value: 0 };
+      tl.to(counterObj, {
+        value: 100,
+        duration: prefersReducedMotion ? 1.0 : 1.8, // Speed up slightly for reduced motion users
+        ease: 'power2.out',
+        onUpdate: () => {
+          const formatted = Math.floor(counterObj.value).toString().padStart(2, '0');
+          if (percentEl) percentEl.textContent = formatted;
+          if (barEl) barEl.style.width = `${counterObj.value}%`;
+        }
+      });
+
+      // Stagger telemetry log lines sequentially during the counter animation
+      tl.to(telemetryLines, {
+        opacity: 1,
+        y: 0,
+        duration: prefersReducedMotion ? 0.15 : 0.25,
+        stagger: prefersReducedMotion ? 0.08 : 0.2,
+        ease: 'power1.out'
+      }, 0.1);
     }
   }
 </script>
