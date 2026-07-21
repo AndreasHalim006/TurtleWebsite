@@ -11,7 +11,6 @@ import Cubes from '../components/reactbits/Cubes.jsx';
 import BounceCards from '../components/reactbits/BounceCards.jsx';
 import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
 import protergiaLogo from '../images/powered_by_protergia.png';
-import Preloader from '../components/Preloader.astro';
 
 import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
 import teamPhoto2 from '../images/Aristurtle_photo_2-1_2.jpg';
@@ -148,8 +147,6 @@ const getSlotClasses = (slot: string) => {
 ---
 
 <BaseLayout title="ARISTURTLE | Bespoke Engineering Excellence">
-	<Preloader />
-	
 	<div class="bg-void min-h-screen w-full relative overflow-x-clip text-foreground selection:bg-brand-orange selection:text-brand-emerald">
 		
 		<div class="fixed inset-0 z-0 bg-brand-emerald pointer-events-none opacity-20"></div>

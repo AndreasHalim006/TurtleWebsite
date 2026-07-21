@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
+import Preloader from '../components/Preloader.astro';
 
 interface Props {
 	title?: string;
@@ -32,9 +33,11 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap" rel="stylesheet">
+		<script is:inline>document.documentElement.classList.add('preloader-active');</script>
 		<slot name="head" />
 	</head>
 	<body class="antialiased">
+		<Preloader />
 		
 		<!-- Global SVG Noise Overlay -->
 		<div class="pointer-events-none fixed inset-0 z-50 h-full w-full opacity-[0.03] mix-blend-overlay" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
@@ -72,6 +75,10 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 				touchMultiplier: isTouchDevice ? 1.2 : 2,
 			});
 
+			if (document.documentElement.classList.contains('preloader-active')) {
+				lenis.stop();
+			}
+
 			// Sync ScrollTrigger with Lenis
 			lenis.on('scroll', ScrollTrigger.update);
 
@@ -81,10 +88,12 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 
 			gsap.ticker.lagSmoothing(0);
 
-			// Refresh ScrollTrigger on page load to ensure correct positions
-			window.addEventListener('load', () => {
+			// Release scrolling only after the loader has left and layout has settled.
+			window.addEventListener('preloader-complete', () => {
+				lenis.resize();
 				ScrollTrigger.refresh();
-			});
+				lenis.start();
+			}, { once: true });
 
 			// Glow Card Mouse Tracking
 			const initGlowCards = () => {
@@ -159,6 +168,11 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 
 	html {
 		background-color: var(--void);
+	}
+
+	html.preloader-active,
+	html.preloader-active body {
+		overflow: hidden;
 	}
 
 	html.lenis,

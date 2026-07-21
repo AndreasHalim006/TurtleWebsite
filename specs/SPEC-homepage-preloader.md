@@ -1,20 +1,21 @@
-# SPEC: Homepage Telemetry Preloader
+# SPEC: Global Telemetry Preloader
 
 ## Goal
-Implement a motorsport-themed, high-performance preloader specifically for the home page of the ARISTURTLE website. The preloader will mask the WebGL/Three.js compile latency, avoid layout shifts, and provide an immersive brand intro aligning with Formula Student engineering precision.
+Implement a motorsport-themed global preloader for every ARISTURTLE page. The loader must cover real document loading, keep scrolling locked while the page settles, and release a fully initialized layout without adding avoidable animation work.
 
 ## References
-- [src/pages/index.astro](file:///c:/Aristurtle-site-LOCAL/src/pages/index.astro)
 - [src/layouts/BaseLayout.astro](file:///c:/Aristurtle-site-LOCAL/src/layouts/BaseLayout.astro)
-- [src/components/Preloader.astro](file:///c:/Aristurtle-site-LOCAL/src/components/Preloader.astro) [NEW]
+- [src/components/Preloader.astro](file:///c:/Aristurtle-site-LOCAL/src/components/Preloader.astro)
 
 ## Acceptance Criteria
 
-1. **Homepage Limitation**:
-   - The preloader must only render and execute on the homepage (the root `/` route).
-   - All other subpages (e.g. `/contact`, `/sponsors`, `/subdivisions`) must bypass the loader and render immediately.
+1. **Global Route Coverage**:
+   - `BaseLayout.astro` must render exactly one preloader on every generated page.
+   - The loader must run on every full document navigation, including refreshes and internal page changes.
+   - Individual pages must not import or mount their own loader instance.
 
 2. **Visual Design & Brand Alignment**:
+   - The preloader must remain visually above the homepage hero, navbar, and global overlays for its entire active sequence.
    - Background color: Strict dark grey/black `#0A0A0A`.
    - Typography: **Jura** (Sans-serif/Monospace appearance) for all telemetry log items and counters.
    - Accent color: Aristurtle Orange (`--brand-orange` which maps to `--brand-primary-1` or `#9FFF10` line).
@@ -24,23 +25,23 @@ Implement a motorsport-themed, high-performance preloader specifically for the h
      - Staggered telemetry status logs printing sequentially (e.g., `[SYS] LOAD DRIVERLESS MODULES...`, `[SYS] BOOTING TELEMETRY BUS...`, `[SYS] WEBGL SHADERS COMPILED`).
      - A progress bar (1px high, full width or boxed) expanding horizontally.
 
-3. **Session Storage Gating**:
-   - The loader must check `sessionStorage.getItem('aristurtle-preloader-played')`.
-   - If present, the preloader container must be set to `display: none` immediately via inline styling or script in the header, ensuring no flash of the loader screen occurs on page refreshes or subpage navigation.
-   - If not present, the loader executes, and sets `sessionStorage.setItem('aristurtle-preloader-played', 'true')` upon completion.
+3. **Real Loading Coordination**:
+   - Progress must animate to no more than `90%` while the document is still loading.
+   - The final `90%` to `100%` step must begin only after the intro timeline and either the browser `window.load` event or the readiness timeout have completed.
+   - A third-party request must not trap the page at `90%`; document readiness must have a maximum wait of `3` seconds before the exit is allowed to continue.
+   - The loader must be removed from the DOM after its exit so it leaves no persistent composited layer or pointer-event surface.
 
 4. **Smooth Entry & Exit Choreography**:
    - The animation must use GSAP with the project-standard `luxe` ease (`cubic-bezier(0.16, 1, 0.3, 1)`).
-   - The percentage counter should count from `0` to `100` over a duration of `1.8` to `2.2` seconds.
-   - When the counter hits `100` and the window `load` event fires (whichever is later), the exit sequence triggers:
+   - The percentage counter should count from `0` to `90` over `1.0` to `1.4` seconds, then complete to `100` in no more than `0.25` seconds after the page is ready.
+   - When the counter hits `100`, the exit sequence triggers:
      - The telemetry lines fade out (`opacity: 0`).
-     - The preloader container translates upwards out of the viewport (`yPercent: -100` or `y: "-100%"`) over a duration of `1.0` second with `luxe` ease.
-     - The homepage hero content initiates its reveal animation concurrently or immediately after the slide-up.
+     - The preloader container translates upwards out of the viewport (`yPercent: -100`) over `0.6` to `0.8` seconds with `luxe` ease.
+   - The progress bar and exit movement must animate with transforms and opacity rather than layout properties such as `width`, `top`, or `left`.
 
 5. **Lenis Scroll-Locking Integration**:
    - During the loading sequence, the global Lenis smooth scroll must be locked using `window.lenis?.stop()`.
-   - Once the exit animation completes, scrolling must be unlocked using `window.lenis?.start()`.
-   - If the preloader is skipped via the `sessionStorage` check, Lenis scrolling must remain unlocked.
+   - Once the exit animation completes, Lenis must resize, ScrollTrigger must refresh once, and scrolling must be unlocked.
 
 6. **Accessibility & Reduced Motion**:
    - In accordance with `prefers-reduced-motion`, if the user has disabled animations:
@@ -48,13 +49,12 @@ Implement a motorsport-themed, high-performance preloader specifically for the h
      - Scroll locking must be instantly released.
 
 ## Out of Scope
-- Global preloader transitions between page route changes.
-- Loading animations for images or videos on secondary pages.
+- Artificially downloading assets that the current page does not use.
+- Replacing asset compression, responsive images, or route-level code splitting.
 
 ## Verification Protocol
 1. Verify code compiles and builds successfully using `pnpm run build`.
 2. Verify visual appearance on desktop (1920px) and mobile (375px).
-3. Test session storage:
-   - First visit: Teleloader runs, counts to 100%, slides up, allows scrolling.
-   - Refresh / internal page click: Loader does not show; page is immediately interactive.
-4. Verify accessibility: Emulate `prefers-reduced-motion` in Chrome DevTools and check that the preloader is skipped/fades out immediately.
+3. Visit `/`, `/about-us`, `/garage`, and `/contact`: each route shows one loader, reaches 100%, exits, and allows scrolling.
+4. Confirm the loader element is absent from the DOM after completion and no page reports console errors.
+5. Verify accessibility: emulate `prefers-reduced-motion` and check that the loader exits immediately without motion or a persistent scroll lock.
