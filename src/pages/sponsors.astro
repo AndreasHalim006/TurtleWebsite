@@ -46,15 +46,15 @@ const tierData = tiers.map((tier) => ({
   countLabel: `${tier.sponsors.length} partners indexed`,
   sponsors: tier.sponsors,
 }));
-const sponsorLogoUrls = Array.from(
-  new Set(tiers.flatMap((tier) => tier.sponsors.map((sponsor) => sponsor.logo).filter(Boolean)))
+const initialSponsorLogoUrls = Array.from(
+  new Set((tiers[0]?.sponsors ?? []).map((sponsor) => sponsor.logo).filter(Boolean))
 );
 ---
 
 <BaseLayout title="ARISTURTLE | Partners" description="The official partners and sponsors supporting Aristurtle Racing Team." pageColors={pageGradient}>
   <Fragment slot="head">
-    {sponsorLogoUrls.map((logo) => (
-      <link rel="preload" as="image" href={logo} fetchpriority="low" />
+    {initialSponsorLogoUrls.map((logo) => (
+      <link rel="preload" as="image" href={logo} fetchpriority="high" />
     ))}
   </Fragment>
 

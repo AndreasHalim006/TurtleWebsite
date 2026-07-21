@@ -21,6 +21,9 @@ Create a sponsors page with a fixed full-viewport honeycomb field: all hexagons 
 - Active sponsor slots are selected center-out, prioritizing the middle hexagons first.
 - All sponsors in each category appear in the active state; dense tiers shrink/fit without viewport overflow.
 - Active sponsor hexes use a white fill for logo readability and reveal logos in a center-out wave.
+- The initial tier's logo resources are requested at high priority; later tiers preload in the background without competing with the initial page render.
+- A tier transition must not reveal an active hexagon until every logo in that tier has completed loading or reached a handled error state.
+- Desktop pool images must not use native lazy loading while positioned offscreen; changing tiers must not produce temporarily blank active hexagons.
 - The HUD stays on the left edge and the tier rail stays on the right edge.
 - The existing target cursor remains, locks to active sponsor hexes, and spins when idle.
 - Mobile and `prefers-reduced-motion: reduce` render readable stacked sponsor sections with no pinned morph animation.

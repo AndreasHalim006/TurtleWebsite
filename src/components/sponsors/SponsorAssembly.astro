@@ -124,7 +124,14 @@ const tierCount = tiers.length;
               const content = (
                 <>
                   <span class="absolute inset-[0.55rem] border border-[rgba(255,137,0,0.24)] pointer-events-none [clip-path:inherit]" aria-hidden="true"></span>
-                  <img class="relative z-[1] block max-h-[58%] max-w-[72%] object-contain" src={sponsor.logo} alt={sponsor.alt} loading="lazy" decoding="async" />
+                  <img
+                    class="relative z-[1] block max-h-[58%] max-w-[72%] object-contain"
+                    src={sponsor.logo}
+                    alt={sponsor.alt}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    fetchpriority={index === 0 ? 'high' : 'low'}
+                  />
                 </>
               );
 
@@ -281,9 +288,43 @@ const tierCount = tiers.length;
     let activePool: any[] = [];
     let activeTimeline: gsap.core.Timeline | null = null;
     let activeIndex = -1;
+    let requestedIndex = -1;
+    let activationToken = 0;
     let geometry = { w: 104, h: 90 };
+    const logoCache = new Map<string, { image: HTMLImageElement; ready: Promise<void> }>();
 
     const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+    const preloadLogo = (src: string, highPriority = false) => {
+      const cached = logoCache.get(src);
+      if (cached) {
+        if (highPriority) cached.image.fetchPriority = 'high';
+        return cached.ready;
+      }
+
+      const image = new Image();
+      image.decoding = 'async';
+      image.loading = 'eager';
+      image.fetchPriority = highPriority ? 'high' : 'low';
+      image.src = src;
+
+      const ready = image.decode()
+        .catch(() => new Promise<void>((resolve) => {
+          if (image.complete) {
+            resolve();
+            return;
+          }
+          image.addEventListener('load', () => resolve(), { once: true });
+          image.addEventListener('error', () => resolve(), { once: true });
+        }));
+
+      logoCache.set(src, { image, ready });
+      return ready;
+    };
+
+    tiers.forEach((tier: any, tierIndex: number) => {
+      tier.sponsors.forEach((sponsor: any) => preloadLogo(sponsor.logo, tierIndex === 0));
+    });
 
     const resetSlot = (slot: any) => {
       if (!slot?.el) return;
@@ -326,7 +367,7 @@ const tierCount = tiers.length;
       el.setAttribute('aria-hidden', 'true');
       el.innerHTML = `
         <span class="honeycomb-frame" aria-hidden="true"></span>
-        <img loading="lazy" decoding="async" />
+        <img loading="eager" decoding="async" fetchpriority="high" />
       `;
       parent.appendChild(el);
       return { el, img: el.querySelector('img') };
@@ -454,9 +495,16 @@ const tierCount = tiers.length;
       slot.img.alt = sponsor.alt || sponsor.name;
     };
 
-    const setActiveTier = (index: number, immediate = false) => {
+    const setActiveTier = async (index: number, immediate = false) => {
       const tier = tiers[index];
-      if (!tier || index === activeIndex || slots.length === 0) return;
+      if (!tier || index === activeIndex || index === requestedIndex || slots.length === 0) return;
+
+      requestedIndex = index;
+      const requestToken = ++activationToken;
+      await Promise.all(tier.sponsors.map((sponsor: any) => preloadLogo(sponsor.logo, true)));
+
+      if (requestToken !== activationToken) return;
+      requestedIndex = -1;
 
       activeTimeline?.kill();
       activeTimeline = gsap.timeline();
