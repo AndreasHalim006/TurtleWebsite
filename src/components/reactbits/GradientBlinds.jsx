@@ -50,6 +50,7 @@ const GradientBlinds = ({
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    let readySignalled = false;
 
     const renderer = new Renderer({
       dpr: dpr ?? (typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1),
@@ -286,6 +287,16 @@ void main() {
       if (!paused && programRef.current && meshRef.current) {
         try {
           renderer.render({ scene: meshRef.current });
+          if (!readySignalled) {
+            readySignalled = true;
+            requestAnimationFrame(() => {
+              const criticalSurface = container.closest('[data-critical-render]');
+              if (criticalSurface) {
+                criticalSurface.dataset.criticalReady = 'true';
+                criticalSurface.dispatchEvent(new CustomEvent('critical-asset-ready'));
+              }
+            });
+          }
         } catch (e) {
           console.error(e);
         }

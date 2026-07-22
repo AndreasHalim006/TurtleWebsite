@@ -1,10 +1,10 @@
 ---
-name: "it"
+name: "IT.AUTH"
 category: "academia"
-order: 8
-logo: "https://aristurtle.gr/wp-content/uploads/2022/01/Picture1.png"
+order: 10
+logo: "/assets/sponsors/academia/it-auth.png"
 website: "https://it.auth.gr/el"
-alt: "Partner Logo"
-active: false
+alt: "IT.AUTH logo"
+active: true
 ---
 

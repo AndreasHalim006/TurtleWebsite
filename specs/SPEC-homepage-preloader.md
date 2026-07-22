@@ -27,8 +27,10 @@ Implement a motorsport-themed global preloader for every ARISTURTLE page. The lo
 
 3. **Real Loading Coordination**:
    - Progress must animate to no more than `90%` while the document is still loading.
-   - The final `90%` to `100%` step must begin only after the intro timeline and either the browser `window.load` event or the readiness timeout have completed.
-   - A third-party request must not trap the page at `90%`; document readiness must have a maximum wait of `3` seconds before the exit is allowed to continue.
+   - The final `90%` to `100%` step must begin only after the intro timeline, the browser `window.load` event, every visible `data-critical-asset` image/video, and every visible `data-critical-render` surface have completed, or the readiness timeout has elapsed.
+   - A `data-critical-render` surface is ready only after its first usable visual frame has been committed and it has set `data-critical-ready="true"`.
+   - A third-party request or failed critical surface must not trap the page at `90%`; readiness has a maximum wait of `3` seconds before the exit is allowed to continue.
+   - The global fail-safe must include the readiness window and exit choreography; it must not dismiss the loader earlier than the readiness timeout.
    - The loader must be removed from the DOM after its exit so it leaves no persistent composited layer or pointer-event surface.
 
 4. **Smooth Entry & Exit Choreography**:

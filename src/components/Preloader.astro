@@ -55,7 +55,8 @@
       // Storage is optional; the loader still exits through its hard timeout.
     }
 
-    const maxDuration = repeat ? 500 : 1600;
+    const readinessTimeout = 3000;
+    const maxDuration = readinessTimeout + 1000;
     const minimumDuration = repeat ? 180 : 720;
     const startedAt = performance.now();
     latencyEl && (latencyEl.textContent = String(Math.floor(Math.random() * 12 + 6)));
@@ -78,14 +79,81 @@
       });
     };
 
+    const isVisible = (element: Element) => {
+      const style = window.getComputedStyle(element);
+      return style.display !== 'none' && style.visibility !== 'hidden' && element.getClientRects().length > 0;
+    };
+
+    const waitForDocument = () => {
+      if (document.readyState === 'complete') return Promise.resolve();
+      return new Promise<void>((resolve) => window.addEventListener('load', () => resolve(), { once: true }));
+    };
+
+    const waitForImage = (image: HTMLImageElement) => {
+      if (image.complete) {
+        return image.naturalWidth > 0 && typeof image.decode === 'function'
+          ? image.decode().catch(() => undefined)
+          : Promise.resolve();
+      }
+
+      return new Promise<void>((resolve) => {
+        const settle = async () => {
+          image.removeEventListener('load', settle);
+          image.removeEventListener('error', settle);
+          if (image.naturalWidth > 0 && typeof image.decode === 'function') {
+            await image.decode().catch(() => undefined);
+          }
+          resolve();
+        };
+        image.addEventListener('load', settle, { once: true });
+        image.addEventListener('error', settle, { once: true });
+        if (image.complete) void settle();
+      });
+    };
+
+    const waitForVideo = (video: HTMLVideoElement) => {
+      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        const settle = () => {
+          video.removeEventListener('loadeddata', settle);
+          video.removeEventListener('canplay', settle);
+          video.removeEventListener('error', settle);
+          resolve();
+        };
+        video.addEventListener('loadeddata', settle, { once: true });
+        video.addEventListener('canplay', settle, { once: true });
+        video.addEventListener('error', settle, { once: true });
+        if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) settle();
+      });
+    };
+
+    const waitForRender = (surface: HTMLElement) => {
+      if (surface.dataset.criticalReady === 'true') return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        const settle = () => {
+          surface.removeEventListener('critical-asset-ready', settle);
+          resolve();
+        };
+        surface.addEventListener('critical-asset-ready', settle, { once: true });
+        if (surface.dataset.criticalReady === 'true') settle();
+      });
+    };
+
     const criticalReady = async () => {
-      const images = Array.from(document.querySelectorAll<HTMLImageElement>('img[data-critical-asset]'));
+      const media = Array.from(document.querySelectorAll<HTMLImageElement | HTMLVideoElement>('[data-critical-asset]'))
+        .filter(isVisible);
+      const renderSurfaces = Array.from(document.querySelectorAll<HTMLElement>('[data-critical-render]'))
+        .filter((surface) => isVisible(surface)
+          && (!surface.dataset.criticalMedia || window.matchMedia(surface.dataset.criticalMedia).matches));
+      const readiness = Promise.allSettled([
+        waitForDocument(),
+        ...media.map((asset) => asset instanceof HTMLVideoElement ? waitForVideo(asset) : waitForImage(asset)),
+        ...renderSurfaces.map(waitForRender),
+      ]);
+
       await Promise.race([
-        Promise.allSettled(images.map((image) => {
-          if (image.complete && image.naturalWidth > 0) return Promise.resolve();
-          return typeof image.decode === 'function' ? image.decode().catch(() => undefined) : Promise.resolve();
-        })),
-        new Promise((resolve) => window.setTimeout(resolve, repeat ? 220 : 850)),
+        readiness,
+        new Promise((resolve) => window.setTimeout(resolve, readinessTimeout)),
       ]);
     };
 

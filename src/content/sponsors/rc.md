@@ -1,10 +1,10 @@
 ---
-name: "rc"
+name: "Research Committee AUTH"
 category: "academia"
 order: 2
-logo: "https://aristurtle.gr/wp-content/uploads/2020/11/Uni-02.png"
+logo: "/assets/sponsors/academia/research-committee.png"
 website: "https://www.rc.auth.gr/"
-alt: "Partner Logo"
-active: false
+alt: "Research Committee of Aristotle University of Thessaloniki logo"
+active: true
 ---
 

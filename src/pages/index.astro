@@ -164,7 +164,7 @@ const getSlotClasses = (slot: string) => {
 
 		<section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-50 overflow-hidden bg-brand-midnight m-0 p-0">
 			<div class="absolute inset-0 z-0 hidden lg:block">
-				<video autoplay muted loop playsinline preload="metadata" class="w-full h-full object-cover">
+				<video autoplay muted loop playsinline preload="auto" data-critical-asset class="w-full h-full object-cover">
 					<source src={heroVideo} type="video/mp4" media="(min-width: 1024px)" />
 				</video>
 			</div>
