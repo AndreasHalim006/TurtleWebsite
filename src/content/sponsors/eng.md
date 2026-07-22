@@ -1,10 +1,10 @@
 ---
-name: "eng"
+name: "Faculty of Engineering"
 category: "academia"
-order: 4
-logo: "https://aristurtle.gr/wp-content/uploads/2020/11/Uni-04.png"
+order: 7
+logo: "/assets/sponsors/academia/faculty-engineering.png"
 website: "http://www.eng.auth.gr/"
-alt: "Partner Logo"
-active: false
+alt: "Faculty of Engineering at Aristotle University of Thessaloniki logo"
+active: true
 ---
 

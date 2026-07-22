@@ -1,10 +1,10 @@
 ---
-name: "auth"
+name: "Aristotle University of Thessaloniki"
 category: "academia"
-order: 1
-logo: "https://aristurtle.gr/wp-content/uploads/2020/11/Uni-01.png"
+order: 5
+logo: "/assets/sponsors/academia/auth.png"
 website: "https://www.auth.gr/"
-alt: "Partner Logo"
-active: false
+alt: "Aristotle University of Thessaloniki logo"
+active: true
 ---
 

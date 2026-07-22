@@ -24,6 +24,7 @@ export const StaggeredMenu = ({
   const openRef = useRef(false);
 
   const panelRef = useRef(null);
+  const menuRootRef = useRef(null);
   const preLayersRef = useRef(null);
   const preLayerElsRef = useRef([]);
 
@@ -47,6 +48,9 @@ export const StaggeredMenu = ({
   const itemEntranceTweenRef = useRef(null);
 
   useLayoutEffect(() => {
+    const menuRoot = menuRootRef.current;
+    menuRoot?.setAttribute('data-gsap-ready', '');
+
     const ctx = gsap.context(() => {
       const panel = panelRef.current;
       const preContainer = preLayersRef.current;
@@ -78,7 +82,10 @@ export const StaggeredMenu = ({
 
       if (toggleBtnRef.current) gsap.set(toggleBtnRef.current, { color: menuButtonColor });
     });
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      menuRoot?.removeAttribute('data-gsap-ready');
+    };
   }, [menuButtonColor, position]);
 
   const buildOpenTimeline = useCallback(() => {
@@ -406,6 +413,7 @@ export const StaggeredMenu = ({
       </div>
 
       <div
+        ref={menuRootRef}
         className={`sm-scope z-40 pointer-events-none ${isFixed ? 'fixed top-0 left-0 w-screen h-screen overflow-hidden' : 'absolute top-0 left-0 w-full h-full'}`}
         style={accentColor ? { ['--sm-accent']: accentColor } : undefined}
         data-position={position}
@@ -426,7 +434,7 @@ export const StaggeredMenu = ({
             return arr.map((c, i) => (
               <div
                 key={i}
-                className="sm-prelayer absolute top-0 right-0 h-full w-full translate-x-0"
+                className="sm-prelayer absolute top-0 right-0 h-full w-full"
                 style={{ background: c }}
               />
             ));
@@ -509,11 +517,15 @@ export const StaggeredMenu = ({
 .sm-scope .sm-icon-line { position: absolute; left: 50%; top: 50%; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transform: translate(-50%, -50%); will-change: transform; }
 .sm-scope .sm-line { display: none !important; }
 .sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(260px, 40vw, 460px); height: 100%; background: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 6em 2em 2em 2em; overflow-y: auto; z-index: 10; scrollbar-width: none; -ms-overflow-style: none; }
+.sm-scope[data-position='right']:not([data-gsap-ready]) .staggered-menu-panel,
+.sm-scope[data-position='right']:not([data-gsap-ready]) .sm-prelayer { transform: translateX(100%); }
+.sm-scope[data-position='left']:not([data-gsap-ready]) .staggered-menu-panel,
+.sm-scope[data-position='left']:not([data-gsap-ready]) .sm-prelayer { transform: translateX(-100%); }
 .sm-scope .staggered-menu-panel::-webkit-scrollbar { display: none; }
-.sm-scope [data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
+.sm-scope[data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
 .sm-scope .sm-prelayers { position: absolute; top: 0; right: 0; bottom: 0; width: clamp(260px, 40vw, 460px); pointer-events: none; z-index: 5; }
-.sm-scope [data-position='left'] .sm-prelayers { right: auto; left: 0; }
-.sm-scope .sm-prelayer { position: absolute; top: 0; right: 0; height: 100%; width: 100%; transform: translateX(0); }
+.sm-scope[data-position='left'] .sm-prelayers { right: auto; left: 0; }
+.sm-scope .sm-prelayer { position: absolute; top: 0; right: 0; height: 100%; width: 100%; }
 .sm-scope .sm-panel-inner { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 3rem; }
 .sm-scope .sm-socials { margin-top: auto; padding-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1); }
 .sm-scope .sm-socials-title { margin: 0; font-weight: 500; color: var(--sm-accent, #ff0000); }

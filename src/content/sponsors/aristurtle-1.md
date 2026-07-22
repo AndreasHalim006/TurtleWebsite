@@ -1,10 +1,10 @@
 ---
-name: "aristurtle"
+name: "ISSEL"
 category: "academia"
-order: 7
-logo: "https://aristurtle.gr/wp-content/uploads/2025/05/Image_Editor.png"
-website: "https://aristurtle.gr/wp-content/uploads/2025/05/Image_Editor.png"
-alt: "Partner Logo"
-active: false
+order: 9
+logo: "/assets/sponsors/academia/image-editor.png"
+website: "https://issel.ee.auth.gr/"
+alt: "Intelligent Systems and Software Engineering Labgroup logo"
+active: true
 ---
 

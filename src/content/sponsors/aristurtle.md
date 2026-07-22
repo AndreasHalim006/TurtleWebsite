@@ -1,10 +1,9 @@
 ---
-name: "aristurtle"
+name: "Ε.ΠΑ.Υ.Κ. ΑΠΘ"
 category: "academia"
-order: 5
-logo: "https://aristurtle.gr/wp-content/uploads/2024/11/white-epayk_logo-compressor.png"
-website: "https://aristurtle.gr/wp-content/uploads/2024/11/white-epayk_logo-compressor.png"
-alt: "Partner Logo"
-active: false
+order: 8
+logo: "/assets/sponsors/academia/epayk.png"
+alt: "Ε.ΠΑ.Υ.Κ. ΑΠΘ logo"
+active: true
 ---
 

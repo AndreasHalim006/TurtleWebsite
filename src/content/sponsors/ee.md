@@ -1,10 +1,10 @@
 ---
-name: "ee"
+name: "School of Electrical and Computer Engineering"
 category: "academia"
-order: 3
-logo: "https://aristurtle.gr/wp-content/uploads/2020/11/Uni-03.png"
+order: 6
+logo: "/assets/sponsors/academia/ee-auth.png"
 website: "http://ee.auth.gr/"
-alt: "Partner Logo"
-active: false
+alt: "School of Electrical and Computer Engineering logo"
+active: true
 ---
 

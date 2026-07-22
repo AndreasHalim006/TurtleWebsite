@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import Hyperspeed from '../components/reactbits/Hyperspeed.jsx';
 import JourneySVG from '../components/JourneySVG.astro';
 import HUDWindow from '../components/HUDWindow.astro';
@@ -25,6 +26,14 @@ import teamPhoto7 from '../images/IMG_8908.jpg';
 // Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
 const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const heroVideo = `${baseUrl}videos/hero.mp4`;
+
+const platinumSponsorLogos = (await getCollection('sponsors', ({ data }) => data.active === true && data.category === 'platinum'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map(({ data }) => ({
+    src: data.logo.startsWith('http') ? data.logo : `${baseUrl}${data.logo.replace(/^\//, '')}`,
+    alt: data.alt || `${data.name} logo`,
+    href: data.website,
+  }));
 
 const subteams = [
     { id: 'st1', text: 'Chassis & Composites', image: teamPhoto1.src, desc: 'Designing the structural skeleton and optimizing carbon fiber layups for maximum rigidity and minimum weight.' },
@@ -390,7 +399,7 @@ const getSlotClasses = (slot: string) => {
 
                               {(win.content.toLowerCase() === 'sponsors-hero-title') && (
                                 <div class="flex flex-col items-center justify-center w-full h-full gap-4">
-                                    <SponsorLogoLoop client:media="(min-width: 1024px)" />
+                                    <SponsorLogoLoop logos={platinumSponsorLogos} client:media="(min-width: 1024px)" />
                                 </div>
                               )}
 

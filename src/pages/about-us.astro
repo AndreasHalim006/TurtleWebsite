@@ -54,7 +54,7 @@ const acrosticItems = [
 
     <!-- BLOCK 2: PURPOSE & VISION CARD -->
     <section class="relative about-reveal">
-        <div class="py-20 px-10 md:py-32 md:px-24 border border-[#333] bg-[#141414] relative overflow-hidden group">
+        <div class="about-feature-card py-20 px-10 md:py-32 md:px-24 border border-[#333] bg-[#141414] relative overflow-hidden group">
             <div class="absolute top-0 left-0 w-1 h-full bg-[var(--brand-orange)] opacity-50 group-hover:opacity-100 transition-opacity"></div>
             
             <div class="mb-24">
@@ -76,7 +76,7 @@ const acrosticItems = [
     <section>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
             <!-- Electric -->
-            <div class="relative bg-[#222222] border border-[#333] p-12 md:p-20 overflow-hidden group about-reveal">
+            <div class="about-dual-card relative bg-[#222222] border border-[#333] p-12 md:p-20 overflow-hidden group about-reveal">
                 <h2 class="text-4xl md:text-5xl font-bold uppercase mb-12 relative z-10">
                     <span class="text-[var(--brand-orange)]">Why</span> Electric?
                 </h2>
@@ -90,7 +90,7 @@ const acrosticItems = [
                 </div>
             </div>
             <!-- Driverless -->
-            <div class="relative bg-[#222222] border border-[#333] p-12 md:p-20 overflow-hidden group about-reveal">
+            <div class="about-dual-card relative bg-[#222222] border border-[#333] p-12 md:p-20 overflow-hidden group about-reveal">
                 <h2 class="text-4xl md:text-5xl font-bold uppercase mb-12 relative z-10">
                     <span class="text-[var(--brand-orange)]">Why</span> Driverless?
                 </h2>
@@ -133,7 +133,7 @@ const acrosticItems = [
 
     <!-- BLOCK 5: IKISKOS -->
     <section class="relative">
-        <div class="bg-[#1E1E1E] p-16 md:p-24 border border-[#333] relative z-10 about-reveal">
+        <div class="about-feature-card bg-[#1E1E1E] p-16 md:p-24 border border-[#333] relative z-10 about-reveal">
             <div class="absolute top-0 right-0 w-32 h-32 border-t-4 border-r-4 border-[var(--brand-orange)] opacity-20 hidden md:block"></div>
             <div class="absolute bottom-0 left-0 w-32 h-32 border-b-4 border-l-4 border-[var(--brand-orange)] opacity-20 hidden md:block"></div>
             
@@ -164,6 +164,15 @@ const acrosticItems = [
       padding-left: 8vw;
       padding-right: 8vw;
     }
+    .about-feature-card {
+      padding: clamp(3rem, 4.5vw, 5rem);
+    }
+    .about-dual-card {
+      padding: clamp(2.5rem, 4vw, 4rem);
+    }
+    .about-container .acrostic-card {
+      padding: clamp(2.25rem, 3vw, 3.5rem);
+    }
   }
   @media (max-width: 1023px) {
     .about-container { padding-left: var(--mobile-gutter); padding-right: var(--mobile-gutter); padding-bottom: 5rem; }
@@ -173,7 +182,10 @@ const acrosticItems = [
     .about-container .px-10,
     .about-container .p-12,
     .about-container .p-16,
-    .about-container .p-10 { padding-left: 0; padding-right: 0; }
+    .about-container .p-10 {
+      padding-left: clamp(1.25rem, 5vw, 2rem);
+      padding-right: clamp(1.25rem, 5vw, 2rem);
+    }
     .acrostic-card { border-width: 1px 0 0; background: transparent; }
   }
 </style>
