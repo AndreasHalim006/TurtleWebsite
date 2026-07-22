@@ -10,7 +10,9 @@ import FuzzyText from '../components/reactbits/FuzzyText.jsx';
 import Cubes from '../components/reactbits/Cubes.jsx';
 import BounceCards from '../components/reactbits/BounceCards.jsx';
 import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
+import Footer from '../components/Footer.astro';
 import protergiaLogo from '../images/powered_by_protergia.png';
+import calypsoHero from '../images/IMG_8879 1.jpeg';
 
 import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
 import teamPhoto2 from '../images/Aristurtle_photo_2-1_2.jpg';
@@ -152,15 +154,24 @@ const getSlotClasses = (slot: string) => {
 		<div class="fixed inset-0 z-0 bg-brand-emerald pointer-events-none opacity-20"></div>
 
 		<section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-50 overflow-hidden bg-brand-midnight m-0 p-0">
-			<div class="absolute inset-0 z-0">
-				<video autoplay muted loop playsinline class="w-full h-full object-cover">
-					<source src={heroVideo} type="video/mp4" />
+			<div class="absolute inset-0 z-0 hidden lg:block">
+				<video autoplay muted loop playsinline preload="metadata" class="w-full h-full object-cover">
+					<source src={heroVideo} type="video/mp4" media="(min-width: 1024px)" />
 				</video>
+			</div>
+			<div class="absolute inset-0 z-0 lg:hidden">
+				<Image src={calypsoHero} alt="ARISTURTLE Calypso electric race car" widths={[480, 768, 1024]} sizes="100vw" loading="eager" decoding="async" fetchpriority="high" data-critical-asset class="h-full w-full object-cover object-center" />
+				<div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/30"></div>
+				<div class="absolute inset-x-[var(--mobile-gutter)] bottom-[max(3rem,env(safe-area-inset-bottom))] z-10 max-w-sm">
+					<p class="mb-3 text-xs font-bold uppercase tracking-[.22em] text-brand-orange">Electric / Driverless</p>
+					<h1 class="text-[clamp(2.8rem,15vw,5rem)] font-black uppercase leading-[.86] tracking-[-.06em]">Built to<br/>move first.</h1>
+					<a href={`${baseUrl}garage#calypso`} class="mt-7 inline-flex min-h-12 items-center border-b-2 border-brand-orange text-sm font-bold uppercase tracking-[.16em]">Meet Calypso</a>
+				</div>
 			</div>
 			<div id="hero-parallax-wrapper" class="relative w-full max-w-[1800px] mx-auto h-full flex z-10 px-[6vw] pb-[5vh] pt-[5vh]"></div>
 		</section>
 
-		<div id="journey-container" class="relative w-full h-[100vh] max-md:hidden">
+		<div id="journey-container" class="relative w-full h-[100vh] max-lg:hidden">
             <div id="journey-viewport" class="sticky top-0 left-0 w-full h-screen overflow-hidden bg-void z-10">
                 <div id="journey-stage" class="absolute top-0 left-0 will-change-transform origin-top-left">
                     {JOURNEY_CONFIG.map((station) => (
@@ -201,7 +212,7 @@ const getSlotClasses = (slot: string) => {
                                         Click & hold to #feelth<span class="text-brand-orange">epower</span>
                                     </p>
                                   </div>
-                                  <Hyperspeed client:load effectOptions={aboutHyperspeedOptions as any} />
+                                  <Hyperspeed client:media="(min-width: 1024px)" effectOptions={aboutHyperspeedOptions as any} />
                                 </div>
                               )}
 
@@ -209,7 +220,7 @@ const getSlotClasses = (slot: string) => {
                                 <p class="font-sans text-white text-[min(5.2cqw,13cqh)] leading-[1.15] uppercase tracking-tight font-bold" style="text-wrap: balance;">
                                   Aristotle University Racing Team Electric & Driverless, also known as <span class="italic text-brand-orange">Aristurtle</span>, is the student research team of the Aristotle University of Thessaloniki, that 
                                   <RotatingText 
-                                    client:load
+                                    client:media="(min-width: 1024px)"
                                     texts={['designs', 'develops', 'builds']}
                                     mainClassName="inline-flex text-brand-orange ml-2"
                                     staggerFrom="last"
@@ -255,7 +266,7 @@ const getSlotClasses = (slot: string) => {
                               {(win.content.toLowerCase() === 'mission-pillars-interactive') && (
                                 <div class="h-full">
                                     <FlowingMenu 
-                                        client:visible
+                                        client:media="(min-width: 1024px)"
                                         items={subteams.map(s => ({ ...s, link: getSubteamLink(s.id) }))}
                                         speed={20}
                                         marqueeBgColor="var(--brand-orange)"
@@ -318,7 +329,7 @@ const getSlotClasses = (slot: string) => {
                               {(win.content.toLowerCase() === 'fuzzy-title') && (
                                 <div class="h-full flex items-center justify-center pointer-events-auto">
                                     <FuzzyText 
-                                        client:load
+                                        client:media="(min-width: 1024px)"
                                         text="ARISTURTLE"
                                         baseIntensity={0.25}
                                         hoverIntensity={0.6}
@@ -337,7 +348,7 @@ const getSlotClasses = (slot: string) => {
                               {(win.content.toLowerCase() === 'history-main-header') && (
                                 <div class="w-full h-full flex items-center justify-center pointer-events-auto">
                                     <BounceCards
-                                        client:load
+                                        client:media="(min-width: 1024px)"
                                         className="history-bounce-cards"
                                         images={[
                                             teamPhoto1.src,
@@ -365,7 +376,7 @@ const getSlotClasses = (slot: string) => {
                                 <div class="w-full h-full flex items-center justify-center pointer-events-auto">
                                   <div class="w-[78%]">
                                     <Cubes
-                                      client:visible
+                                      client:media="(min-width: 1024px)"
                                       gridSize={6}
                                       maxAngle={45}
                                       radius={3}
@@ -379,7 +390,7 @@ const getSlotClasses = (slot: string) => {
 
                               {(win.content.toLowerCase() === 'sponsors-hero-title') && (
                                 <div class="flex flex-col items-center justify-center w-full h-full gap-4">
-                                    <SponsorLogoLoop client:load />
+                                    <SponsorLogoLoop client:media="(min-width: 1024px)" />
                                 </div>
                               )}
 
@@ -418,43 +429,50 @@ const getSlotClasses = (slot: string) => {
 		</div>
 
 		<!-- MOBILE VERSION (Native Scrolling Fallback Layout) -->
-		<div class="md:hidden flex flex-col w-full bg-void text-white relative z-10 px-[6vw] py-20 gap-24">
+		<div class="lg:hidden flex flex-col w-full bg-void text-white relative z-10 px-[var(--mobile-gutter)]">
             
             <!-- ABOUT SECTION -->
-            <section id="mobile-about" class="flex flex-col gap-8 border-b border-white/10 pb-16">
+            <section id="mobile-about" class="flex flex-col gap-7 border-b border-white/10 py-[var(--mobile-section-space)]">
                 <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// ABOUT US</h2>
-                <p class="font-jura text-xl leading-relaxed text-gray-300 text-justify">
-                    Aristotle University Racing Team Electric & Driverless, also known as <span class="italic text-brand-orange">Aristurtle</span>, is the student research team of the Aristotle University of Thessaloniki that designs, develops, and builds electric race cars.
+                <Image src={teamPhoto1} alt="ARISTURTLE team working around its electric race car" widths={[480, 768, 1024]} sizes="(max-width: 1023px) 100vw, 1px" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover" />
+                <p class="max-w-[var(--readable-copy)] font-jura text-xl leading-relaxed text-gray-300">
+                    Aristotle University Racing Team Electric & Driverless is the student research team that designs, develops, and builds electric race cars in Thessaloniki.
                 </p>
-                <div class="bg-brand-midnight border border-gray-800 p-6 rounded-lg">
+                <div class="border-l-2 border-brand-orange pl-5">
                     <p class="text-xs text-brand-orange uppercase tracking-wider mb-3 font-bold font-jura">// OUR VISION</p>
-                    <p class="font-jura text-base text-gray-300 leading-relaxed text-justify">
+                    <p class="font-jura text-base text-gray-300 leading-relaxed">
                         Our vision is to contribute to research around innovative technologies and to promote electric mobility in Greece and abroad by materializing high-level pioneering products.
                     </p>
                 </div>
+                <a href={`${baseUrl}about-us`} class="inline-flex min-h-12 items-center self-start border-b border-brand-orange text-sm font-bold uppercase tracking-[.16em]">Meet the team</a>
             </section>
 
             <!-- MISSION SECTION & SUBTEAMS -->
-            <section id="mobile-mission" class="flex flex-col gap-8 border-b border-white/10 pb-16">
+            <section id="mobile-mission" class="flex flex-col gap-8 border-b border-white/10 py-[var(--mobile-section-space)]">
                 <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// OUR MISSION</h2>
-                <p class="font-jura text-xl leading-relaxed text-gray-300 text-justify">
+                <p class="font-jura text-xl leading-relaxed text-gray-300">
                     To inspire the next generation of engineers through the development of high-performance electric racing vehicles and driverless technologies.
                 </p>
                 <div class="flex flex-col gap-6 mt-4">
                     <h3 class="text-base font-bold uppercase tracking-wider text-white font-jura">// SUBDIVISIONS</h3>
-                    <div class="grid grid-cols-1 gap-4">
-                        {subteams.map(sub => (
-                            <div class="bg-brand-midnight border border-gray-800 p-6 rounded-lg">
-                                <h4 class="text-brand-orange font-bold uppercase text-base mb-2 font-jura">{sub.text}</h4>
-                                <p class="font-jura text-gray-400 text-sm leading-relaxed text-justify">{sub.desc}</p>
-                            </div>
+                    <div class="divide-y divide-white/10 border-y border-white/10">
+                        {subteams.map((sub, index) => (
+                            <details class="mobile-disclosure group py-1" open={index === 0}>
+                                <summary class="flex min-h-16 cursor-pointer items-center justify-between gap-4 py-3">
+                                    <h4 class="font-jura text-base font-bold uppercase text-white">{sub.text}</h4>
+                                    <span class="text-2xl text-brand-orange transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+                                </summary>
+                                <img src={sub.image} width="900" height="600" alt="" loading="lazy" decoding="async" class="mb-4 aspect-[16/9] w-full object-cover" />
+                                <p class="pb-5 font-jura text-sm leading-relaxed text-gray-400">{sub.desc}</p>
+                                <a href={getSubteamLink(sub.id)} class="mb-5 inline-flex min-h-11 items-center border-b border-brand-orange text-xs font-bold uppercase tracking-widest">Explore subdivision</a>
+                            </details>
                         ))}
                     </div>
                 </div>
             </section>
 
             <!-- SUBSYSTEMS SECTION (ACROSTIC) -->
-            <section id="mobile-subsystems" class="flex flex-col gap-8 border-b border-white/10 pb-16">
+            <section id="mobile-subsystems" class="flex flex-col gap-8 border-b border-white/10 py-[var(--mobile-section-space)]">
                 <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// VALUES & SUBSYSTEMS</h2>
                 <div class="grid grid-cols-2 gap-x-8 gap-y-4">
                     {[
@@ -478,17 +496,17 @@ const getSlotClasses = (slot: string) => {
             </section>
 
             <!-- HISTORY SECTION -->
-            <section id="mobile-history" class="flex flex-col gap-8 border-b border-white/10 pb-16">
+            <section id="mobile-history" class="flex flex-col gap-8 border-b border-white/10 py-[var(--mobile-section-space)]">
                 <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// OUR HISTORY</h2>
-                <p class="font-jura text-xl leading-relaxed text-gray-300 text-justify">
+                <p class="font-jura text-xl leading-relaxed text-gray-300">
                     Founded in 2013, Aristurtle has evolved from a group of visionaries into a premier Formula Student powerhouse, building <span class="text-brand-orange">8 electric race cars</span> and pioneering autonomous racing in the Balkans.
                 </p>
                 <div class="grid grid-cols-2 gap-4 mt-2">
-                    <div class="bg-brand-midnight border border-gray-800 p-5 rounded text-center">
+                    <div class="border-t-2 border-brand-orange py-5">
                         <p class="text-3xl font-black text-brand-orange font-jura">2013</p>
                         <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-jura">FOUNDED</p>
                     </div>
-                    <div class="bg-brand-midnight border border-gray-800 p-5 rounded text-center">
+                    <div class="border-t-2 border-brand-orange py-5">
                         <p class="text-3xl font-black text-brand-orange font-jura">8</p>
                         <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-jura">CARS BUILT</p>
                     </div>
@@ -496,19 +514,27 @@ const getSlotClasses = (slot: string) => {
             </section>
 
             <!-- SPONSORS SECTION -->
-            <section id="mobile-sponsors" class="flex flex-col gap-8 pb-10">
+            <section id="mobile-sponsors" class="flex flex-col gap-8 border-b border-white/10 py-[var(--mobile-section-space)]">
                 <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// PARTNERS</h2>
-                <div class="flex flex-col gap-6 items-center text-center">
+                <div class="flex flex-col gap-6 items-start">
                     <p class="font-jura text-lg leading-relaxed text-gray-300">
                         Our success is driven by the support of our <span class="text-[var(--brand-primary-2)]">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
                     </p>
-                    <a href={baseUrl + "sponsors"} class="px-8 py-4 bg-[var(--brand-primary-2)] text-black font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform rounded-sm font-jura mt-2">
+                    <a href={baseUrl + "sponsors"} class="inline-flex min-h-12 w-full items-center justify-center bg-[var(--brand-primary-2)] px-8 text-black font-black uppercase tracking-widest text-sm font-jura mt-2">
                         SUPPORT THE TEAM
                     </a>
                 </div>
             </section>
 
+            <section class="flex flex-col gap-6 py-[var(--mobile-section-space)]">
+                <p class="text-xs font-bold uppercase tracking-[.25em] text-brand-orange">// JOIN THE GRID</p>
+                <h2 class="text-[clamp(2.5rem,13vw,4.5rem)] font-black uppercase leading-[.9] tracking-[-.05em]">Build the next car.</h2>
+                <p class="max-w-md text-lg leading-relaxed text-gray-300">Engineering, software, media, and operations move as one team.</p>
+                <a href={`${baseUrl}recruitment`} class="inline-flex min-h-12 w-full items-center justify-center border border-brand-orange text-sm font-bold uppercase tracking-[.16em]">Join Aristurtle</a>
+            </section>
+
 		</div>
+		<div class="lg:hidden"><Footer /></div>
 	</div>
 </BaseLayout>
 
@@ -518,6 +544,10 @@ const getSlotClasses = (slot: string) => {
 	import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 	import { CustomEase } from 'gsap/CustomEase';
     import { SplitText } from 'gsap/SplitText';
+
+	if (window.matchMedia('(max-width: 1023px)').matches) {
+		document.getElementById('journey-container')?.remove();
+	}
 
 	gsap.registerPlugin(ScrollTrigger, DrawSVGPlugin, CustomEase, SplitText);
 
@@ -576,7 +606,7 @@ const getSlotClasses = (slot: string) => {
 		mm = gsap.matchMedia();
 
 		mm.add({
-			isDesktop: "(min-width: 768px)",
+			isDesktop: "(min-width: 1024px)",
 			reduceMotion: "(prefers-reduced-motion: reduce)",
 			noPreference: "(prefers-reduced-motion: no-preference)"
 		}, (context) => {

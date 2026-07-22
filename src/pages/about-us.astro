@@ -22,7 +22,7 @@ const acrosticItems = [
 <BaseLayout title="About Us | ARISTURTLE" pageColors={pageGradient}>
 
   <!-- HEADER BLOCK -->
-  <header class="about-reveal w-full sticky top-0 h-[100svh] z-0">
+  <header class="w-full relative lg:sticky top-0 h-[78svh] lg:h-[100svh] z-0">
       <BlindsHero title="ABOUT US" description="Discover the Aristotle University Racing Team Electric and the people who make it possible." gradientColors={pageGradient} />
   </header>
 
@@ -158,6 +158,17 @@ const acrosticItems = [
       padding-right: 8vw;
     }
   }
+  @media (max-width: 1023px) {
+    .about-container { padding-left: var(--mobile-gutter); padding-right: var(--mobile-gutter); padding-bottom: 5rem; }
+    .about-container > .h-20 { height: 4rem; }
+    .about-container section { scroll-margin-top: 6rem; }
+    .about-container .py-20 { padding-top: 3rem; padding-bottom: 3rem; }
+    .about-container .px-10,
+    .about-container .p-12,
+    .about-container .p-16,
+    .about-container .p-10 { padding-left: 0; padding-right: 0; }
+    .acrostic-card { border-width: 1px 0 0; background: transparent; }
+  }
 </style>
 
 <script>
@@ -166,37 +177,14 @@ const acrosticItems = [
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const reveals = gsap.utils.toArray('.about-reveal');
-    reveals.forEach((element: any) => {
-        gsap.fromTo(element, 
-            { y: 50, autoAlpha: 0 },
-            { 
-                y: 0, 
-                autoAlpha: 1, 
-                duration: 1, 
-                ease: 'luxe', 
-                scrollTrigger: {
-                    trigger: element,
-                    start: 'top 85%',
-                    toggleActions: 'play none none reverse'
-                }
-            }
-        );
-    });
-
-    gsap.fromTo('.acrostic-card',
-        { y: 50, autoAlpha: 0 },
-        {
-            y: 0,
-            autoAlpha: 1,
-            duration: 0.8,
-            ease: 'luxe',
-            stagger: 0.1,
-            scrollTrigger: {
-                trigger: '.acrostic-card',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-            }
-        }
-    );
+    if (window.matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)').matches) {
+      const context = gsap.context(() => {
+        ScrollTrigger.batch('.about-reveal, .acrostic-card', {
+          start: 'top 85%',
+          once: true,
+          onEnter: (elements) => gsap.fromTo(elements, { y: 36, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .8, stagger: .06, ease: 'luxe' })
+        });
+      });
+      window.addEventListener('pagehide', () => context.revert(), { once: true });
+    }
 </script>

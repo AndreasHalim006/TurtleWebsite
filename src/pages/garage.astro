@@ -12,7 +12,7 @@ const pageTitle = "Garage | ARISTURTLE";
 
 <BaseLayout title={pageTitle} pageColors={pageGradient}>
   <!-- HERO SECTION -->
-  <div class="sticky top-0 w-full h-[100svh] z-0">
+  <div class="relative lg:sticky top-0 w-full h-[78svh] lg:h-[100svh] z-0">
     <BlindsHero title="GARAGE" description="The machines that drive us forward. Explore the engineering behind our fleet." gradientColors={pageGradient} />
   </div>
 
@@ -23,7 +23,7 @@ const pageTitle = "Garage | ARISTURTLE";
         {garageData.map((car) => (
           <a 
             href={`#${car.id}`} 
-            class="gradient-underline font-jura text-sm lg:text-base font-bold uppercase text-gray-400 hover:text-[--brand-orange] transition-colors whitespace-nowrap"
+            class="car-nav-link gradient-underline min-h-11 inline-flex items-center font-jura text-sm lg:text-base font-bold uppercase text-gray-400 hover:text-[--brand-orange] transition-colors whitespace-nowrap"
           >
             {car.name}
           </a>
@@ -35,12 +35,11 @@ const pageTitle = "Garage | ARISTURTLE";
     <div class="flex flex-col w-full">
       {garageData.map((car, index) => (
         <div class={`relative ${index !== 0 ? "border-t border-white/10" : "pt-8"}`}>
-          <CarSection car={car} />
+          <CarSection car={car} isInitial={index === 0} />
         </div>
       ))}
     </div>
 
-  </div>
   </div>
 </BaseLayout>
 
@@ -53,3 +52,40 @@ const pageTitle = "Garage | ARISTURTLE";
     scrollbar-width: none;
   }
 </style>
+
+<script>
+  const carSections = Array.from(document.querySelectorAll<HTMLElement>('.car-section'));
+  const isMobileGarage = () => window.matchMedia('(max-width: 1023px)').matches;
+
+  const openCar = (id: string, scroll = false) => {
+    const target = document.getElementById(id);
+    if (!target?.classList.contains('car-section') || !isMobileGarage()) return;
+    carSections.forEach((section) => {
+      const open = section === target;
+      section.classList.toggle('is-mobile-open', open);
+      section.querySelector<HTMLButtonElement>('.car-mobile-toggle')?.setAttribute('aria-expanded', String(open));
+    });
+    document.querySelectorAll('.car-nav-link').forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${id}`));
+    if (scroll) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+  };
+
+  carSections.forEach((section) => {
+    section.querySelector<HTMLButtonElement>('.car-mobile-toggle')?.addEventListener('click', () => {
+      const alreadyOpen = section.classList.contains('is-mobile-open');
+      if (alreadyOpen) return;
+      history.replaceState(null, '', `#${section.id}`);
+      openCar(section.id, true);
+    });
+    const gallery = section.querySelector<HTMLElement>('.car-gallery');
+    gallery?.querySelector<HTMLButtonElement>('.car-gallery-toggle')?.addEventListener('click', (event) => {
+      const button = event.currentTarget as HTMLButtonElement;
+      const open = gallery.classList.toggle('is-open');
+      button.setAttribute('aria-expanded', String(open));
+      button.textContent = open ? 'Hide gallery' : 'View gallery';
+    });
+  });
+
+  const openHash = () => openCar(location.hash.slice(1) || carSections[0]?.id, false);
+  window.addEventListener('hashchange', openHash);
+  openHash();
+</script>

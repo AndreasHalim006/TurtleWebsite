@@ -47,7 +47,7 @@ const tierData = tiers.map((tier) => ({
   sponsors: tier.sponsors,
 }));
 const initialSponsorLogoUrls = Array.from(
-  new Set((tiers[0]?.sponsors ?? []).map((sponsor) => sponsor.logo).filter(Boolean))
+  new Set((tiers[0]?.sponsors ?? []).slice(0, 6).map((sponsor) => sponsor.logo).filter(Boolean))
 );
 ---
 
@@ -59,8 +59,8 @@ const initialSponsorLogoUrls = Array.from(
   </Fragment>
 
   <div class="sponsors-page min-h-screen overflow-clip bg-[var(--void)] text-[var(--foreground)] selection:bg-[var(--brand-orange)] selection:text-[var(--brand-emerald)] max-md:overflow-visible">
-    <TargetCursor client:only="react" targetSelector=".honeycomb-slot.is-active[href]" spinDuration={2.6} hoverDuration={0.18} />
-    <div class="sticky top-0 w-full h-[100svh] z-0">
+    <TargetCursor client:media="(min-width: 1024px) and (pointer: fine) and (prefers-reduced-motion: no-preference)" targetSelector=".honeycomb-slot.is-active[href]" spinDuration={2.6} hoverDuration={0.18} />
+    <div class="relative lg:sticky top-0 w-full h-[78svh] lg:h-[100svh] z-0">
       <SponsorHero totalSponsors={totalSponsors} totalTiers={tiers.length} />
     </div>
     
@@ -69,6 +69,5 @@ const initialSponsorLogoUrls = Array.from(
     </div>
 
     <SponsorCTA />
-    </div>
   </div>
 </BaseLayout>

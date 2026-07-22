@@ -1,26 +1,23 @@
 ---
-// src/components/Preloader.astro
+// Global, session-aware telemetry loader.
 ---
 
-<div id="preloader-container" class="fixed inset-0 z-[2000] flex flex-col items-center justify-center overflow-hidden bg-[#0A0A0A] pointer-events-auto select-none will-change-transform">
-  <div class="relative flex w-full max-w-[500px] flex-col gap-6 px-6 will-change-[transform,opacity]" id="preloader-content">
-    <!-- Header -->
+<div id="preloader-container" class="fixed inset-0 z-[2000] flex flex-col items-center justify-center overflow-hidden bg-[#0A0A0A] pointer-events-auto select-none">
+  <div class="relative flex w-full max-w-[500px] flex-col gap-6 px-6" id="preloader-content">
     <div class="flex justify-between items-center border-b border-white/10 pb-3 text-xs tracking-[0.2em] uppercase text-white/40 font-mono">
       <span>SYS.BOOT_SEQUENCE</span>
       <span class="text-[#9FFF10] font-semibold font-jura">ARISTURTLE EV</span>
     </div>
 
-    <!-- Telemetry Log Window -->
-    <div class="h-[140px] overflow-hidden border border-white/5 bg-white/[0.01] p-4 font-mono text-[10px] leading-relaxed text-white/40 flex flex-col gap-2 justify-end">
-      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] ESTABLISHING CAN-BUS LINK ... OK</div>
-      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] CHECKING INVERTER DC-LINK ... 400V</div>
-      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] DRIVETRAIN CONTROLLERS ACTIVATED ... OK</div>
-      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] READING CHASSIS KINEMATICS ... OK</div>
-      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] SYNCING AUTONOMOUS perception_stack ... ONLINE</div>
-      <div class="telemetry-line opacity-0 select-none transform translate-y-1">[SYS] THREE.JS WEBGL CONTEXT ... READY</div>
+    <div class="telemetry-window h-[140px] overflow-hidden border border-white/5 bg-white/[0.01] p-4 font-mono text-[10px] leading-relaxed text-white/40 flex flex-col gap-2 justify-end">
+      <div class="telemetry-line">[SYS] ESTABLISHING CAN-BUS LINK ... OK</div>
+      <div class="telemetry-line">[SYS] CHECKING INVERTER DC-LINK ... 400V</div>
+      <div class="telemetry-line">[SYS] DRIVETRAIN CONTROLLERS ACTIVATED ... OK</div>
+      <div class="telemetry-line">[SYS] READING CHASSIS KINEMATICS ... OK</div>
+      <div class="telemetry-line">[SYS] SYNCING AUTONOMOUS PERCEPTION ... ONLINE</div>
+      <div class="telemetry-line">[SYS] CRITICAL ASSETS ... READY</div>
     </div>
 
-    <!-- Center Section: Percentage Counter & Progress -->
     <div class="flex flex-col gap-4">
       <div class="flex justify-between items-baseline font-jura">
         <span class="text-xs uppercase tracking-widest text-white/40 font-mono">SYSTEM READY STATE</span>
@@ -28,13 +25,11 @@
           <span id="preloader-percentage" class="font-jura tabular-nums">00</span><span class="text-xs text-[#9FFF10] ml-1 font-mono">%</span>
         </div>
       </div>
-      <!-- Progress Bar Track -->
       <div class="w-full h-[2px] bg-white/10 relative overflow-hidden">
-        <div id="preloader-bar" class="absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[#9FFF10] will-change-transform"></div>
+        <div id="preloader-bar" class="absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[#9FFF10]"></div>
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="flex justify-between text-[10px] text-white/20 tracking-wider font-mono">
       <span>LATENCY: <span id="preloader-latency">--</span>ms</span>
       <span>FSG_2026_CORE_v4.0</span>
@@ -43,107 +38,102 @@
 </div>
 
 <script>
-  import { gsap } from 'gsap';
-  import { CustomEase } from 'gsap/CustomEase';
-
-  // Register CustomEase locally to prevent dependencies loading order issues
-  gsap.registerPlugin(CustomEase);
-  CustomEase.create("luxe", "0.16, 1, 0.3, 1");
-
   const container = document.getElementById('preloader-container');
   const content = document.getElementById('preloader-content');
   const percentEl = document.getElementById('preloader-percentage');
   const barEl = document.getElementById('preloader-bar');
   const latencyEl = document.getElementById('preloader-latency');
-  const telemetryLines = gsap.utils.toArray<HTMLElement>('.telemetry-line');
 
   if (container && content && percentEl && barEl) {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const progress = { value: 0 };
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let repeat = false;
+    let finished = false;
+    try {
+      repeat = sessionStorage.getItem('aristurtle-loader-seen') === '1';
+      sessionStorage.setItem('aristurtle-loader-seen', '1');
+    } catch {
+      // Storage is optional; the loader still exits through its hard timeout.
+    }
 
-    const renderProgress = () => {
-      const value = Math.round(progress.value);
-      percentEl.textContent = value.toString().padStart(2, '0');
-      gsap.set(barEl, { scaleX: value / 100 });
+    const maxDuration = repeat ? 500 : 1600;
+    const minimumDuration = repeat ? 180 : 720;
+    const startedAt = performance.now();
+    latencyEl && (latencyEl.textContent = String(Math.floor(Math.random() * 12 + 6)));
+    (window as any).lenis?.stop();
+
+    const render = (value: number) => {
+      const normalized = Math.max(0, Math.min(100, Math.round(value)));
+      percentEl.textContent = String(normalized).padStart(2, '0');
+      (barEl as HTMLElement).style.transform = `scaleX(${normalized / 100})`;
     };
 
     const finish = () => {
+      if (finished) return;
+      finished = true;
       document.documentElement.classList.remove('preloader-active');
       container.remove();
-
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          window.dispatchEvent(new CustomEvent('preloader-complete'));
-          (window as any).lenis?.start();
-        });
+        window.dispatchEvent(new CustomEvent('preloader-complete'));
+        (window as any).lenis?.start();
       });
     };
 
-    latencyEl && (latencyEl.textContent = Math.floor(Math.random() * 12 + 6).toString());
+    const criticalReady = async () => {
+      const images = Array.from(document.querySelectorAll<HTMLImageElement>('img[data-critical-asset]'));
+      await Promise.race([
+        Promise.allSettled(images.map((image) => {
+          if (image.complete && image.naturalWidth > 0) return Promise.resolve();
+          return typeof image.decode === 'function' ? image.decode().catch(() => undefined) : Promise.resolve();
+        })),
+        new Promise((resolve) => window.setTimeout(resolve, repeat ? 220 : 850)),
+      ]);
+    };
 
-    if (prefersReducedMotion) {
-      progress.value = 100;
-      renderProgress();
-      gsap.set(container, { autoAlpha: 0 });
+    const hardTimeout = window.setTimeout(finish, reducedMotion ? 0 : maxDuration);
+
+    if (reducedMotion) {
+      render(100);
       finish();
     } else {
-      (window as any).lenis?.stop();
+      const progressStart = performance.now();
+      const updateProgress = (now: number) => {
+        if (finished) return;
+        const ratio = Math.min(1, (now - progressStart) / minimumDuration);
+        render(ratio * 90);
+        if (ratio < 1) requestAnimationFrame(updateProgress);
+      };
+      requestAnimationFrame(updateProgress);
 
-      const pageReady = new Promise<void>((resolve) => {
-        if (document.readyState === 'complete') {
-          resolve();
-          return;
+      Promise.all([
+        criticalReady(),
+        new Promise((resolve) => window.setTimeout(resolve, Math.max(0, minimumDuration - (performance.now() - startedAt)))),
+      ]).then(async () => {
+        if (finished) return;
+        render(100);
+        if (!repeat) {
+          await content.animate(
+            [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(-12px)' }],
+            { duration: 160, easing: 'ease-out', fill: 'forwards' }
+          ).finished.catch(() => undefined);
         }
-
-        const finishWaiting = () => {
-          window.clearTimeout(readinessTimeout);
-          window.removeEventListener('load', finishWaiting);
-          resolve();
-        };
-
-        const readinessTimeout = window.setTimeout(finishWaiting, 3000);
-        window.addEventListener('load', finishWaiting, { once: true });
-      });
-
-      const introReady = new Promise<void>((resolve) => {
-        gsap.timeline({ onComplete: resolve })
-          .to(progress, {
-            value: 90,
-            duration: 1.2,
-            ease: 'power2.out',
-            onUpdate: renderProgress
-          })
-          .to(telemetryLines, {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.22,
-            stagger: 0.14,
-            ease: 'power1.out'
-          }, 0.08);
-      });
-
-      Promise.all([pageReady, introReady]).then(() => {
-        gsap.to(progress, {
-          value: 100,
-          duration: 0.2,
-          ease: 'power2.out',
-          onUpdate: renderProgress,
-          onComplete: () => {
-            gsap.timeline({ onComplete: finish })
-              .to(content, {
-                autoAlpha: 0,
-                y: -12,
-                duration: 0.25,
-                ease: 'power2.out'
-              })
-              .to(container, {
-                yPercent: -100,
-                duration: 0.7,
-                ease: 'luxe'
-              }, '-=0.12');
-          }
-        });
+        if (finished) return;
+        await container.animate(
+          [{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }],
+          { duration: repeat ? 220 : 420, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
+        ).finished.catch(() => undefined);
+        window.clearTimeout(hardTimeout);
+        finish();
       });
     }
   }
 </script>
+
+<style>
+  .telemetry-line { opacity: .72; }
+  @media (max-width: 420px) {
+    .telemetry-window { height: 124px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #preloader-container { opacity: 0; }
+  }
+</style>

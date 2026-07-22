@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Jura";
+  src: url("/fonts/jura-latin-variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Jura";
+  src: url("/fonts/jura-greek-variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
 @theme {
   --color-brand-primary-1: #9FFF10;
   --color-brand-primary-2: #00F3CB;
@@ -18,6 +36,10 @@
 :root {
   background-color: var(--color-void);
   color: var(--color-foreground);
+  --mobile-gutter: clamp(1rem, 5vw, 1.5rem);
+  --mobile-nav-height: 72px;
+  --mobile-section-space: clamp(4.5rem, 16vw, 7rem);
+  --readable-copy: 42rem;
 }
 
 ::selection {
@@ -29,6 +51,63 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+}
+
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-disclosure > summary {
+  list-style: none;
+}
+
+.mobile-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  html {
+    scroll-padding-top: calc(var(--mobile-nav-height) + env(safe-area-inset-top) + 3.5rem);
+  }
+
+  body {
+    overflow-x: clip;
+  }
+
+  .site-noise,
+  .glow-card::before {
+    display: none !important;
+  }
+
+  .watermark-text {
+    transform: none !important;
+  }
+
+  [data-mobile-static] {
+    contain: paint;
+  }
+
+  .mobile-content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 800px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -26,13 +26,11 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap" rel="stylesheet">
+		<link rel="preload" href={`${baseUrl}fonts/jura-latin-variable.woff2`} as="font" type="font/woff2" crossorigin />
 		<script is:inline>document.documentElement.classList.add('preloader-active');</script>
 		<slot name="head" />
 	</head>
@@ -40,7 +38,7 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 		<Preloader />
 		
 		<!-- Global SVG Noise Overlay -->
-		<div class="pointer-events-none fixed inset-0 z-50 h-full w-full opacity-[0.03] mix-blend-overlay" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
+		<div class="site-noise pointer-events-none fixed inset-0 z-50 h-full w-full opacity-[0.03] mix-blend-overlay" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
 
 		<Navbar forceCompact={forceCompact} />
 		<main id="main-content">
@@ -48,7 +46,6 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 		</main>
 
 		<script>
-			import Lenis from 'lenis';
 			import { gsap } from 'gsap';
 			import { ScrollTrigger } from 'gsap/ScrollTrigger';
 			import { CustomEase } from 'gsap/CustomEase';
@@ -64,40 +61,33 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 				duration: 0.6
 			});
 
-			// Detect touch device to optimize smooth scroll multipliers
-			const isTouchDevice = typeof window !== 'undefined' && 
-				(('ontouchstart' in window) || navigator.maxTouchPoints > 0);
+			const useSmoothScroll = window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
+			let lenis: import('lenis').default | null = null;
 
-			// Initialize Lenis smooth scrolling
-			const lenis = new Lenis({
-				duration: isTouchDevice ? 1.0 : 1.5,
-				easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-				touchMultiplier: isTouchDevice ? 1.2 : 2,
-			});
-
-			if (document.documentElement.classList.contains('preloader-active')) {
-				lenis.stop();
+			if (useSmoothScroll) {
+				const { default: Lenis } = await import('lenis');
+				lenis = new Lenis({
+					duration: 1.35,
+					easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+				});
+				if (document.documentElement.classList.contains('preloader-active')) lenis.stop();
+				lenis.on('scroll', ScrollTrigger.update);
+				gsap.ticker.add((time) => lenis?.raf(time * 1000));
 			}
-
-			// Sync ScrollTrigger with Lenis
-			lenis.on('scroll', ScrollTrigger.update);
-
-			gsap.ticker.add((time) => {
-				lenis.raf(time * 1000);
-			});
-
-			gsap.ticker.lagSmoothing(0);
 
 			// Release scrolling only after the loader has left and layout has settled.
 			window.addEventListener('preloader-complete', () => {
-				lenis.resize();
-				ScrollTrigger.refresh();
-				lenis.start();
+				lenis?.resize();
+				if (useSmoothScroll) ScrollTrigger.refresh();
+				lenis?.start();
 			}, { once: true });
 
 			// Glow Card Mouse Tracking
 			const initGlowCards = () => {
+				if (!window.matchMedia('(pointer: fine)').matches) return;
 				document.querySelectorAll('.glow-card').forEach((card) => {
+					if ((card as HTMLElement).dataset.glowReady === 'true') return;
+					(card as HTMLElement).dataset.glowReady = 'true';
 					(card as HTMLElement).addEventListener('mousemove', (e) => {
 						const rect = card.getBoundingClientRect();
 						const x = e.clientX - rect.left;
@@ -111,30 +101,23 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 			// Initialize on first load
 			initGlowCards();
 
-			// Watermark Parallax
-			const initWatermarks = () => {
-				document.querySelectorAll('.watermark-text').forEach(text => {
-					gsap.fromTo(text, 
-						{ y: 150 },
-						{ 
+			const watermarkMedia = gsap.matchMedia();
+			watermarkMedia.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+				const context = gsap.context(() => {
+					document.querySelectorAll('.watermark-text').forEach(text => {
+						gsap.fromTo(text, { y: 150 }, {
 							y: -150,
-							ease: "none",
+							ease: 'none',
 							scrollTrigger: {
 								trigger: text.closest('section') || text.parentElement,
-								start: "top bottom",
-								end: "bottom top",
-								scrub: true
+								start: 'top bottom',
+								end: 'bottom top',
+								scrub: 0.6
 							}
-						}
-					);
+						});
+					});
 				});
-			};
-			initWatermarks();
-			
-			// Re-initialize on Astro page transitions
-			document.addEventListener('astro:page-load', () => {
-				initGlowCards();
-				initWatermarks();
+				return () => context.revert();
 			});
 
 			// Global access for other components if needed

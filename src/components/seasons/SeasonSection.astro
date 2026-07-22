@@ -2,13 +2,14 @@
 // src/components/seasons/SeasonSection.astro
 interface Props {
   season: any;
+  isInitial?: boolean;
 }
 
-const { season } = Astro.props;
+const { season, isInitial = false } = Astro.props;
 const { title, year, heroImage, departments } = season.data;
 ---
 
-<section id={year} class="w-full flex flex-col relative pt-8 lg:pt-0">
+<section class="season-content w-full flex flex-col relative lg:pt-0">
   
   {/* Hero Image & Name */}
   <div class="relative w-full h-[50vh] lg:h-[80vh] flex items-center justify-center overflow-hidden">
@@ -16,8 +17,13 @@ const { title, year, heroImage, departments } = season.data;
       <img 
         src={heroImage} 
         alt={`${year} Team`} 
+        width="1600"
+        height="1000"
         class="absolute inset-0 w-full h-full object-cover opacity-50" 
-        loading="lazy"
+        loading={isInitial ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={isInitial ? 'high' : 'low'}
+        data-critical-asset={isInitial ? '' : undefined}
       />
     ) : (
       <div class="absolute inset-0 w-full h-full bg-[#111] opacity-50"></div>
@@ -39,13 +45,14 @@ const { title, year, heroImage, departments } = season.data;
   <div class="w-full max-w-[1800px] mx-auto px-6 lg:px-12 xl:px-24 flex flex-col py-16 gap-16 md:gap-24">
     {departments && departments.length > 0 ? (
       departments.map((dept: any) => (
-        <div class="department-block w-full border-t border-white/10 pt-8 md:pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-[5vw]">
-          <div class="md:col-span-1">
-            <h3 class="font-jura text-3xl md:text-5xl font-bold tracking-tight uppercase sticky top-[120px] text-white">
+        <details class="department-block mobile-disclosure w-full border-t border-white/10 pt-2 lg:pt-12 lg:grid lg:grid-cols-3 lg:gap-[5vw]" open>
+          <summary class="lg:col-span-1 min-h-[72px] flex cursor-pointer items-center justify-between py-3 lg:block lg:cursor-default">
+            <h3 class="font-jura text-2xl lg:text-5xl font-bold tracking-tight uppercase lg:sticky lg:top-[120px] text-white">
               {dept.name}
             </h3>
-          </div>
-          <div class="md:col-span-2">
+            <span class="department-toggle text-3xl text-brand-orange lg:hidden" aria-hidden="true">+</span>
+          </summary>
+          <div class="lg:col-span-2">
             <ul class="flex flex-col w-full">
               {dept.members.map((member: any) => (
                 <li 
@@ -66,7 +73,7 @@ const { title, year, heroImage, departments } = season.data;
               ))}
             </ul>
           </div>
-        </div>
+        </details>
       ))
     ) : (
       <div class="w-full text-center py-20">
@@ -76,26 +83,9 @@ const { title, year, heroImage, departments } = season.data;
   </div>
 </section>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  // We register inside the component but it runs for all instances
-  gsap.registerPlugin(ScrollTrigger);
-
-  // We could add simple entrance animations for department blocks here,
-  // but we must be careful with multiple instances.
-  const blocks = document.querySelectorAll('.department-block');
-  blocks.forEach((block) => {
-    gsap.from(block, {
-      scrollTrigger: {
-        trigger: block,
-        start: 'top 85%',
-      },
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power3.out'
-    });
-  });
-</script>
+<style>
+  @media (max-width: 1023px) {
+    .department-block[open] .department-toggle { transform: rotate(45deg); }
+    .department-toggle { transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+  }
+</style>

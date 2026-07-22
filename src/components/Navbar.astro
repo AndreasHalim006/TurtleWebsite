@@ -37,16 +37,18 @@ const socialItems = [
           id="nav-logo"
           data-force-compact={forceCompact}
           class:list={[
-            "h-auto transition-all duration-1000 brightness-0 invert",
-            forceCompact ? "w-[150px] md:w-[200px]" : "w-[280px] sm:w-[350px] md:w-[550px] lg:w-[700px]"
+            "h-auto brightness-0 invert",
+            forceCompact
+              ? "w-[150px] lg:w-[200px]"
+              : "w-[150px] lg:w-[700px] lg:transition-[width] lg:duration-700"
           ]}
         />
       </a>
     </div>
 
-    <div class="pointer-events-auto mt-[8px]">
+    <div class="pointer-events-auto mt-[8px] hidden lg:block">
       <StaggeredMenu
-        client:load
+        client:media="(min-width: 1024px)"
         position="right"
         items={menuItems}
         socialItems={socialItems}
@@ -60,8 +62,42 @@ const socialItems = [
         isFixed={true}
       />
     </div>
+
+    <button
+      id="mobile-menu-toggle"
+      type="button"
+      class="mobile-menu-toggle pointer-events-auto lg:hidden"
+      aria-label="Open navigation"
+      aria-controls="mobile-menu-panel"
+      aria-expanded="false"
+    >
+      <span>MENU</span>
+      <span class="mobile-menu-icon" aria-hidden="true"></span>
+    </button>
   </div>
 </header>
+
+<div id="mobile-menu-root" class="mobile-menu-root lg:hidden" aria-hidden="true">
+  <button id="mobile-menu-backdrop" class="mobile-menu-backdrop" type="button" tabindex="-1" aria-label="Close navigation"></button>
+  <nav id="mobile-menu-panel" class="mobile-menu-panel" aria-label="Primary navigation" tabindex="-1">
+    <div class="mobile-menu-heading">
+      <span>ARISTURTLE</span>
+      <span class="text-brand-orange">EV / DV</span>
+    </div>
+    <ol class="mobile-menu-list">
+      {menuItems.map((item, index) => (
+        <li>
+          <a href={item.link} aria-label={item.ariaLabel}>
+            <span>{item.label}</span><small>{String(index + 1).padStart(2, '0')}</small>
+          </a>
+        </li>
+      ))}
+    </ol>
+    <div class="mobile-menu-socials">
+      {socialItems.map((item) => <a href={item.link} target="_blank" rel="noopener noreferrer">{item.label}</a>)}
+    </div>
+  </nav>
+</div>
 
 <script>
   import { gsap } from 'gsap';
@@ -79,13 +115,13 @@ const socialItems = [
   const mm = gsap.matchMedia();
 
   mm.add({
-    isMobile: "(max-width: 767px)",
-    isDesktop: "(min-width: 768px)",
+    isDesktop: "(min-width: 1024px)",
     reduceMotion: "(prefers-reduced-motion: reduce)",
     noPreference: "(prefers-reduced-motion: no-preference)"
   }, (context) => {
-    const { isMobile, reduceMotion } = context.conditions as any;
-    const targetWidth = isMobile ? "150px" : "200px";
+    const { isDesktop, reduceMotion } = context.conditions as any;
+    if (!isDesktop) return;
+    const targetWidth = "200px";
 
     if (!forceCompact) {
         // LOGO DISCRETE SWITCH (Snaps when exiting Hero)
@@ -112,16 +148,140 @@ const socialItems = [
 
     return () => context.revert();
   });
+
+  const root = document.getElementById('mobile-menu-root');
+  const panel = document.getElementById('mobile-menu-panel');
+  const toggle = document.getElementById('mobile-menu-toggle') as HTMLButtonElement | null;
+  const backdrop = document.getElementById('mobile-menu-backdrop');
+  let lastFocused: HTMLElement | null = null;
+
+  const getFocusable = () => panel
+    ? Array.from(panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+    : [];
+
+  const setMenuOpen = (open: boolean) => {
+    if (!root || !panel || !toggle) return;
+    root.classList.toggle('is-open', open);
+    root.setAttribute('aria-hidden', String(!open));
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    document.documentElement.classList.toggle('mobile-menu-open', open);
+    if (open) {
+      lastFocused = document.activeElement as HTMLElement;
+      requestAnimationFrame(() => getFocusable()[0]?.focus());
+    } else {
+      (lastFocused || toggle).focus();
+    }
+  };
+
+  toggle?.addEventListener('click', () => setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  backdrop?.addEventListener('click', () => setMenuOpen(false));
+  root?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      setMenuOpen(false);
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = getFocusable();
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
 </script>
 
 <style>
   #main-nav {
-    padding-top: 2vh;
-    padding-left: 2vw;
-    padding-right: 1vw;
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
   }
 
   .ease-expo {
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
+
+  .mobile-menu-toggle {
+    min-width: 72px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: white;
+    font: 700 11px/1 'Jura', sans-serif;
+    letter-spacing: .16em;
+  }
+
+  .mobile-menu-icon,
+  .mobile-menu-icon::after {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: currentColor;
+    content: '';
+    transition: transform .35s cubic-bezier(.16, 1, .3, 1);
+  }
+
+  .mobile-menu-icon::after { transform: translateY(5px); }
+  [aria-expanded='true'] .mobile-menu-icon { transform: translateY(2px) rotate(45deg); color: #050505; }
+  [aria-expanded='true'] .mobile-menu-icon::after { transform: rotate(-90deg); }
+  [aria-expanded='true'] { color: #050505; }
+
+  .mobile-menu-root {
+    position: fixed;
+    inset: 0;
+    z-index: 990;
+    pointer-events: none;
+    visibility: hidden;
+    overflow: hidden;
+    contain: layout paint;
+  }
+
+  .mobile-menu-root.is-open { pointer-events: auto; visibility: visible; }
+  .mobile-menu-root:not(.is-open) .mobile-menu-panel { display: none; }
+  .mobile-menu-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.72); opacity: 0; transition: opacity .3s ease; }
+  .mobile-menu-root.is-open .mobile-menu-backdrop { opacity: 1; }
+
+  .mobile-menu-panel {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: min(100%, 520px);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: max(88px, calc(env(safe-area-inset-top) + 72px)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) 24px;
+    background: #f6f7fb;
+    color: #050505;
+    transform: translateX(100%);
+    transition: transform .55s cubic-bezier(.16, 1, .3, 1);
+    overflow-y: auto;
+  }
+
+  .mobile-menu-root.is-open .mobile-menu-panel { transform: translateX(0); animation: mobile-menu-in .55s cubic-bezier(.16, 1, .3, 1); }
+  @keyframes mobile-menu-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  .mobile-menu-heading { display: flex; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid #d5d5d5; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+  .mobile-menu-list { margin: 18px 0 24px; counter-reset: item; }
+  .mobile-menu-list a { min-height: 52px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d5d5d5; font-size: clamp(1.65rem, 8vw, 2.4rem); font-weight: 700; line-height: 1; letter-spacing: -.04em; }
+  .mobile-menu-list small { color: #5d5d5d; font-size: 10px; letter-spacing: .1em; }
+  .mobile-menu-socials { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  .mobile-menu-socials a { min-height: 44px; display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; }
+
+  @media (min-width: 1024px) {
+    #main-nav { padding-top: 2vh; padding-left: 2vw; padding-right: 1vw; }
+    .mobile-menu-toggle,
+    .mobile-menu-root { display: none !important; }
+  }
+</style>
+
+<style is:global>
+  html.mobile-menu-open,
+  html.mobile-menu-open body { overflow: hidden; }
 </style>

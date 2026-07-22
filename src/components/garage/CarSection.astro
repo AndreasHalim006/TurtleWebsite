@@ -3,6 +3,7 @@
 import { Image } from 'astro:assets';
 
 interface Props {
+  isInitial?: boolean;
   car: {
     id: string;
     name: string;
@@ -17,7 +18,7 @@ interface Props {
   };
 }
 
-const { car } = Astro.props;
+const { car, isInitial = false } = Astro.props;
 
 // Dynamically import all images in src/images
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/images/*.{jpeg,jpg,png,gif,svg}');
@@ -29,7 +30,13 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
 
 ---
 
-<section id={car.id} class="w-full flex flex-col relative pt-8 lg:pt-0">
+<section id={car.id} class:list={['car-section w-full flex flex-col relative lg:pt-0 scroll-mt-32', isInitial && 'is-mobile-open']}>
+  <button class="car-mobile-toggle lg:hidden min-h-[76px] w-full px-[var(--mobile-gutter)] py-4 flex items-center justify-between border-b border-white/10 text-left" type="button" aria-expanded={isInitial ? 'true' : 'false'} aria-controls={`car-panel-${car.id}`}>
+    <span><strong class="block text-2xl font-black uppercase leading-none">{car.name}</strong><small class="mt-1 block text-xs font-bold uppercase tracking-[.16em] text-brand-orange">{car.years}</small></span>
+    <span class="car-toggle-icon text-3xl font-light text-brand-orange" aria-hidden="true">+</span>
+  </button>
+
+  <div id={`car-panel-${car.id}`} class="car-mobile-panel">
   
   {/* Hero Image & Name */}
   <div class="relative w-full h-[50vh] lg:h-[80vh] flex items-center justify-center overflow-hidden">
@@ -38,6 +45,12 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
       <Image 
         src={galleryImages[`/src/images/garage/gallery/${car.gallery[0]}`].default} 
         alt={`${car.name} Hero Image`}
+        widths={[480, 768, 1200, 1800]}
+        sizes="(max-width: 1023px) 100vw, 100vw"
+        loading={isInitial ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={isInitial ? 'high' : 'low'}
+        data-critical-asset={isInitial ? '' : undefined}
         class="absolute inset-0 w-full h-full object-cover opacity-50" 
       />
     ) : (
@@ -45,6 +58,10 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
         <Image 
           src={images[imagePath]()} 
           alt={car.name} 
+          widths={[480, 768, 1200, 1800]}
+          sizes="100vw"
+          loading={isInitial ? 'eager' : 'lazy'}
+          decoding="async"
           class="absolute inset-0 w-full h-full object-cover opacity-50" 
         />
       )
@@ -69,7 +86,7 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
       {/* Description */}
       <div class="w-full lg:col-span-5 flex flex-col">
         <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] mb-6">About the Car</h3>
-        <p class="font-jura text-gray-300 text-lg lg:text-xl leading-relaxed text-justify">
+        <p class="font-jura text-gray-300 text-lg lg:text-xl leading-relaxed">
           {car.description}
         </p>
       </div>
@@ -82,7 +99,7 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
             // Attempt to bold numbers for emphasis
             const boldedSpec = spec.replace(/(\d+(?:\.\d+)?\s*[a-zA-Z%/"\\]*)/g, '<strong class="text-white text-lg">$1</strong>');
             return (
-              <div class="glow-card bg-[#141414] border border-gray-800 p-4 md:p-6 rounded flex items-center justify-center text-center hover:border-[--brand-orange]/50 transition-colors">
+              <div class="glow-card border-t border-gray-700 py-4 md:p-6 flex items-start lg:items-center lg:justify-center lg:text-center hover:border-[--brand-orange]/50 transition-colors">
                 <span class="font-jura text-gray-400 text-xs md:text-sm lg:text-base leading-snug" set:html={boldedSpec} />
               </div>
             );
@@ -93,8 +110,9 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
 
   {/* Gallery */}
   {car.gallery && car.gallery.length > 1 && (
-    <div class="mt-16 w-full pt-8 border-t border-gray-800">
+    <div class="car-gallery mt-16 w-full pt-8 border-t border-gray-800">
       <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] text-center mb-12">Gallery</h3>
+      <button class="car-gallery-toggle lg:hidden mb-6 min-h-12 w-full border border-white/20 text-xs font-bold uppercase tracking-[.16em]" type="button" aria-expanded="false">View gallery</button>
       <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
         {car.gallery.slice(1).map(imgFile => {
            const imgPath = `/src/images/garage/gallery/${imgFile}`;
@@ -102,11 +120,14 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
            if (!imgAsset) return null;
            return (
              <div class="aspect-[4/3] w-full overflow-hidden rounded-md bg-[#111] group">
-               <img 
-                 src={imgAsset.default.src} 
+               <Image
+                 src={imgAsset.default}
                  alt={`${car.name} Gallery Image`}
+                 widths={[320, 640, 960]}
+                 sizes="(max-width: 767px) 50vw, (max-width: 1279px) 33vw, 25vw"
                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] opacity-80 group-hover:opacity-100"
                  loading="lazy"
+                 decoding="async"
                />
              </div>
            );
@@ -115,4 +136,17 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
     </div>
   )}
   </div>
+  </div>
 </section>
+
+<style>
+  @media (max-width: 1023px) {
+    .car-mobile-panel { display: none; }
+    .car-section.is-mobile-open .car-mobile-panel { display: block; }
+    .car-section.is-mobile-open .car-toggle-icon { transform: rotate(45deg); }
+    .car-toggle-icon { transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+    .car-section .car-gallery > div { display: none; }
+    .car-section .car-gallery.is-open > div { display: grid; }
+    .car-section .car-gallery h3 { display: none; }
+  }
+</style>
