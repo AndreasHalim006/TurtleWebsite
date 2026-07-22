@@ -17,8 +17,8 @@ The public routes `/`, `/about-us`, `/contact`, `/garage`, `/recruitment`, `/sea
 3. The phone navigation logo is `150px` from first paint. Menu controls are at least `48px`, the panel uses `100dvh` plus safe-area padding, traps focus, closes with Escape/backdrop, and restores focus.
 4. The full loader runs once per session and exits within `1.6s`; later document loads use a `300-500ms` transition. It waits only for elements marked `data-critical-asset`, with a timeout, and always removes itself and restores scrolling.
 5. Hidden desktop homepage islands do not hydrate below their desktop media queries. Mobile routes do not request Hyperspeed, Three.js/OGL effects, TargetCursor, or the desktop menu island.
-6. Sponsor tiers, cars, seasons/departments, and subdivisions use progressive disclosure on phones. A hash target opens the matching group. Inactive galleries and member portraits remain lazy.
-7. Sponsor logos visible at loader exit are decoded or display an explicit fallback; their slots reserve final dimensions and never render as unexplained empty cells.
+6. Cars, seasons/departments, and subdivisions use progressive disclosure on phones. A hash target opens the matching group. Sponsor tiers remain constantly visible without tabs or accordion controls. Inactive galleries and member portraits remain lazy.
+7. Sponsor logos visible at loader exit are decoded or display an explicit fallback; their slots reserve final dimensions and never render as unexplained empty cells. Mobile sponsor cells use a regular flat-top hexagon ratio of `2 / sqrt(3)` and contain logos inside a centered safe area without cropping.
 8. Every content image has dimensions/aspect ratio, responsive sizing where Astro assets are available, async decoding, and lazy loading unless it is the LCP/critical asset.
 9. Mobile reveals animate only transforms/opacity, play once, honor reduced motion, and clean up listeners/ScrollTriggers.
 10. The footer does not simulate a successful newsletter submission without a real service.
@@ -32,4 +32,3 @@ The public routes `/`, `/about-us`, `/contact`, `/garage`, `/recruitment`, `/sea
 - Mobile-throttled targets are LCP `<=2.5s`, CLS `<=0.1`, and INP `<=200ms`.
 - Menu, disclosures, deep links, browser back, email-copy fallback, map link, and reduced-motion mode work with keyboard and touch.
 - `pnpm run build` passes; Playwright reports no console errors on every public route; desktop smoke tests preserve existing composition.
-
