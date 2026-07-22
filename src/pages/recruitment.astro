@@ -64,6 +64,13 @@ const benefits = [
 ---
 
 <BaseLayout title="Recruitment | ARISTURTLE" pageColors={pageGradient}>
+    <Fragment slot="head">
+      <script is:inline>
+        if (window.matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)').matches) {
+          document.documentElement.classList.add('recruitment-motion-ready');
+        }
+      </script>
+    </Fragment>
     <div class="relative lg:sticky top-0 w-full h-[78svh] lg:h-[100svh] z-0">
         <BlindsHero title="JOIN THE TEAM" description="Step into the fast lane. Discover where your skills fit in our legacy of innovation." gradientColors={pageGradient} />
     </div>
@@ -203,6 +210,17 @@ const benefits = [
     }
 </style>
 
+<style is:global>
+    @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+        html.recruitment-motion-ready .sub-reveal,
+        html.recruitment-motion-ready .sub-card {
+            opacity: 0;
+            transform: translate3d(0, 36px, 0);
+            will-change: transform, opacity;
+        }
+    }
+</style>
+
 <script>
     import { gsap } from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -218,12 +236,18 @@ const benefits = [
         roleGroups.forEach((other) => { if (other !== group) other.open = false; });
       }));
     } else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const context = gsap.context(() => {
-        ScrollTrigger.batch('.sub-reveal, .sub-card', {
+      const targets = gsap.utils.toArray<HTMLElement>('.sub-reveal, .sub-card');
+      const triggers = ScrollTrigger.batch(targets, {
           start: 'top 85%', once: true,
-          onEnter: (elements) => gsap.fromTo(elements, { y: 36, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .8, stagger: .06, ease: 'luxe' })
-        });
+          onEnter: (elements) => gsap.to(elements, {
+            y: 0, autoAlpha: 1, duration: .8, stagger: .06, ease: 'luxe', overwrite: 'auto',
+            onComplete: () => gsap.set(elements, { clearProps: 'willChange' })
+          })
       });
-      window.addEventListener('pagehide', () => context.revert(), { once: true });
+      window.addEventListener('pagehide', () => {
+        triggers.forEach((trigger) => trigger.kill());
+        gsap.killTweensOf(targets);
+        document.documentElement.classList.remove('recruitment-motion-ready');
+      }, { once: true });
     }
 </script>

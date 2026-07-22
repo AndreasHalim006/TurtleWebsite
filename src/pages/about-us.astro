@@ -20,6 +20,13 @@ const acrosticItems = [
 ---
 
 <BaseLayout title="About Us | ARISTURTLE" pageColors={pageGradient}>
+  <Fragment slot="head">
+    <script is:inline>
+      if (window.matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)').matches) {
+        document.documentElement.classList.add('about-motion-ready');
+      }
+    </script>
+  </Fragment>
 
   <!-- HEADER BLOCK -->
   <header class="w-full relative lg:sticky top-0 h-[78svh] lg:h-[100svh] z-0">
@@ -171,20 +178,49 @@ const acrosticItems = [
   }
 </style>
 
+<style is:global>
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    html.about-motion-ready .about-reveal,
+    html.about-motion-ready .acrostic-card {
+      opacity: 0;
+      transform: translate3d(0, 36px, 0);
+      will-change: transform, opacity;
+    }
+  }
+</style>
+
 <script>
     import { gsap } from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
     gsap.registerPlugin(ScrollTrigger);
 
-    if (window.matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)').matches) {
-      const context = gsap.context(() => {
-        ScrollTrigger.batch('.about-reveal, .acrostic-card', {
+    const media = gsap.matchMedia();
+
+    media.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+      const targets = gsap.utils.toArray<HTMLElement>('.about-reveal, .acrostic-card');
+      const triggers = ScrollTrigger.batch(targets, {
           start: 'top 85%',
           once: true,
-          onEnter: (elements) => gsap.fromTo(elements, { y: 36, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .8, stagger: .06, ease: 'luxe' })
-        });
+          onEnter: (elements) => gsap.to(elements, {
+            y: 0,
+            autoAlpha: 1,
+            duration: .8,
+            stagger: .06,
+            ease: 'luxe',
+            overwrite: 'auto',
+            onComplete: () => gsap.set(elements, { clearProps: 'willChange' })
+          })
       });
-      window.addEventListener('pagehide', () => context.revert(), { once: true });
-    }
+
+      return () => {
+        triggers.forEach((trigger) => trigger.kill());
+        gsap.killTweensOf(targets);
+      };
+    });
+
+    window.addEventListener('pagehide', () => {
+      media.revert();
+      document.documentElement.classList.remove('about-motion-ready');
+    }, { once: true });
 </script>

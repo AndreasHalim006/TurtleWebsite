@@ -249,6 +249,13 @@ const subdivisions: Subdivision[] = [
 ---
 
 <BaseLayout title="Subdivisions | ARISTURTLE" pageColors={pageGradient}>
+    <Fragment slot="head">
+      <script is:inline>
+        if (window.matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)').matches) {
+          document.documentElement.classList.add('subdivisions-motion-ready');
+        }
+      </script>
+    </Fragment>
     <!-- HERO SECTION -->
     <div class="relative lg:sticky top-0 w-full h-[78svh] lg:h-[100svh] z-0">
         <BlindsHero title="SUBDIVISIONS" description="The seven specialized pillars of Aristurtle. Explore the teams that build our success." gradientColors={pageGradient} />
@@ -440,6 +447,16 @@ const subdivisions: Subdivision[] = [
     }
 </style>
 
+<style is:global>
+    @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+        html.subdivisions-motion-ready .sub-reveal {
+            opacity: 0;
+            transform: translate3d(0, 36px, 0);
+            will-change: transform, opacity;
+        }
+    }
+</style>
+
 <script>
     import { gsap } from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -466,14 +483,20 @@ const subdivisions: Subdivision[] = [
         window.addEventListener('hashchange', openHash);
         openHash();
     } else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const context = gsap.context(() => {
-            ScrollTrigger.batch('.sub-reveal', {
+        const targets = gsap.utils.toArray<HTMLElement>('.sub-reveal');
+        const triggers = ScrollTrigger.batch(targets, {
                 start: 'top 85%',
                 once: true,
-                onEnter: (elements) => gsap.fromTo(elements, { y: 36, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .8, stagger: .06, ease: 'luxe' })
-            });
+                onEnter: (elements) => gsap.to(elements, {
+                    y: 0, autoAlpha: 1, duration: .8, stagger: .06, ease: 'luxe', overwrite: 'auto',
+                    onComplete: () => gsap.set(elements, { clearProps: 'willChange' })
+                })
         });
-        window.addEventListener('pagehide', () => context.revert(), { once: true });
+        window.addEventListener('pagehide', () => {
+            triggers.forEach((trigger) => trigger.kill());
+            gsap.killTweensOf(targets);
+            document.documentElement.classList.remove('subdivisions-motion-ready');
+        }, { once: true });
     }
 </script>
 

@@ -21,6 +21,7 @@ The public routes `/`, `/about-us`, `/contact`, `/garage`, `/recruitment`, `/sea
 7. Sponsor logos visible at loader exit are decoded or display an explicit fallback; their slots reserve final dimensions and never render as unexplained empty cells. Mobile sponsor cells use a regular flat-top hexagon ratio of `2 / sqrt(3)` and contain logos inside a centered safe area without cropping.
 8. Every content image has dimensions/aspect ratio, responsive sizing where Astro assets are available, async decoding, and lazy loading unless it is the LCP/critical asset.
 9. Mobile reveals animate only transforms/opacity, play once, honor reduced motion, and clean up listeners/ScrollTriggers.
+   Desktop reveals establish their start state before first paint and never flash in place before moving into view.
 10. The footer does not simulate a successful newsletter submission without a real service.
 
 ## Acceptance criteria
