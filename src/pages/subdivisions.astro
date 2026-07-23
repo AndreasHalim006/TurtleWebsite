@@ -461,41 +461,85 @@ const subdivisions: Subdivision[] = [
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const mobile = window.matchMedia('(max-width: 1023px)').matches;
-    const sections = Array.from(document.querySelectorAll<HTMLElement>('.sub-section'));
-    const disclosures = sections.map((section) => section.querySelector<HTMLDetailsElement>('.subdivision-disclosure')).filter(Boolean) as HTMLDetailsElement[];
+    const initSubdivisions = () => {
+        const mobile = window.matchMedia('(max-width: 1023px)').matches;
+        const sections = Array.from(document.querySelectorAll<HTMLElement>('.sub-section'));
+        const disclosures = sections.map((section) => section.querySelector<HTMLDetailsElement>('.subdivision-disclosure')).filter(Boolean) as HTMLDetailsElement[];
 
-    if (mobile) {
-        disclosures.forEach((details, index) => { details.open = index === 0; });
-        disclosures.forEach((details) => details.addEventListener('toggle', () => {
-            if (!details.open) return;
-            disclosures.forEach((other) => { if (other !== details) other.open = false; });
-        }));
-        const openHash = () => {
-            const section = document.getElementById(location.hash.slice(1));
-            const details = section?.querySelector<HTMLDetailsElement>('.subdivision-disclosure');
-            if (!details) return;
-            disclosures.forEach((other) => { other.open = other === details; });
-            requestAnimationFrame(() => section.scrollIntoView({ block: 'start' }));
+        if (mobile) {
+            disclosures.forEach((details, index) => { details.open = index === 0; });
+            disclosures.forEach((details) => details.addEventListener('toggle', () => {
+                if (!details.open) return;
+                disclosures.forEach((other) => { if (other !== details) other.open = false; });
+            }));
+        }
+
+        const scrollToSection = (id: string) => {
+            if (!id) return;
+            const targetSection = document.getElementById(id);
+            if (!targetSection) return;
+
+            if (mobile) {
+                const details = targetSection.querySelector<HTMLDetailsElement>('.subdivision-disclosure');
+                if (details) {
+                    disclosures.forEach((other) => { other.open = other === details; });
+                }
+                requestAnimationFrame(() => {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            } else {
+                const lenis = (window as any).lenis;
+                if (lenis) {
+                    lenis.scrollTo(targetSection, { offset: -100, duration: 1.2 });
+                } else {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
         };
-        window.addEventListener('hashchange', openHash);
-        openHash();
-    } else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const targets = gsap.utils.toArray<HTMLElement>('.sub-reveal');
-        const triggers = ScrollTrigger.batch(targets, {
+
+        const navLinks = document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]');
+        navLinks.forEach((link) => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#') && href.length > 1) {
+                    e.preventDefault();
+                    const id = href.slice(1);
+                    history.pushState(null, '', href);
+                    scrollToSection(id);
+                }
+            });
+        });
+
+        const handleHash = () => {
+            if (location.hash && location.hash.length > 1) {
+                const id = location.hash.slice(1);
+                setTimeout(() => scrollToSection(id), 200);
+            }
+        };
+
+        window.addEventListener('hashchange', handleHash);
+        handleHash();
+
+        if (!mobile && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const targets = gsap.utils.toArray<HTMLElement>('.sub-reveal');
+            const triggers = ScrollTrigger.batch(targets, {
                 start: 'top 85%',
                 once: true,
                 onEnter: (elements) => gsap.to(elements, {
                     y: 0, autoAlpha: 1, duration: .8, stagger: .06, ease: 'luxe', overwrite: 'auto',
                     onComplete: () => gsap.set(elements, { clearProps: 'willChange' })
                 })
-        });
-        window.addEventListener('pagehide', () => {
-            triggers.forEach((trigger) => trigger.kill());
-            gsap.killTweensOf(targets);
-            document.documentElement.classList.remove('subdivisions-motion-ready');
-        }, { once: true });
-    }
+            });
+            window.addEventListener('pagehide', () => {
+                triggers.forEach((trigger) => trigger.kill());
+                gsap.killTweensOf(targets);
+                document.documentElement.classList.remove('subdivisions-motion-ready');
+            }, { once: true });
+        }
+    };
+
+    initSubdivisions();
+    document.addEventListener('astro:page-load', initSubdivisions);
 </script>
 
 <style>
