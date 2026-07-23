@@ -111,12 +111,12 @@ const acrosticItems = [
     <!-- BLOCK 4: WHY SUPPORT ARISTURTLE (ACROSTICS) -->
     <section class="pt-24 border-t border-[#222]">
         <h2 class="text-4xl md:text-6xl font-bold uppercase mb-20 text-center about-reveal">
-            Why support <span class="text-[var(--brand-orange)]">Aristurtle?</span>
+            Why support <span class="text-[var(--brand-primary-2)]">Aristurtle?</span>
         </h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
             {acrosticItems.map((item, index) => (
-                <div class="acrostic-card glow-card bg-[#141414] p-10 md:p-14 border border-[#222] hover:border-[var(--brand-primary-2)] transition-colors duration-500 group flex flex-col justify-start">
+                <div class="acrostic-card bg-[#141414] p-10 md:p-14 border border-[#222] hover:border-white/20 transition-colors duration-500 group flex flex-col justify-start">
                     <h3 class="text-3xl md:text-4xl font-bold mb-8 uppercase flex items-baseline">
                         <span class="text-6xl md:text-7xl text-[var(--brand-primary-2)] mr-2 font-black">{item.letter}</span>
                         <span class="text-white group-hover:text-gray-200 transition-colors tracking-wide">{item.title}</span>

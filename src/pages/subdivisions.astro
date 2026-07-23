@@ -281,7 +281,7 @@ const subdivisions: Subdivision[] = [
                 {subdivisions.map((sub, i) => (
                     <a
                         href={`#${sub.id}`}
-                        class="group min-h-12 shrink-0 flex items-center gap-2 py-3 lg:flex-col lg:p-8 lg:border lg:border-white/10 lg:bg-brand-midnight hover:border-brand-orange transition-colors duration-300"
+                        class="group min-h-12 shrink-0 flex items-center gap-2 py-3 lg:flex-col lg:p-8 lg:border lg:border-white/10 lg:bg-brand-midnight hover:border-white/30 transition-colors duration-300"
                     >
                         <span class="text-brand-orange font-bold text-sm tracking-widest uppercase opacity-50 group-hover:opacity-100 transition-opacity">
                             {String(i + 1).padStart(2, '0')}
@@ -331,7 +331,7 @@ const subdivisions: Subdivision[] = [
                             {sub.subteams.map((st, i) => (
                                 <div class="sub-reveal grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                                     {/* Image Container - Staggered Left/Right */}
-                                    <div class={`relative overflow-hidden aspect-[16/10] bg-brand-midnight border border-white/10 hover:border-brand-orange transition-colors duration-500 group ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+                                    <div class={`relative overflow-hidden aspect-[16/10] bg-brand-midnight border border-white/10 hover:border-white/30 transition-colors duration-500 group ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
                                         {st.image && (
                                             <Image
                                                 src={st.image}
@@ -400,7 +400,7 @@ const subdivisions: Subdivision[] = [
                         {sub.images && (
                             <div class="sub-reveal grid grid-cols-1 md:grid-cols-2 gap-8">
                                 {sub.images.map((img) => (
-                                    <div class="relative overflow-hidden aspect-[16/10] bg-brand-midnight border border-white/10 hover:border-brand-orange transition-colors duration-500">
+                                    <div class="relative overflow-hidden aspect-[16/10] bg-brand-midnight border border-white/10 hover:border-white/30 transition-colors duration-500">
                                         <Image
                                             src={img}
                                             alt={`${sub.name} system`}

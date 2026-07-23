@@ -75,31 +75,13 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 				gsap.ticker.add((time) => lenis?.raf(time * 1000));
 			}
 
+
 			// Release scrolling only after the loader has left and layout has settled.
 			window.addEventListener('preloader-complete', () => {
 				lenis?.resize();
 				if (useSmoothScroll) ScrollTrigger.refresh();
 				lenis?.start();
 			}, { once: true });
-
-			// Glow Card Mouse Tracking
-			const initGlowCards = () => {
-				if (!window.matchMedia('(pointer: fine)').matches) return;
-				document.querySelectorAll('.glow-card').forEach((card) => {
-					if ((card as HTMLElement).dataset.glowReady === 'true') return;
-					(card as HTMLElement).dataset.glowReady = 'true';
-					(card as HTMLElement).addEventListener('mousemove', (e) => {
-						const rect = card.getBoundingClientRect();
-						const x = e.clientX - rect.left;
-						const y = e.clientY - rect.top;
-						(card as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
-						(card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
-					});
-				});
-			};
-			
-			// Initialize on first load
-			initGlowCards();
 
 			const watermarkMedia = gsap.matchMedia();
 			watermarkMedia.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
