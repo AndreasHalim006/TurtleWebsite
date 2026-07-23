@@ -36,17 +36,7 @@ const pageTitle = "Garage | ARISTURTLE";
       {garageData.map((car, index) => (
         <div class="relative">
           {index !== 0 && (
-            <div class="w-full py-16 lg:py-24 bg-void border-y border-white/10 flex items-center justify-center relative z-20">
-              <div class="max-w-[1800px] w-full px-6 lg:px-12 flex items-center justify-between gap-8">
-                <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/15 to-brand-orange/40"></div>
-                <div class="flex items-center gap-3 px-4 py-2 border border-white/10 bg-brand-midnight text-xs font-mono font-bold uppercase tracking-[0.25em] text-gray-400">
-                  <span class="text-brand-orange font-black">//</span>
-                  <span>FLEET_SPECIFICATION</span>
-                  <span class="text-brand-orange">[{String(index + 1).padStart(2, '0')}]</span>
-                </div>
-                <div class="h-[1px] flex-1 bg-gradient-to-l from-transparent via-white/15 to-brand-orange/40"></div>
-              </div>
-            </div>
+            <div class="w-full h-[30vh] lg:h-[45vh] bg-void border-y border-white/10 relative z-20"></div>
           )}
           <CarSection car={car} isInitial={index === 0} />
         </div>
