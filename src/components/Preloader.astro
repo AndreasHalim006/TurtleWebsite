@@ -1,53 +1,71 @@
 ---
-// Global, session-aware telemetry loader.
+import logoSvg from '../images/Turtle_logo_svg.svg';
 ---
 
-<div id="preloader-container" class="fixed inset-0 z-[2000] flex flex-col items-center justify-center overflow-hidden bg-[#0A0A0A] pointer-events-auto select-none">
-  <div class="relative flex w-full max-w-[500px] flex-col gap-6 px-6" id="preloader-content">
-    <div class="flex justify-between items-center border-b border-white/10 pb-3 text-xs tracking-[0.2em] uppercase text-white/40 font-mono">
-      <span>SYS.BOOT_SEQUENCE</span>
-      <span class="text-[#9FFF10] font-semibold font-jura">ARISTURTLE EV</span>
-    </div>
+<div
+  id="preloader-container"
+  class="fixed inset-0 z-[2000] flex items-center justify-center overflow-hidden bg-[#0A0A0A] pointer-events-auto select-none"
+  role="status"
+  aria-live="polite"
+  aria-label="Loading ARISTURTLE"
+>
+  <div id="preloader-content" class="aristurtle-loader">
+    <img
+      src={logoSvg.src}
+      alt=""
+      aria-hidden="true"
+      class="aristurtle-loader__logo"
+    />
 
-    <div class="telemetry-window h-[140px] overflow-hidden border border-white/5 bg-white/[0.01] p-4 font-mono text-[10px] leading-relaxed text-white/40 flex flex-col gap-2 justify-end">
-      <div class="telemetry-line">[SYS] ESTABLISHING CAN-BUS LINK ... OK</div>
-      <div class="telemetry-line">[SYS] CHECKING INVERTER DC-LINK ... 400V</div>
-      <div class="telemetry-line">[SYS] DRIVETRAIN CONTROLLERS ACTIVATED ... OK</div>
-      <div class="telemetry-line">[SYS] READING CHASSIS KINEMATICS ... OK</div>
-      <div class="telemetry-line">[SYS] SYNCING AUTONOMOUS PERCEPTION ... ONLINE</div>
-      <div class="telemetry-line">[SYS] CRITICAL ASSETS ... READY</div>
-    </div>
-
-    <div class="flex flex-col gap-4">
-      <div class="flex justify-between items-baseline font-jura">
-        <span class="text-xs uppercase tracking-widest text-white/40 font-mono">SYSTEM READY STATE</span>
-        <div class="text-5xl font-light tracking-tight text-white">
-          <span id="preloader-percentage" class="font-jura tabular-nums">00</span><span class="text-xs text-[#9FFF10] ml-1 font-mono">%</span>
-        </div>
+    <div class="aristurtle-loader__track" aria-hidden="true">
+      <div class="aristurtle-loader__runner">
+        {[0, 1].map(() => (
+          <svg
+            class="aristurtle-loader__segment"
+            viewBox="0 0 360 64"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              class="aristurtle-loader__circuit"
+              d="M0 32H21L33 11H57L69 32L57 53H33L21 32H91L103 11H127L139 32L127 53H103L91 32H161L173 11H197L209 32L197 53H173L161 32H231L243 11H267L279 32L267 53H243L231 32H301L313 11H337L349 32H360"
+            />
+            <path
+              class="aristurtle-loader__shell"
+              d="M103 32L115 21L127 32L115 43L103 32ZM173 32L185 21L197 32L185 43L173 32ZM243 32L255 21L267 32L255 43L243 32Z"
+            />
+            <path
+              class="aristurtle-loader__energy"
+              d="M91 32L103 11H127L139 32L127 53H103L91 32H161"
+            />
+          </svg>
+        ))}
       </div>
-      <div class="w-full h-[2px] bg-white/10 relative overflow-hidden">
-        <div id="preloader-bar" class="absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[#9FFF10]"></div>
-      </div>
     </div>
 
-    <div class="flex justify-between text-[10px] text-white/20 tracking-wider font-mono">
-      <span>LATENCY: <span id="preloader-latency">--</span>ms</span>
-      <span>FSG_2026_CORE_v4.0</span>
+    <div class="aristurtle-loader__status">
+      <span class="aristurtle-loader__signal" aria-hidden="true"></span>
+      <span>ENGINEERING IN MOTION</span>
+      <span class="aristurtle-loader__location">AUTh / THESSALONIKI</span>
     </div>
   </div>
 </div>
 
 <script>
+  import { gsap } from 'gsap';
+  import { CustomEase } from 'gsap/CustomEase';
+
+  gsap.registerPlugin(CustomEase);
+  CustomEase.create('preloader-luxe', '0.16, 1, 0.3, 1');
+
   const container = document.getElementById('preloader-container');
   const content = document.getElementById('preloader-content');
-  const percentEl = document.getElementById('preloader-percentage');
-  const barEl = document.getElementById('preloader-bar');
-  const latencyEl = document.getElementById('preloader-latency');
 
-  if (container && content && percentEl && barEl) {
+  if (container && content) {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let repeat = false;
     let finished = false;
+
     try {
       repeat = sessionStorage.getItem('aristurtle-loader-seen') === '1';
       sessionStorage.setItem('aristurtle-loader-seen', '1');
@@ -56,17 +74,10 @@
     }
 
     const readinessTimeout = 3000;
-    const maxDuration = readinessTimeout + 1000;
+    const maxDuration = readinessTimeout + 1400;
     const minimumDuration = repeat ? 180 : 720;
     const startedAt = performance.now();
-    latencyEl && (latencyEl.textContent = String(Math.floor(Math.random() * 12 + 6)));
     (window as any).lenis?.stop();
-
-    const render = (value: number) => {
-      const normalized = Math.max(0, Math.min(100, Math.round(value)));
-      percentEl.textContent = String(normalized).padStart(2, '0');
-      (barEl as HTMLElement).style.transform = `scaleX(${normalized / 100})`;
-    };
 
     const finish = () => {
       if (finished) return;
@@ -160,48 +171,149 @@
     const hardTimeout = window.setTimeout(finish, reducedMotion ? 0 : maxDuration);
 
     if (reducedMotion) {
-      render(100);
       finish();
     } else {
-      const progressStart = performance.now();
-      const updateProgress = (now: number) => {
-        if (finished) return;
-        const ratio = Math.min(1, (now - progressStart) / minimumDuration);
-        render(ratio * 90);
-        if (ratio < 1) requestAnimationFrame(updateProgress);
-      };
-      requestAnimationFrame(updateProgress);
-
       Promise.all([
         criticalReady(),
         new Promise((resolve) => window.setTimeout(resolve, Math.max(0, minimumDuration - (performance.now() - startedAt)))),
-      ]).then(async () => {
+      ]).then(() => {
         if (finished) return;
-        render(100);
-        if (!repeat) {
-          await content.animate(
-            [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(-12px)' }],
-            { duration: 160, easing: 'ease-out', fill: 'forwards' }
-          ).finished.catch(() => undefined);
-        }
-        if (finished) return;
-        await container.animate(
-          [{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }],
-          { duration: repeat ? 220 : 420, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
-        ).finished.catch(() => undefined);
-        window.clearTimeout(hardTimeout);
-        finish();
+
+        gsap.timeline({
+          onComplete: () => {
+            window.clearTimeout(hardTimeout);
+            finish();
+          },
+        })
+          .to(content, {
+            autoAlpha: 0,
+            y: -12,
+            duration: repeat ? 0.1 : 0.18,
+            ease: 'power2.out',
+          })
+          .to(container, {
+            yPercent: -100,
+            duration: repeat ? 0.25 : 0.68,
+            ease: 'preloader-luxe',
+          }, repeat ? '<' : '-=0.02');
       });
     }
   }
 </script>
 
 <style>
-  .telemetry-line { opacity: .72; }
-  @media (max-width: 420px) {
-    .telemetry-window { height: 124px; }
+  .aristurtle-loader {
+    display: flex;
+    width: min(82vw, 480px);
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
   }
+
+  .aristurtle-loader__logo {
+    width: min(72vw, 340px);
+    height: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .aristurtle-loader__track {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .aristurtle-loader__runner {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: aristurtle-loader-loop 2.4s linear infinite;
+  }
+
+  .aristurtle-loader__segment {
+    display: block;
+    width: 360px;
+    height: 64px;
+    flex: none;
+  }
+
+  .aristurtle-loader__circuit {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .aristurtle-loader__shell {
+    stroke: rgba(255, 255, 255, 0.42);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .aristurtle-loader__energy {
+    stroke: #9FFF10;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .aristurtle-loader__status {
+    display: grid;
+    width: 100%;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.52);
+    font-family: 'Jura', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .aristurtle-loader__signal {
+    width: 5px;
+    height: 5px;
+    background: #9FFF10;
+    box-shadow: 0 0 12px rgba(159, 255, 16, 0.65);
+  }
+
+  .aristurtle-loader__location {
+    color: rgba(255, 255, 255, 0.22);
+    text-align: right;
+  }
+
+  @keyframes aristurtle-loader-loop {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (max-width: 420px) {
+    .aristurtle-loader {
+      width: min(86vw, 360px);
+      gap: 22px;
+    }
+
+    .aristurtle-loader__segment {
+      width: 300px;
+      height: auto;
+    }
+
+    .aristurtle-loader__status {
+      grid-template-columns: auto 1fr;
+      font-size: 9px;
+    }
+
+    .aristurtle-loader__location {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    #preloader-container { opacity: 0; }
+    #preloader-container {
+      opacity: 0;
+    }
+
+    .aristurtle-loader__runner {
+      animation: none;
+    }
   }
 </style>
