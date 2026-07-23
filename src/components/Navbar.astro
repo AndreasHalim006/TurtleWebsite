@@ -176,6 +176,19 @@ const socialItems = [
 
   toggle?.addEventListener('click', () => setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true'));
   backdrop?.addEventListener('click', () => setMenuOpen(false));
+  
+  panel?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setMenuOpen(false));
+  });
+
+  const cleanupMenu = () => {
+    setMenuOpen(false);
+    document.documentElement.classList.remove('mobile-menu-open');
+  };
+
+  window.addEventListener('pagehide', cleanupMenu);
+  document.addEventListener('astro:page-load', cleanupMenu);
+
   root?.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();

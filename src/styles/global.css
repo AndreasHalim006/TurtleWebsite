@@ -73,11 +73,21 @@ summary {
 
 @media (max-width: 1023px) {
   html {
-    scroll-padding-top: calc(var(--mobile-nav-height) + env(safe-area-inset-top) + 3.5rem);
+    scroll-padding-top: calc(var(--mobile-nav-height) + env(safe-area-inset-top) + 0.5rem);
+    -webkit-overflow-scrolling: touch;
   }
 
   body {
     overflow-x: clip;
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+  }
+
+  /* Smooth momentum scrolling and pan support for sub-navbars */
+  .hide-scrollbar,
+  nav[class*="overflow-x-auto"] {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
   }
 
   .site-noise {

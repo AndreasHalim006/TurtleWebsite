@@ -83,6 +83,13 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 				lenis?.start();
 			}, { once: true });
 
+			// Backup safety to guarantee scroll is active on mobile devices
+			if (!useSmoothScroll) {
+				setTimeout(() => {
+					document.documentElement.classList.remove('preloader-active', 'mobile-menu-open');
+				}, 2200);
+			}
+
 			const watermarkMedia = gsap.matchMedia();
 			watermarkMedia.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
 				const context = gsap.context(() => {
