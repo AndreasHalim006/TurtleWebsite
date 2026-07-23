@@ -20,7 +20,8 @@ Create a sponsors page with a fixed full-viewport honeycomb field: all hexagons 
 - During category changes, the previous sponsor hexes collapse to idle before the next category expands.
 - Active sponsor slots are selected center-out, prioritizing the middle hexagons first.
 - All sponsors in each category appear in the active state; dense tiers shrink/fit without viewport overflow.
-- The Academia tier may scale active hexagons up to `1.5`; the existing viewport-fit bounds still take precedence so its 11-logo cluster remains fully visible.
+- The 11-logo Academia tier uses a compact five-column `2–2–3–2–2` honeycomb formation instead of the generic center-out field geometry.
+- Academia hexagons may scale up to `1.85`; viewport-fit bounds still take precedence. At `1365 × 768`, each active Academia hexagon is at least `215px × 185px`, the full cluster remains visible, and no horizontal overflow is introduced.
 - Active sponsor hexes use a white fill for logo readability and reveal logos in a center-out wave.
 - The initial tier's logo resources are requested at high priority; later tiers preload in the background without competing with the initial page render.
 - A tier transition must not reveal an active hexagon until every logo in that tier has completed loading or reached a handled error state.

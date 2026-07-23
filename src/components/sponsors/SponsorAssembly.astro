@@ -503,7 +503,7 @@ const tierCount = tiers.length;
       activeLayer.appendChild(activeFragment);
     };
 
-    const getActiveScale = (selected: any[], tierId: string) => {
+    const getActiveScale = (selected: any[]) => {
       if (!selected.length) return 1;
       const minX = Math.min(...selected.map((slot) => slot.x));
       const maxX = Math.max(...selected.map((slot) => slot.x + geometry.w));
@@ -516,11 +516,54 @@ const tierCount = tiers.length;
       const vh = window.innerHeight;
       const boxW = vw * 0.96 - vw * 0.30;
       const boxH = vh * 0.85; // 85% of screen height
-      const maxScale = tierId === 'academia'
-        ? 1.5
-        : selected.length <= 4 ? 1.5 : selected.length <= 12 ? 1.3 : 1.15;
+      const maxScale = selected.length <= 4 ? 1.5 : selected.length <= 12 ? 1.3 : 1.15;
 
       return clamp(Math.min(maxScale, boxW / clusterW, boxH / clusterH), 0.3, maxScale);
+    };
+
+    const ACADEMIA_PATTERN = [
+      [0, 0],
+      [-1, -0.5], [1, -0.5],
+      [-1, 0.5], [1, 0.5],
+      [0, -1], [0, 1],
+      [-2, -1], [2, -1],
+      [-2, 0], [2, 0],
+    ] as const;
+
+    const getAcademiaLayout = (count: number) => {
+      if (count < 1 || count > ACADEMIA_PATTERN.length) return null;
+
+      const pattern = ACADEMIA_PATTERN.slice(0, count);
+      const columns = pattern.map(([column]) => column);
+      const rows = pattern.map(([, row]) => row);
+      const minColumn = Math.min(...columns);
+      const maxColumn = Math.max(...columns);
+      const minRow = Math.min(...rows);
+      const maxRow = Math.max(...rows);
+      const columnSpan = (maxColumn - minColumn) * 0.75;
+      const rowSpan = maxRow - minRow;
+      const gap = clamp(window.innerWidth / 180, 6, 9);
+      const boxLeft = window.innerWidth * 0.30;
+      const boxRight = window.innerWidth * 0.96;
+      const boxWidth = boxRight - boxLeft;
+      const boxHeight = window.innerHeight * 0.85;
+      const widthScale = (boxWidth - columnSpan * gap) / (geometry.w * (columnSpan + 1));
+      const heightScale = (boxHeight - rowSpan * gap * 0.8660254) / (geometry.h * (rowSpan + 1));
+      const scale = clamp(Math.min(1.85, widthScale, heightScale), 0.3, 1.85);
+      const pitchWidth = geometry.w * scale + gap;
+      const pitchHeight = pitchWidth * 0.8660254;
+      const targetCenterX = boxLeft + boxWidth / 2;
+      const targetCenterY = window.innerHeight / 2;
+      const patternCenterColumn = (minColumn + maxColumn) / 2;
+      const patternCenterRow = (minRow + maxRow) / 2;
+
+      return {
+        scale,
+        centers: pattern.map(([column, row]) => ({
+          x: targetCenterX + (column - patternCenterColumn) * 0.75 * pitchWidth,
+          y: targetCenterY + (row - patternCenterRow) * pitchHeight,
+        })),
+      };
     };
 
     const prepareSlot = (slot: any, sponsor: any) => {
@@ -558,7 +601,8 @@ const tierCount = tiers.length;
 
       const selectedGeometry = slots.slice(0, tier.sponsors.length);
       const selected = activePool.slice(0, tier.sponsors.length);
-      const activeScale = getActiveScale(selectedGeometry, tier.id);
+      const academiaLayout = tier.id === 'academia' ? getAcademiaLayout(selectedGeometry.length) : null;
+      const activeScale = academiaLayout?.scale ?? getActiveScale(selectedGeometry);
       const previous = [...activeSlots];
 
       if (previous.length) {
@@ -604,9 +648,9 @@ const tierCount = tiers.length;
           
           const cx = rawX + geometry.w / 2;
           const cy = rawY + geometry.h / 2;
-          
-          const newCx = targetCx + (cx - rawCx) * activeScale;
-          const newCy = targetCy + (cy - rawCy) * activeScale;
+          const customCenter = academiaLayout?.centers[slotIndex];
+          const newCx = customCenter?.x ?? targetCx + (cx - rawCx) * activeScale;
+          const newCy = customCenter?.y ?? targetCy + (cy - rawCy) * activeScale;
           
           slot.targetX = newCx - geometry.w / 2;
           slot.targetY = newCy - geometry.h / 2;
