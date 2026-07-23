@@ -83,28 +83,59 @@ const pageTitle = "Seasons | ARISTURTLE";
   const mobileSeasonSections = Array.from(document.querySelectorAll<HTMLElement>('.season-section'));
   const mobileSeasons = window.matchMedia('(max-width: 1023px)').matches;
 
-  const setOpenSeason = (target: HTMLElement, shouldScroll = false) => {
-    if (!mobileSeasons) return;
-    mobileSeasonSections.forEach((section) => {
-      const open = section === target;
-      section.classList.toggle('is-mobile-open', open);
-      section.querySelector<HTMLButtonElement>('.season-mobile-toggle')?.setAttribute('aria-expanded', String(open));
-    });
-    if (shouldScroll) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+  const scrollToSeason = (id: string, scroll = true) => {
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target?.classList.contains('season-section')) return;
+
+    if (mobileSeasons) {
+      mobileSeasonSections.forEach((section) => {
+        const open = section === target;
+        section.classList.toggle('is-mobile-open', open);
+        section.querySelector<HTMLButtonElement>('.season-mobile-toggle')?.setAttribute('aria-expanded', String(open));
+      });
+      if (scroll) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    } else if (scroll) {
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(target, { offset: -100, duration: 1.2 });
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   };
 
   mobileSeasonSections.forEach((section) => {
     section.querySelector<HTMLButtonElement>('.season-mobile-toggle')?.addEventListener('click', () => {
       if (section.classList.contains('is-mobile-open')) return;
       history.replaceState(null, '', `#${section.id}`);
-      setOpenSeason(section, true);
+      scrollToSeason(section.id, true);
+    });
+  });
+
+  const seasonNavLinks = document.querySelectorAll<HTMLAnchorElement>('.season-nav-link, a[href^="#"]');
+  seasonNavLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#') && href.length > 1) {
+        const id = href.slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+          e.preventDefault();
+          history.pushState(null, '', href);
+          scrollToSeason(id, true);
+        }
+      }
     });
   });
 
   const activateSeasonHash = () => {
-    const target = document.getElementById(location.hash.slice(1)) || mobileSeasonSections[0];
-    if (target?.classList.contains('season-section')) setOpenSeason(target, false);
+    if (location.hash && location.hash.length > 1) {
+      const id = location.hash.slice(1);
+      setTimeout(() => scrollToSeason(id, true), 200);
+    }
   };
+
   window.addEventListener('hashchange', activateSeasonHash);
   activateSeasonHash();
 

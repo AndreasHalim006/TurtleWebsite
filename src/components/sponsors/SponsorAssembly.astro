@@ -702,6 +702,49 @@ const tierCount = tiers.length;
       });
     });
 
+    const scrollToTier = (id: string) => {
+      if (!id) return;
+      let target = document.getElementById(id);
+      if (!target && id.startsWith('tier-step-')) {
+        const altId = id.replace('tier-step-', 'tier-');
+        target = document.getElementById(altId);
+      } else if (!target && id.startsWith('tier-')) {
+        const altId = id.replace('tier-', 'tier-step-');
+        target = document.getElementById(altId);
+      }
+      if (!target) return;
+
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(target, { duration: 1.2 });
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    const tierLinks = document.querySelectorAll<HTMLAnchorElement>('.micro-tier-link, .tier-rail-link, a[href^="#tier-"]');
+    tierLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#') && href.length > 1) {
+          e.preventDefault();
+          const id = href.slice(1);
+          history.pushState(null, '', href);
+          scrollToTier(id);
+        }
+      });
+    });
+
+    const handleSponsorHash = () => {
+      if (location.hash && location.hash.length > 1) {
+        const id = location.hash.slice(1);
+        setTimeout(() => scrollToTier(id), 250);
+      }
+    };
+
+    window.addEventListener('hashchange', handleSponsorHash);
+    handleSponsorHash();
+
     gsap.to('.assembly-shell', {
       scrollTrigger: {
         trigger: '#sponsor-assembly',

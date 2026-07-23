@@ -60,16 +60,27 @@ const pageTitle = "Garage | ARISTURTLE";
   const carSections = Array.from(document.querySelectorAll<HTMLElement>('.car-section'));
   const isMobileGarage = () => window.matchMedia('(max-width: 1023px)').matches;
 
-  const openCar = (id: string, scroll = false) => {
+  const scrollToCar = (id: string, scroll = true) => {
+    if (!id) return;
     const target = document.getElementById(id);
-    if (!target?.classList.contains('car-section') || !isMobileGarage()) return;
-    carSections.forEach((section) => {
-      const open = section === target;
-      section.classList.toggle('is-mobile-open', open);
-      section.querySelector<HTMLButtonElement>('.car-mobile-toggle')?.setAttribute('aria-expanded', String(open));
-    });
-    document.querySelectorAll('.car-nav-link').forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${id}`));
-    if (scroll) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+    if (!target?.classList.contains('car-section')) return;
+
+    if (isMobileGarage()) {
+      carSections.forEach((section) => {
+        const open = section === target;
+        section.classList.toggle('is-mobile-open', open);
+        section.querySelector<HTMLButtonElement>('.car-mobile-toggle')?.setAttribute('aria-expanded', String(open));
+      });
+      document.querySelectorAll('.car-nav-link').forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${id}`));
+      if (scroll) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    } else if (scroll) {
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(target, { offset: -100, duration: 1.2 });
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   };
 
   carSections.forEach((section) => {
@@ -77,7 +88,7 @@ const pageTitle = "Garage | ARISTURTLE";
       const alreadyOpen = section.classList.contains('is-mobile-open');
       if (alreadyOpen) return;
       history.replaceState(null, '', `#${section.id}`);
-      openCar(section.id, true);
+      scrollToCar(section.id, true);
     });
     const gallery = section.querySelector<HTMLElement>('.car-gallery');
     gallery?.querySelector<HTMLButtonElement>('.car-gallery-toggle')?.addEventListener('click', (event) => {
@@ -88,7 +99,29 @@ const pageTitle = "Garage | ARISTURTLE";
     });
   });
 
-  const openHash = () => openCar(location.hash.slice(1) || carSections[0]?.id, false);
+  const carNavLinks = document.querySelectorAll<HTMLAnchorElement>('.car-nav-link, a[href^="#"]');
+  carNavLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#') && href.length > 1) {
+        const id = href.slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+          e.preventDefault();
+          history.pushState(null, '', href);
+          scrollToCar(id, true);
+        }
+      }
+    });
+  });
+
+  const openHash = () => {
+    if (location.hash && location.hash.length > 1) {
+      const id = location.hash.slice(1);
+      setTimeout(() => scrollToCar(id, true), 200);
+    }
+  };
+
   window.addEventListener('hashchange', openHash);
   openHash();
 </script>
