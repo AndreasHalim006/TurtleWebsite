@@ -352,8 +352,8 @@ export const LogoLoop = memo(
             key={copyIndex}
             ref={copyIndex === 0 ? seqRef : undefined}
             className={cx(
-              'flex shrink-0 items-center justify-around font-sans select-none list-none m-0 p-0',
-              isVertical ? 'flex-col min-h-full' : 'flex-row min-w-full'
+              'flex shrink-0 items-center font-sans select-none list-none m-0 p-0',
+              isVertical ? 'flex-col min-h-full' : 'flex-row'
             )}
             role="list"
             aria-hidden={copyIndex > 0}
