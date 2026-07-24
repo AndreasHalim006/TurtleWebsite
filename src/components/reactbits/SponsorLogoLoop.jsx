@@ -13,34 +13,39 @@ export default function SponsorLogoLoop({ logos = [] }) {
       <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10"></div>
 
       <div className="w-full flex overflow-hidden group">
-        <div className="flex shrink-0 items-center gap-12 sm:gap-16 animate-sponsor-marquee group-hover:[animation-play-state:paused]">
+        <div className="flex shrink-0 items-center gap-8 sm:gap-12 animate-sponsor-marquee group-hover:[animation-play-state:paused]">
           {loopLogos.map((logo, index) => {
             const content = (
-              <img
-                src={logo.src}
-                alt={logo.alt || 'Sponsor logo'}
-                title={logo.alt || ''}
-                className="h-10 md:h-12 w-auto max-h-10 md:max-h-12 object-contain pointer-events-none filter brightness-0 invert opacity-85 hover:opacity-100 transition-all duration-300 drop-shadow-[0_0_2px_rgba(255,255,255,0.3)]"
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
+              <div
+                className="w-full h-full max-h-[36px] sm:max-h-[42px] max-w-[120px] sm:max-w-[145px] transition-all duration-300 group-hover:scale-110 opacity-90 hover:opacity-100"
+                style={{
+                  background: 'linear-gradient(to bottom, #9FFF10 0%, #00F3CB 100%)',
+                  WebkitMaskImage: `url("${logo.src}")`,
+                  maskImage: `url("${logo.src}")`,
+                  WebkitMaskSize: 'contain',
+                  maskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center',
+                  maskPosition: 'center',
+                  filter: 'drop-shadow(0 0 3px rgba(159, 255, 16, 0.35))',
                 }}
+                title={logo.alt || ''}
+                aria-label={logo.alt || 'Sponsor logo'}
               />
             );
 
             return (
               <div
                 key={`${logo.src}-${index}`}
-                className="shrink-0 flex items-center justify-center px-2 py-1 transition-transform duration-300 hover:scale-110"
+                className="shrink-0 flex items-center justify-center w-[130px] sm:w-[160px] h-[52px] px-2 py-1"
               >
                 {logo.href ? (
                   <a
                     href={logo.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center"
+                    className="w-full h-full flex items-center justify-center"
                     aria-label={logo.alt || 'Sponsor link'}
                   >
                     {content}
