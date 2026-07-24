@@ -8,9 +8,9 @@ export default function SponsorLogoLoop({ logos = [] }) {
         ...logo,
         ariaLabel: logo.alt || logo.title || 'Sponsor logo',
         node: (
-          <div className="flex h-[52px] w-[130px] md:w-[160px] items-center justify-center pointer-events-auto">
+          <div className="flex h-[84px] md:h-[96px] w-[160px] md:w-[195px] items-center justify-center pointer-events-auto">
             <div
-              className="w-full h-full max-h-[36px] md:max-h-[42px] max-w-[120px] md:max-w-[145px] transition-all duration-300 opacity-90 group-hover/item:opacity-100"
+              className="w-full h-full max-h-[64px] md:max-h-[76px] max-w-[145px] md:max-w-[180px] opacity-95 transition-opacity duration-300 hover:opacity-100"
               style={{
                 background: 'linear-gradient(to bottom, #9FFF10 0%, #00F3CB 100%)',
                 WebkitMaskImage: `url("${logo.src}")`,
@@ -21,7 +21,7 @@ export default function SponsorLogoLoop({ logos = [] }) {
                 maskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'center',
                 maskPosition: 'center',
-                filter: 'drop-shadow(0 0 3px rgba(159, 255, 16, 0.35))',
+                filter: 'drop-shadow(0 0 4px rgba(159, 255, 16, 0.4))',
               }}
               title={logo.alt || ''}
             />
@@ -37,12 +37,12 @@ export default function SponsorLogoLoop({ logos = [] }) {
         logos={fittedLogos}
         speed={100}
         direction="left"
-        logoHeight={52}
-        gap={40}
+        logoHeight={84}
+        gap={20}
         hoverSpeed={15}
         fadeOut
         fadeOutColor="#0a0a0a"
-        scaleOnHover
+        scaleOnHover={false}
         ariaLabel="Platinum sponsor logos"
       />
     </div>
