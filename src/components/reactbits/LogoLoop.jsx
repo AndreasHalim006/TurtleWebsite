@@ -336,25 +336,30 @@ export const LogoLoop = memo(
             )}
             key={key}
             role="listitem"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
             {inner}
           </li>
         );
       },
-      [isVertical, scaleOnHover, renderItem]
+      [isVertical, scaleOnHover, renderItem, handleMouseEnter, handleMouseLeave]
     );
 
     const logoLists = useMemo(
       () =>
         Array.from({ length: copyCount }, (_, copyIndex) => (
           <ul
-            className={cx('flex items-center', isVertical && 'flex-col')}
-            key={`copy-${copyIndex}`}
+            key={copyIndex}
+            ref={copyIndex === 0 ? seqRef : undefined}
+            className={cx(
+              'flex shrink-0 items-center justify-around font-sans select-none list-none m-0 p-0',
+              isVertical ? 'flex-col min-h-full' : 'flex-row min-w-full'
+            )}
             role="list"
             aria-hidden={copyIndex > 0}
-            ref={copyIndex === 0 ? seqRef : undefined}
           >
-            {logos.map((item, itemIndex) => renderLogoItem(item, `${copyIndex}-${itemIndex}`))}
+            {logos.map((item, index) => renderLogoItem(item, `${copyIndex}-${index}`))}
           </ul>
         )),
       [copyCount, logos, renderLogoItem, isVertical]
@@ -380,8 +385,6 @@ export const LogoLoop = memo(
         style={containerStyle}
         role="region"
         aria-label={ariaLabel}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
         {fadeOut && (
           <>
