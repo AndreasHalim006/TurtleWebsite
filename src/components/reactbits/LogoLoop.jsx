@@ -298,7 +298,6 @@ export const LogoLoop = memo(
             width={item.width}
             height={item.height}
             alt={item.alt ?? ''}
-            title={item.title}
             loading="lazy"
             decoding="async"
             draggable={false}
