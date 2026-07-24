@@ -31,7 +31,20 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<link rel="preload" href={`${baseUrl}fonts/jura-latin-variable.woff2`} as="font" type="font/woff2" crossorigin />
-		<script is:inline>document.documentElement.classList.add('preloader-active');</script>
+		<script is:inline>
+			if ('scrollRestoration' in history) {
+				history.scrollRestoration = 'manual';
+			}
+			if (!window.location.hash) {
+				window.scrollTo(0, 0);
+			}
+			document.documentElement.classList.add('preloader-active');
+			window.addEventListener('beforeunload', () => {
+				if (!window.location.hash) {
+					window.scrollTo(0, 0);
+				}
+			});
+		</script>
 		<slot name="head" />
 	</head>
 	<body class="antialiased">
@@ -70,6 +83,9 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 					duration: 1.35,
 					easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
 				});
+				if (!window.location.hash) {
+					lenis.scrollTo(0, { immediate: true });
+				}
 				if (document.documentElement.classList.contains('preloader-active')) lenis.stop();
 				lenis.on('scroll', ScrollTrigger.update);
 				gsap.ticker.add((time) => lenis?.raf(time * 1000));
@@ -78,6 +94,10 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 
 			// Release scrolling only after the loader has left and layout has settled.
 			window.addEventListener('preloader-complete', () => {
+				if (!window.location.hash) {
+					window.scrollTo(0, 0);
+					lenis?.scrollTo(0, { immediate: true });
+				}
 				lenis?.resize();
 				if (useSmoothScroll) ScrollTrigger.refresh();
 				lenis?.start();
