@@ -554,16 +554,16 @@ const tierCount = tiers.length;
       const maxRow = Math.max(...rows);
       const columnSpan = (maxColumn - minColumn) * 0.75;
       const rowSpan = maxRow - minRow;
-      const gap = clamp(window.innerWidth / 160, 8, 14);
+      const gap = clamp(window.innerWidth / 180, 4, 8);
 
-      const boxLeft = window.innerWidth * 0.32;
-      const boxRight = window.innerWidth * 0.94;
+      const boxLeft = window.innerWidth * 0.26;
+      const boxRight = window.innerWidth * 0.98;
       const boxWidth = boxRight - boxLeft;
-      const boxHeight = window.innerHeight * 0.88;
+      const boxHeight = window.innerHeight * 0.95;
 
       const widthScale = (boxWidth - columnSpan * gap) / (geometry.w * (columnSpan + 1));
       const heightScale = (boxHeight - rowSpan * gap * 0.8660254) / (geometry.h * (rowSpan + 1));
-      const scale = clamp(Math.min(1.85, widthScale, heightScale), 0.5, 1.85);
+      const scale = clamp(Math.min(2.5, widthScale, heightScale), 0.5, 2.5);
 
       const pitchWidth = geometry.w * scale + gap;
       const pitchHeight = pitchWidth * 0.8660254;
