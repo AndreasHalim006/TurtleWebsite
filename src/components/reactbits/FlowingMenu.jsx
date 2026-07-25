@@ -146,10 +146,13 @@ function MenuItem({ id, id: itemID, link, text, image, speed, textColor, marquee
           {[...Array(repetitions)].map((_, idx) => (
             <div className="marquee-part flex items-center flex-shrink-0 h-full gap-[4vw]" key={idx} style={{ color: marqueeTextColor }}>
               <span className="whitespace-nowrap uppercase font-normal text-[4vh] leading-[1]">{text}</span>
-              <div
-                className="w-[200px] h-[70%] rounded-[50px] bg-cover bg-center flex-shrink-0"
-                style={{ backgroundImage: `url('${image}')` }}
-              />
+              <div className="w-[200px] h-[70%] rounded-[50px] bg-white flex items-center justify-center overflow-hidden flex-shrink-0 p-2 shadow-sm">
+                <img
+                  src={image}
+                  alt=""
+                  className="w-full h-full object-contain pointer-events-none"
+                />
+              </div>
             </div>
           ))}
         </div>
