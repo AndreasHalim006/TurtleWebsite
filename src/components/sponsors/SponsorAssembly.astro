@@ -112,56 +112,68 @@ const tierCount = tiers.length;
 
     <!-- Fallback Stage -->
     <div class="fallback-stage hidden max-lg:block motion-reduce:block w-full">
-      {tiers.map((tier, index) => (
-        <section id={`tier-${tier.id}`} class="fallback-tier border-b border-white/12 py-8 first:pt-2" aria-labelledby={`tier-title-${tier.id}`}>
-          <header class="flex min-h-[72px] items-center gap-4 pb-5">
-          <div class="grid gap-1.5 min-w-0">
-            <p class="text-[var(--brand-orange)] text-[clamp(0.65rem,0.58rem+0.2vw,0.82rem)] font-bold tracking-[0.48em] leading-relaxed uppercase">// {String(index + 1).padStart(2, '0')}</p>
-            <h2 id={`tier-title-${tier.id}`} class="text-white text-[clamp(1.7rem,9vw,3rem)] font-bold leading-[0.92] uppercase">{tier.title}</h2>
-          </div>
-          </header>
+      {tiers.map((tier, index) => {
+        const isPlatinum = index === 0 || tier.id === 'platinum';
+        return (
+          <section id={`tier-${tier.id}`} class="fallback-tier border-b border-white/12 py-8 first:pt-2" aria-labelledby={`tier-title-${tier.id}`}>
+            <header class="flex min-h-[72px] items-center gap-4 pb-5">
+              <div class="grid gap-1.5 min-w-0">
+                <p class="text-[var(--brand-orange)] text-[clamp(0.65rem,0.58rem+0.2vw,0.82rem)] font-bold tracking-[0.48em] leading-relaxed uppercase">// {String(index + 1).padStart(2, '0')}</p>
+                <h2 id={`tier-title-${tier.id}`} class="text-white text-[clamp(1.7rem,9vw,3rem)] font-bold leading-[0.92] uppercase">{tier.title}</h2>
+              </div>
+            </header>
 
-          <div class:list={['fallback-logo-grid grid w-full grid-cols-2 gap-x-3 gap-y-4 pb-4', tier.sponsors.length >= 18 && 'is-dense']}>
-            {tier.sponsors.map((sponsor, sponsorIndex) => {
-              const isCritical = index === 0 && sponsorIndex < 6;
-              const content = (
-                <>
-                  <img
-                    class="mobile-sponsor-logo relative z-[2] block object-contain"
-                    src={sponsor.logo}
-                    alt={sponsor.alt}
-                    width="320"
-                    height="180"
-                    loading={isCritical ? 'eager' : 'lazy'}
-                    decoding="async"
-                    fetchpriority={isCritical ? 'high' : 'low'}
-                    data-critical-asset={isCritical ? '' : undefined}
-                  />
-                  <span class="logo-fallback relative z-[1] hidden px-3 text-center text-xs font-bold uppercase tracking-wider text-black">{sponsor.name}</span>
-                </>
-              );
+            <div class:list={[
+              'fallback-logo-grid grid w-full gap-y-4 pb-4',
+              isPlatinum ? 'grid-cols-1 gap-y-5' : 'grid-cols-2 gap-x-3',
+              !isPlatinum && tier.sponsors.length >= 18 && 'is-dense'
+            ]}>
+              {tier.sponsors.map((sponsor, sponsorIndex) => {
+                const isCritical = index === 0 && sponsorIndex < 6;
+                const content = (
+                  <>
+                    <img
+                      class:list={[
+                        'mobile-sponsor-logo relative z-[2] block object-contain filter brightness-0 invert opacity-95 transition-opacity duration-300',
+                        isPlatinum ? 'h-20 sm:h-28 max-h-24 w-auto max-w-[85%]' : ''
+                      ]}
+                      src={sponsor.logo}
+                      alt={sponsor.alt}
+                      width={isPlatinum ? '480' : '320'}
+                      height={isPlatinum ? '240' : '180'}
+                      loading={isCritical ? 'eager' : 'lazy'}
+                      decoding="async"
+                      fetchpriority={isCritical ? 'high' : 'low'}
+                      data-critical-asset={isCritical ? '' : undefined}
+                    />
+                    <span class="logo-fallback relative z-[1] hidden px-3 text-center text-xs font-bold uppercase tracking-wider text-black">{sponsor.name}</span>
+                  </>
+                );
 
-              const cellClasses = "mobile-sponsor-hex relative grid place-items-center";
+                const cellClasses = isPlatinum
+                  ? 'mobile-sponsor-hex relative flex items-center justify-center min-h-[110px] sm:min-h-[130px] p-6 rounded-xl bg-white/[0.03] border border-white/10 shadow-sm transition-colors duration-300 active:bg-white/[0.08]'
+                  : 'mobile-sponsor-hex relative grid place-items-center min-h-[80px] p-3 rounded-lg bg-white/[0.02] border border-white/5';
 
-              return sponsor.website ? (
-                <a
-                  class={cellClasses}
-                  href={sponsor.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Visit ${sponsor.name}`}
-                >
-                  {content}
-                </a>
-              ) : (
-                <div class={cellClasses} aria-label={sponsor.name}>
-                  {content}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      ))}
+                return sponsor.website ? (
+                  <a
+                    class={cellClasses}
+                    href={sponsor.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit ${sponsor.name}`}
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  <div class={cellClasses} aria-label={sponsor.name}>
+                    {content}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
     </div>
   </div>
 
