@@ -14,13 +14,16 @@ import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
 import protergiaLogo from '../images/powered_by_protergia.png';
 import calypsoHero from '../images/IMG_8879 1.jpeg';
 
-import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
-import teamPhoto2 from '../images/Aristurtle_photo_2-1_2.jpg';
-import teamPhoto3 from '../images/Aristurtle_photo_3-1_2.jpg';
-import teamPhoto4 from '../images/Untitled-7 1.jpg';
-import teamPhoto5 from '../images/Untitled-12 3.jpg';
-import teamPhoto6 from '../images/team.png';
-import teamPhoto7 from '../images/IMG_8908.jpg';
+import mechanicalChassis from '../assets/subdivisions/mechanical_chassis.png';
+import mechanicalSuspension from '../assets/subdivisions/mechanical_suspension.png';
+import mechanicalAerodynamics from '../assets/subdivisions/mechanical_aerodynamics.png';
+import mechanicalDrivetrain from '../assets/subdivisions/mechanical_drivetrain.png';
+import powertrain1 from '../assets/subdivisions/powertrain_1.png';
+import vehicledynamics1 from '../assets/subdivisions/vehicledynamics_1.png';
+import electronics1 from '../assets/subdivisions/electronics_1.png';
+import driverlessPerception from '../assets/subdivisions/driverless_perception.png';
+import it1 from '../assets/subdivisions/it_1.jpg';
+import operationsGraphic from '../assets/subdivisions/operations_graphic.png';
 
 // Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
 const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
@@ -35,16 +38,16 @@ const platinumSponsorLogos = (await getCollection('sponsors', ({ data }) => data
   }));
 
 const subteams = [
-    { id: 'st1', text: 'Chassis & Composites', image: teamPhoto1.src, desc: 'Designing the structural skeleton and optimizing carbon fiber layups for maximum rigidity and minimum weight.' },
-    { id: 'st2', text: 'Suspension', image: teamPhoto2.src, desc: "Engineering vehicle dynamics through advanced geometry, shock absorber tuning, and tire interface optimization." },
-    { id: 'st3', text: 'Aerodynamics', image: teamPhoto3.src, desc: "Utilizing CFD and wind tunnel testing to maximize downforce across the technical car outline." },
-    { id: 'st4', text: 'Drivetrain', image: teamPhoto4.src, desc: "Developing high-efficiency power transmission systems to deliver torque precisely to the wheels." },
-    { id: 'st5', text: 'Powertrain - HV', image: teamPhoto5.src, desc: "Engineering the battery pack and power distribution systems with safety and efficiency at the core." },
-    { id: 'st6', text: 'Vehicle Dynamics', image: teamPhoto6.src, desc: "Implementing control algorithms and simulating behavior to push the limits of track performance." },
-    { id: 'st7', text: 'Electronics', image: teamPhoto7.src, desc: "Designing custom PCBs and real-time firmware for low-latency system communication." },
-    { id: 'st8', text: 'Driverless', image: teamPhoto1.src, desc: "Developing the autonomous stack including perception, SLAM, and path planning for robotic racing." },
-    { id: 'st9', text: 'IT & Software', image: teamPhoto2.src, desc: "Building digital infrastructure and telemetry systems to support real-time engineering decisions." },
-    { id: 'st10', text: 'Operations', image: teamPhoto3.src, desc: "Managing logistics, sponsorships, and team coordination to ensure seamless racing program execution." }
+    { id: 'st1', text: 'Chassis & Composites', image: mechanicalChassis.src, desc: 'Designing the structural skeleton and optimizing carbon fiber layups for maximum rigidity and minimum weight.' },
+    { id: 'st2', text: 'Suspension', image: mechanicalSuspension.src, desc: "Engineering vehicle dynamics through advanced geometry, shock absorber tuning, and tire interface optimization." },
+    { id: 'st3', text: 'Aerodynamics', image: mechanicalAerodynamics.src, desc: "Utilizing CFD and wind tunnel testing to maximize downforce across the technical car outline." },
+    { id: 'st4', text: 'Drivetrain', image: mechanicalDrivetrain.src, desc: "Developing high-efficiency power transmission systems to deliver torque precisely to the wheels." },
+    { id: 'st5', text: 'Powertrain - HV', image: powertrain1.src, desc: "Engineering the battery pack and power distribution systems with safety and efficiency at the core." },
+    { id: 'st6', text: 'Vehicle Dynamics', image: vehicledynamics1.src, desc: "Implementing control algorithms and simulating behavior to push the limits of track performance." },
+    { id: 'st7', text: 'Electronics', image: electronics1.src, desc: "Designing custom PCBs and real-time firmware for low-latency system communication." },
+    { id: 'st8', text: 'Driverless', image: driverlessPerception.src, desc: "Developing the autonomous stack including perception, SLAM, and path planning for robotic racing." },
+    { id: 'st9', text: 'IT & Software', image: it1.src, desc: "Building digital infrastructure and telemetry systems to support real-time engineering decisions." },
+    { id: 'st10', text: 'Operations', image: operationsGraphic.src, desc: "Managing logistics, sponsorships, and team coordination to ensure seamless racing program execution." }
 ];
 
 const getSubteamLink = (subteamId: string) => {
