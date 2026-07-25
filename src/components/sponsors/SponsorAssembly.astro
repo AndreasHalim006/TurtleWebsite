@@ -113,7 +113,7 @@ const tierCount = tiers.length;
     <!-- Fallback Stage -->
     <div class="fallback-stage hidden max-lg:block motion-reduce:block w-full">
       {tiers.map((tier, index) => {
-        const isPlatinum = index === 0 || tier.id === 'platinum';
+        const isPlatinum = tier.id === 'platinum' || tier.title.toLowerCase().includes('platinum');
         return (
           <section id={`tier-${tier.id}`} class="fallback-tier border-b border-white/12 py-8 first:pt-2" aria-labelledby={`tier-title-${tier.id}`}>
             <header class="flex min-h-[72px] items-center gap-4 pb-5">
@@ -125,7 +125,7 @@ const tierCount = tiers.length;
 
             <div class:list={[
               'fallback-logo-grid grid w-full gap-y-4 pb-4',
-              isPlatinum ? 'grid-cols-1 gap-y-5' : 'grid-cols-2 gap-x-3',
+              isPlatinum ? 'grid-cols-1 gap-y-4' : 'grid-cols-2 gap-x-3',
               !isPlatinum && tier.sponsors.length >= 18 && 'is-dense'
             ]}>
               {tier.sponsors.map((sponsor, sponsorIndex) => {
@@ -134,8 +134,8 @@ const tierCount = tiers.length;
                   <>
                     <img
                       class:list={[
-                        'mobile-sponsor-logo relative z-[2] block object-contain filter brightness-0 invert opacity-95 transition-opacity duration-300',
-                        isPlatinum ? 'h-20 sm:h-28 max-h-24 w-auto max-w-[85%]' : ''
+                        'mobile-sponsor-logo relative z-[2] block object-contain',
+                        isPlatinum ? '!w-[78%] !h-[70%] !max-w-[80%] !max-h-[70%]' : ''
                       ]}
                       src={sponsor.logo}
                       alt={sponsor.alt}
@@ -151,8 +151,8 @@ const tierCount = tiers.length;
                 );
 
                 const cellClasses = isPlatinum
-                  ? 'mobile-sponsor-hex relative flex items-center justify-center min-h-[110px] sm:min-h-[130px] p-6 rounded-xl bg-white/[0.03] border border-white/10 shadow-sm transition-colors duration-300 active:bg-white/[0.08]'
-                  : 'mobile-sponsor-hex relative grid place-items-center min-h-[80px] p-3 rounded-lg bg-white/[0.02] border border-white/5';
+                  ? 'mobile-sponsor-hex relative grid place-items-center min-h-[110px] sm:min-h-[130px] p-4'
+                  : 'mobile-sponsor-hex relative grid place-items-center min-h-[80px] p-2';
 
                 return sponsor.website ? (
                   <a
