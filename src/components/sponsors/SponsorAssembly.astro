@@ -533,6 +533,54 @@ const tierCount = tiers.length;
       return clamp(Math.min(maxScale, boxW / clusterW, boxH / clusterH), 0.3, maxScale);
     };
 
+    const PLATINUM_PATTERN = [
+      [0, 0],     // Center (circuit)
+      [0, -1],    // Center Top (dSPACE)
+      [0, 1],     // Center Bottom (EY)
+      [-1, -0.5], // Left Top (TELSAT)
+      [-1, 0.5],  // Left Bottom (SUNLIGHT)
+      [1, -0.5],  // Right Top (FRIGO STAHL)
+      [1, 0.5],   // Right Bottom (Palaplast)
+    ] as const;
+
+    const getPlatinumLayout = (count: number) => {
+      if (count < 1) return null;
+      const pattern = PLATINUM_PATTERN.slice(0, count);
+      const columns = pattern.map(([col]) => col);
+      const rows = pattern.map(([, row]) => row);
+      const minColumn = Math.min(...columns);
+      const maxColumn = Math.max(...columns);
+      const minRow = Math.min(...rows);
+      const maxRow = Math.max(...rows);
+      const columnSpan = (maxColumn - minColumn) * 0.75;
+      const rowSpan = maxRow - minRow;
+      const gap = clamp(window.innerWidth / 160, 8, 14);
+
+      const boxLeft = window.innerWidth * 0.32;
+      const boxRight = window.innerWidth * 0.94;
+      const boxWidth = boxRight - boxLeft;
+      const boxHeight = window.innerHeight * 0.88;
+
+      const widthScale = (boxWidth - columnSpan * gap) / (geometry.w * (columnSpan + 1));
+      const heightScale = (boxHeight - rowSpan * gap * 0.8660254) / (geometry.h * (rowSpan + 1));
+      const scale = clamp(Math.min(1.85, widthScale, heightScale), 0.5, 1.85);
+
+      const pitchWidth = geometry.w * scale + gap;
+      const pitchHeight = pitchWidth * 0.8660254;
+      const targetCenterX = boxLeft + boxWidth / 2;
+      const targetCenterY = window.innerHeight / 2;
+      const patternCenterColumn = (minColumn + maxColumn) / 2;
+      const patternCenterRow = (minRow + maxRow) / 2;
+
+      return {
+        scale,
+        centers: pattern.map(([column, row]) => ({
+          x: targetCenterX + (column - patternCenterColumn) * 0.75 * pitchWidth,
+          y: targetCenterY + (row - patternCenterRow) * pitchHeight,
+        })),
+      };
+    };
+
     const ACADEMIA_PATTERN = [
       [0, 0],
       [-1, -0.5], [1, -0.5],
@@ -613,8 +661,13 @@ const tierCount = tiers.length;
 
       const selectedGeometry = slots.slice(0, tier.sponsors.length);
       const selected = activePool.slice(0, tier.sponsors.length);
-      const academiaLayout = tier.id === 'academia' ? getAcademiaLayout(selectedGeometry.length) : null;
-      const activeScale = academiaLayout?.scale ?? getActiveScale(selectedGeometry);
+      const isPlatinumTier = tier.id === 'platinum' || tier.title.toLowerCase().includes('platinum');
+      const customLayout = isPlatinumTier
+        ? getPlatinumLayout(selectedGeometry.length)
+        : tier.id === 'academia'
+        ? getAcademiaLayout(selectedGeometry.length)
+        : null;
+      const activeScale = customLayout?.scale ?? getActiveScale(selectedGeometry);
       const previous = [...activeSlots];
 
       if (previous.length) {
@@ -660,7 +713,7 @@ const tierCount = tiers.length;
           
           const cx = rawX + geometry.w / 2;
           const cy = rawY + geometry.h / 2;
-          const customCenter = academiaLayout?.centers[slotIndex];
+          const customCenter = customLayout?.centers[slotIndex];
           const newCx = customCenter?.x ?? targetCx + (cx - rawCx) * activeScale;
           const newCy = customCenter?.y ?? targetCy + (cy - rawCy) * activeScale;
           
