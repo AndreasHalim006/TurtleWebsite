@@ -72,7 +72,17 @@ const pageTitle = "Garage | ARISTURTLE";
         section.querySelector<HTMLButtonElement>('.car-mobile-toggle')?.setAttribute('aria-expanded', String(open));
       });
       document.querySelectorAll('.car-nav-link').forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${id}`));
-      if (scroll) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      
+      if (scroll) {
+        requestAnimationFrame(() => {
+          void target.offsetHeight;
+          const targetTop = target.getBoundingClientRect().top + window.scrollY - 12;
+          window.scrollTo({
+            top: Math.max(0, targetTop),
+            behavior: 'smooth'
+          });
+        });
+      }
     } else if (scroll) {
       const lenis = (window as any).lenis;
       if (lenis) {
@@ -84,11 +94,17 @@ const pageTitle = "Garage | ARISTURTLE";
   };
 
   carSections.forEach((section) => {
-    section.querySelector<HTMLButtonElement>('.car-mobile-toggle')?.addEventListener('click', () => {
-      const alreadyOpen = section.classList.contains('is-mobile-open');
-      if (alreadyOpen) return;
-      history.replaceState(null, '', `#${section.id}`);
-      scrollToCar(section.id, true);
+    const toggleBtn = section.querySelector<HTMLButtonElement>('.car-mobile-toggle');
+    toggleBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isOpen = section.classList.contains('is-mobile-open');
+      if (isOpen) {
+        section.classList.remove('is-mobile-open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        history.replaceState(null, '', `#${section.id}`);
+        scrollToCar(section.id, true);
+      }
     });
     const gallery = section.querySelector<HTMLElement>('.car-gallery');
     gallery?.querySelector<HTMLButtonElement>('.car-gallery-toggle')?.addEventListener('click', (event) => {

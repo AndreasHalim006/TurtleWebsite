@@ -127,12 +127,11 @@ const pageTitle = "Seasons | ARISTURTLE";
       }
 
       requestAnimationFrame(() => {
-        const headerOffset = 90;
-        const elementPosition = target.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - headerOffset;
+        void target.offsetHeight;
+        const targetTop = target.getBoundingClientRect().top + window.scrollY - 12;
 
         window.scrollTo({
-          top: Math.max(0, offsetPosition),
+          top: Math.max(0, targetTop),
           behavior: 'smooth'
         });
 
