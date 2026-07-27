@@ -10,7 +10,7 @@ const sponsors = defineCollection({
       category: z.string(),
       order: z.number(),
       logo: z.string(),
-      website: z.string().url().optional(),
+      website: z.string().optional(),
       alt: z.string().optional(),
       active: z.boolean().default(true),
     }),
