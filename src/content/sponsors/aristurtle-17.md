@@ -2,8 +2,8 @@
 name: "aristurtle"
 category: "bronze"
 order: 8
-logo: "https://aristurtle.gr/wp-content/uploads/2022/10/formaction.png"
-website: "https://aristurtle.gr/wp-content/uploads/2022/10/formaction.png"
+logo: "/assets/sponsors/formaction.png"
+website: "/assets/sponsors/formaction.png"
 alt: "Partner Logo"
 active: false
 ---

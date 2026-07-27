@@ -2,8 +2,8 @@
 name: "aristurtle"
 category: "food-suppliers"
 order: 7
-logo: "https://aristurtle.gr/wp-content/uploads/2024/08/sklavenitis.png"
-website: "https://aristurtle.gr/wp-content/uploads/2024/08/sklavenitis.png"
+logo: "/assets/sponsors/sklavenitis.png"
+website: "/assets/sponsors/sklavenitis.png"
 alt: "Partner Logo"
 active: false
 ---

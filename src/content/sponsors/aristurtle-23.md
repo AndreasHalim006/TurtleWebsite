@@ -2,8 +2,8 @@
 name: "aristurtle"
 category: "supporters"
 order: 8
-logo: "https://aristurtle.gr/wp-content/uploads/2022/10/hubertetoio.png"
-website: "https://aristurtle.gr/wp-content/uploads/2022/10/hubertetoio.png"
+logo: "/assets/sponsors/hubertetoio.png"
+website: "/assets/sponsors/hubertetoio.png"
 alt: "Partner Logo"
 active: false
 ---

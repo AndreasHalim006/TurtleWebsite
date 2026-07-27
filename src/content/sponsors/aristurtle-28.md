@@ -2,8 +2,8 @@
 name: "aristurtle"
 category: "supporters"
 order: 14
-logo: "https://aristurtle.gr/wp-content/uploads/2022/10/eleyuerioy.png"
-website: "https://aristurtle.gr/wp-content/uploads/2022/10/eleyuerioy.png"
+logo: "/assets/sponsors/eleyuerioy.png"
+website: "/assets/sponsors/eleyuerioy.png"
 alt: "Partner Logo"
 active: false
 ---

@@ -2,8 +2,8 @@
 name: "aristurtle"
 category: "supporters"
 order: 16
-logo: "https://aristurtle.gr/wp-content/uploads/2024/05/murata.png"
-website: "https://aristurtle.gr/wp-content/uploads/2024/05/murata.png"
+logo: "/assets/sponsors/murata.png"
+website: "/assets/sponsors/murata.png"
 alt: "Partner Logo"
 active: false
 ---
