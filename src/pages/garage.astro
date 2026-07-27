@@ -66,16 +66,12 @@ const pageTitle = "Garage | ARISTURTLE";
     if (!target?.classList.contains('car-section')) return;
 
     if (isMobileGarage()) {
-      carSections.forEach((section) => {
-        const open = section === target;
-        section.classList.toggle('is-mobile-open', open);
-        section.querySelector<HTMLButtonElement>('.car-mobile-toggle')?.setAttribute('aria-expanded', String(open));
-      });
+      target.classList.add('is-mobile-open');
+      target.querySelector<HTMLButtonElement>('.car-mobile-toggle')?.setAttribute('aria-expanded', 'true');
       document.querySelectorAll('.car-nav-link').forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${id}`));
       
       if (scroll) {
         requestAnimationFrame(() => {
-          void target.offsetHeight;
           const targetTop = target.getBoundingClientRect().top + window.scrollY - 12;
           window.scrollTo({
             top: Math.max(0, targetTop),

@@ -104,11 +104,8 @@ const pageTitle = "Seasons | ARISTURTLE";
   };
 
   const openSeasonMobile = (targetSection: HTMLElement) => {
-    seasonSections.forEach((section) => {
-      const isOpen = section === targetSection;
-      section.classList.toggle('is-mobile-open', isOpen);
-      section.querySelector<HTMLButtonElement>('.season-mobile-toggle')?.setAttribute('aria-expanded', String(isOpen));
-    });
+    targetSection.classList.add('is-mobile-open');
+    targetSection.querySelector<HTMLButtonElement>('.season-mobile-toggle')?.setAttribute('aria-expanded', 'true');
   };
 
   const scrollToSeason = (id: string, updateUrl = true) => {
@@ -127,7 +124,6 @@ const pageTitle = "Seasons | ARISTURTLE";
       }
 
       requestAnimationFrame(() => {
-        void target.offsetHeight;
         const targetTop = target.getBoundingClientRect().top + window.scrollY - 12;
 
         window.scrollTo({
