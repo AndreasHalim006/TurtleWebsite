@@ -19,9 +19,9 @@ const pageTitle = "Seasons | ARISTURTLE";
   </div>
 
   <div class="bg-brand-midnight w-full min-h-screen text-white relative z-10 overflow-x-clip">
-    {/* Season Selector Sub-Navbar (Static) */}
-    <div class="relative w-full bg-brand-midnight border-b border-white/10">
-      <div class="max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-start md:justify-center gap-8 md:gap-12 py-4 overflow-x-auto hide-scrollbar">
+    {/* Season Selector Sub-Navbar (Sticky) */}
+    <div class="sticky top-0 z-40 w-full bg-brand-midnight/95 backdrop-blur-md border-b border-white/10">
+      <div class="max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-start md:justify-center gap-6 md:gap-12 py-3 overflow-x-auto hide-scrollbar">
         {seasons.map((season) => (
           <a 
             href={`#${season.data.year}`} 
@@ -80,36 +80,99 @@ const pageTitle = "Seasons | ARISTURTLE";
 <script>
   import { gsap } from 'gsap';
 
-  const mobileSeasonSections = Array.from(document.querySelectorAll<HTMLElement>('.season-section'));
-  const mobileSeasons = window.matchMedia('(max-width: 1023px)').matches;
+  const seasonSections = Array.from(document.querySelectorAll<HTMLElement>('.season-section'));
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.season-nav-link');
+  const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
+  let isProgrammaticScrolling = false;
 
-  const scrollToSeason = (id: string, scroll = true) => {
+  const updateActiveNavLink = (activeId: string) => {
+    navLinks.forEach((link) => {
+      const isMatch = link.getAttribute('href') === `#${activeId}`;
+      link.classList.toggle('text-[--brand-orange]', isMatch);
+      link.classList.toggle('text-gray-400', !isMatch);
+      if (isMatch && link.parentElement) {
+        const container = link.parentElement;
+        const linkLeft = link.offsetLeft;
+        const linkWidth = link.offsetWidth;
+        const containerWidth = container.offsetWidth;
+        container.scrollTo({
+          left: linkLeft - containerWidth / 2 + linkWidth / 2,
+          behavior: 'smooth'
+        });
+      }
+    });
+  };
+
+  const openSeasonMobile = (targetSection: HTMLElement) => {
+    seasonSections.forEach((section) => {
+      const isOpen = section === targetSection;
+      section.classList.toggle('is-mobile-open', isOpen);
+      section.querySelector<HTMLButtonElement>('.season-mobile-toggle')?.setAttribute('aria-expanded', String(isOpen));
+    });
+  };
+
+  const scrollToSeason = (id: string, updateUrl = true) => {
     if (!id) return;
     const target = document.getElementById(id);
     if (!target?.classList.contains('season-section')) return;
 
-    if (mobileSeasons) {
-      mobileSeasonSections.forEach((section) => {
-        const open = section === target;
-        section.classList.toggle('is-mobile-open', open);
-        section.querySelector<HTMLButtonElement>('.season-mobile-toggle')?.setAttribute('aria-expanded', String(open));
+    isProgrammaticScrolling = true;
+
+    if (isMobile()) {
+      openSeasonMobile(target);
+      updateActiveNavLink(id);
+
+      if (updateUrl) {
+        history.replaceState(null, '', `#${id}`);
+      }
+
+      requestAnimationFrame(() => {
+        const headerOffset = 90;
+        const elementPosition = target.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - headerOffset;
+
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: 'smooth'
+        });
+
+        setTimeout(() => {
+          isProgrammaticScrolling = false;
+        }, 500);
       });
-      if (scroll) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-    } else if (scroll) {
+    } else {
+      updateActiveNavLink(id);
+      if (updateUrl) {
+        history.replaceState(null, '', `#${id}`);
+      }
       const lenis = (window as any).lenis;
       if (lenis) {
-        lenis.scrollTo(target, { offset: -100, duration: 1.2 });
+        lenis.scrollTo(target, { offset: -100, duration: 1.0 });
       } else {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const headerOffset = 100;
+        const elementPosition = target.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({
+          top: Math.max(0, elementPosition - headerOffset),
+          behavior: 'smooth'
+        });
       }
+      setTimeout(() => {
+        isProgrammaticScrolling = false;
+      }, 800);
     }
   };
 
-  mobileSeasonSections.forEach((section) => {
-    section.querySelector<HTMLButtonElement>('.season-mobile-toggle')?.addEventListener('click', () => {
-      if (section.classList.contains('is-mobile-open')) return;
-      history.replaceState(null, '', `#${section.id}`);
-      scrollToSeason(section.id, true);
+  seasonSections.forEach((section) => {
+    const toggleBtn = section.querySelector<HTMLButtonElement>('.season-mobile-toggle');
+    toggleBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isOpen = section.classList.contains('is-mobile-open');
+      if (isOpen) {
+        section.classList.remove('is-mobile-open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        scrollToSeason(section.id, true);
+      }
     });
   });
 
@@ -122,22 +185,45 @@ const pageTitle = "Seasons | ARISTURTLE";
         const target = document.getElementById(id);
         if (target) {
           e.preventDefault();
-          history.pushState(null, '', href);
           scrollToSeason(id, true);
         }
       }
     });
   });
 
-  const activateSeasonHash = () => {
+  const handleInitialHash = () => {
     if (location.hash && location.hash.length > 1) {
       const id = location.hash.slice(1);
-      setTimeout(() => scrollToSeason(id, true), 200);
+      setTimeout(() => {
+        scrollToSeason(id, false);
+      }, 150);
     }
   };
 
-  window.addEventListener('hashchange', activateSeasonHash);
-  activateSeasonHash();
+  handleInitialHash();
+
+  if (seasonSections.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isProgrammaticScrolling) return;
+
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            if (id) {
+              updateActiveNavLink(id);
+            }
+          }
+        });
+      },
+      {
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0
+      }
+    );
+
+    seasonSections.forEach((section) => observer.observe(section));
+  }
 
   const previewImg = document.getElementById('global-member-preview') as HTMLImageElement;
   const members = document.querySelectorAll('.member-item');
@@ -162,48 +248,40 @@ const pageTitle = "Seasons | ARISTURTLE";
   };
 
   if (desktopFine && previewImg && members.length > 0) {
-    // Set initial state: centered on cursor coords, invisible
     gsap.set(previewImg, { xPercent: -50, yPercent: -50, scale: 0, autoAlpha: 0 });
 
-    // Use quickTo for performant mouse tracking
-    const xTo = gsap.quickTo(previewImg, "x", { duration: 0.4, ease: "power3" });
-    const yTo = gsap.quickTo(previewImg, "y", { duration: 0.4, ease: "power3" });
+    const xTo = gsap.quickTo(previewImg, 'x', { duration: 0.4, ease: 'power3' });
+    const yTo = gsap.quickTo(previewImg, 'y', { duration: 0.4, ease: 'power3' });
 
     let isHovering = false;
 
-    window.addEventListener("mousemove", (e) => {
+    window.addEventListener('mousemove', (e) => {
       if (isHovering) {
         xTo(e.clientX);
         yTo(e.clientY);
       }
     });
 
-    members.forEach(member => {
-      member.addEventListener("mouseenter", (e: Event) => {
+    members.forEach((member) => {
+      member.addEventListener('mouseenter', (e: Event) => {
         const mouseEvent = e as MouseEvent;
         isHovering = true;
-        
-        // Update image source only if it changed to avoid decode lag
+
         const imgUrl = member.getAttribute('data-image');
         if (imgUrl && previewImg.getAttribute('src') !== imgUrl) {
           previewImg.src = imgUrl;
         }
-        
-        // Snap position so it doesn't fly in from previous location
+
         gsap.set(previewImg, { x: mouseEvent.clientX, y: mouseEvent.clientY });
-
-        // Animate in with overwrite "auto" to only kill conflicting opacity/scale tweens, leaving x/y intact
-        gsap.to(previewImg, { scale: 1, autoAlpha: 1, duration: 0.4, ease: "power3.out", overwrite: "auto" });
-        gsap.to(member, { x: -10, color: '#fff', duration: 0.3, ease: "power2.out", overwrite: "auto" });
+        gsap.to(previewImg, { scale: 1, autoAlpha: 1, duration: 0.4, ease: 'power3.out', overwrite: 'auto' });
+        gsap.to(member, { x: -10, color: '#fff', duration: 0.3, ease: 'power2.out', overwrite: 'auto' });
       });
 
-      member.addEventListener("mouseleave", () => {
+      member.addEventListener('mouseleave', () => {
         isHovering = false;
-        // Animate out
-        gsap.to(previewImg, { scale: 0, autoAlpha: 0, duration: 0.3, ease: "power2.inOut", overwrite: "auto" });
-        gsap.to(member, { x: 0, color: '', duration: 0.3, ease: "power2.inOut", overwrite: "auto" });
+        gsap.to(previewImg, { scale: 0, autoAlpha: 0, duration: 0.3, ease: 'power2.inOut', overwrite: 'auto' });
+        gsap.to(member, { x: 0, color: '', duration: 0.3, ease: 'power2.inOut', overwrite: 'auto' });
       });
-
     });
   }
 
@@ -223,69 +301,4 @@ const pageTitle = "Seasons | ARISTURTLE";
       }, 2000);
     });
   });
-
-  // ScrollSpy for updating URL hash based on visible season
-  const seasonSections = mobileSeasonSections;
-  const navLinks = document.querySelectorAll('.season-nav-link');
-  
-  if (seasonSections.length > 0) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          if (id) {
-            // Update URL hash without jumping
-            history.replaceState(null, '', `#${id}`);
-            
-            // Highlight active link in the sub-navbar
-            navLinks.forEach(link => {
-              if (link.getAttribute('href') === `#${id}`) {
-                link.classList.add('text-[--brand-orange]');
-                link.classList.remove('text-gray-400');
-              } else {
-                link.classList.remove('text-[--brand-orange]');
-                link.classList.add('text-gray-400');
-              }
-            });
-            
-            // Auto-scroll the nav container to keep active link in view
-            const activeLink = document.querySelector(`.season-nav-link[href="#${id}"]`);
-            if (activeLink) {
-              activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
-          }
-          
-          // Preload images for the members of this season so the hover effect is instant
-          if (desktopFine && !entry.target.hasAttribute('data-preloaded')) {
-            const membersInSeason = entry.target.querySelectorAll('.member-item');
-            
-            // Create a hidden container to force image decoding
-            let hiddenContainer = document.getElementById('preload-container');
-            if (!hiddenContainer) {
-              hiddenContainer = document.createElement('div');
-              hiddenContainer.id = 'preload-container';
-              hiddenContainer.style.display = 'none';
-              document.body.appendChild(hiddenContainer);
-            }
-
-            membersInSeason.forEach(member => {
-              const imgUrl = member.getAttribute('data-image');
-              if (imgUrl && imgUrl !== '/favicon.svg') {
-                const img = new Image();
-                img.src = imgUrl;
-                // Appending to DOM forces the browser to decode the image, eliminating lag
-                hiddenContainer.appendChild(img);
-              }
-            });
-            entry.target.setAttribute('data-preloaded', 'true');
-          }
-        }
-      });
-    }, {
-      rootMargin: '-30% 0px -60% 0px', // Triggers when element is near the middle/top of the viewport
-      threshold: 0
-    });
-
-    seasonSections.forEach(section => observer.observe(section));
-  }
 </script>
