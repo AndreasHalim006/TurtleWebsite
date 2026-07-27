@@ -7,15 +7,26 @@ interface Props {
 
 const { season, isInitial = false } = Astro.props;
 const { title, year, heroImage, departments } = season.data;
+
+const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+
+const resolveAssetUrl = (url?: string) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+  return `${baseUrl}${cleanPath}`;
+};
+
+const resolvedHeroImage = resolveAssetUrl(heroImage);
 ---
 
 <section class="season-content w-full flex flex-col relative lg:pt-0">
   
   {/* Hero Image & Name */}
   <div class="relative w-full h-[50vh] lg:h-[80vh] flex items-center justify-center overflow-hidden">
-    {heroImage ? (
+    {resolvedHeroImage ? (
       <img 
-        src={heroImage} 
+        src={resolvedHeroImage} 
         alt={`${year} Team`} 
         width="1600"
         height="1000"
@@ -53,15 +64,17 @@ const { title, year, heroImage, departments } = season.data;
           </div>
           <div class="lg:col-span-2">
             <ul class="flex flex-col w-full">
-              {dept.members.map((member: any) => (
-                <li 
-                  class="member-item grid grid-cols-[6.5rem_minmax(0,1fr)] items-start gap-4 group font-jura w-full border-b border-white/5 py-4 hover:border-[--brand-orange]/30 transition-colors cursor-pointer relative lg:flex lg:flex-row lg:justify-between lg:items-end"
-                  data-image={member.image || heroImage || '/favicon.svg'}
-                  data-email={member.email}
-                >
-                  <img
-                    src={member.image || heroImage || '/favicon.svg'}
-                    alt={member.image ? `${member.name} portrait` : ''}
+              {dept.members.map((member: any) => {
+                const memberImg = resolveAssetUrl(member.image) || resolvedHeroImage || `${baseUrl}favicon.svg`;
+                return (
+                  <li 
+                    class="member-item grid grid-cols-[6.5rem_minmax(0,1fr)] items-start gap-4 group font-jura w-full border-b border-white/5 py-4 hover:border-[--brand-orange]/30 transition-colors cursor-pointer relative lg:flex lg:flex-row lg:justify-between lg:items-end"
+                    data-image={memberImg}
+                    data-email={member.email}
+                  >
+                    <img
+                      src={memberImg}
+                      alt={member.image ? `${member.name} portrait` : ''}
                     width="520"
                     height="650"
                     loading="lazy"
