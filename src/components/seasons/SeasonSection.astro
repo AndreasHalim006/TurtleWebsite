@@ -86,10 +86,15 @@ const resolvedHeroImage = resolveAssetUrl(heroImage);
                       <span class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-300 group-hover:text-white transition-colors uppercase leading-tight">{member.name}</span>
                     </div>
                     <div class="flex min-w-0 flex-col text-left lg:text-right mt-2 lg:mt-0">
-                      <span class="text-xs sm:text-sm lg:text-base font-bold tracking-[0.16em] lg:tracking-[0.2em] text-[--brand-orange] uppercase break-words">{member.role || 'Position not listed'}</span>
-                      <span class="email-text text-[0.68rem] sm:text-xs tracking-[0.08em] sm:tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors mt-2 lg:mt-0 break-all uppercase">{member.email || 'Email not listed'}</span>
+                      {member.role && (
+                        <span class="text-xs sm:text-sm lg:text-base font-bold tracking-[0.16em] lg:tracking-[0.2em] text-[--brand-orange] uppercase break-words">{member.role}</span>
+                      )}
+                      {member.email && (
+                        <span class="email-text text-[0.68rem] sm:text-xs tracking-[0.08em] sm:tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors mt-2 lg:mt-0 break-all uppercase">{member.email}</span>
+                      )}
                     </div>
-                  </li>
+                  </div>
+                </li>
                 );
               })}
             </ul>
