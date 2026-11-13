@@ -1,0 +1,13 @@
+---
+// Visible, intentional placeholder block. Keep in sync with src/data/placeholders.md.
+interface Props {
+  label: string;
+  ratio?: string;
+  class?: string;
+}
+const { label, ratio = '16 / 9', class: className = '' } = Astro.props;
+---
+
+<div class:list={['ph-box', className]} style={`aspect-ratio: ${ratio};`} role="img" aria-label={`Placeholder: ${label}`}>
+  <span>Placeholder<br />{label}</span>
+</div>

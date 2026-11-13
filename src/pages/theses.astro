@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { contact } from '../data/site';
+
+// TODO(content): replace with real Bachelor / Master / Diploma theses done with the team.
+const theses = [
+	{ title: 'Placeholder thesis title', type: 'Diploma thesis', year: '20XX', author: 'Student Name', area: 'Powertrain' },
+	{ title: 'Placeholder thesis title', type: 'Diploma thesis', year: '20XX', author: 'Student Name', area: 'Driverless' },
+	{ title: 'Placeholder thesis title', type: 'Bachelor thesis', year: '20XX', author: 'Student Name', area: 'Mechanical' },
+];
+---
+
+<BaseLayout title="Theses | ARISTURTLE" description="Diploma, Master and Bachelor theses completed in collaboration with the Aristurtle team.">
+	<PageHero
+		eyebrow="Theses"
+		title="research that drives the car"
+		subtitle="Diploma, Master and Bachelor theses completed in collaboration with the team."
+	/>
+
+	<section class="section-pad bg-void">
+		<div class="container-site">
+			<ul class="flex flex-col">
+				{theses.map((t) => (
+					<li class="grid gap-3 border-b border-line py-8 md:grid-cols-[1fr_auto] md:items-center" data-reveal>
+						<div>
+							<p class="eyebrow">{t.type} · {t.year} · {t.area}</p>
+							<h2 class="h-card mt-3">{t.title}</h2>
+							<p class="mt-2 text-sm text-muted">{t.author}</p>
+						</div>
+						<span class="ph-box !px-5 !py-3">PDF placeholder</span>
+					</li>
+				))}
+			</ul>
+			<p class="lead mt-14" data-reveal>
+				Interested in writing your thesis with Aristurtle? <a class="link-inline" href={`mailto:${contact.email}?subject=Thesis`}>Get in touch</a>.
+			</p>
+		</div>
+	</section>
+</BaseLayout>

@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { subdivisions } from '../data/site';
+
+const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
+const asset = (p?: string) => (p ? (p.startsWith('http') ? p : `${baseUrl}${p.replace(/^\//, '')}`) : undefined);
+
+const seasons = (await getCollection('seasons')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title="Team | ARISTURTLE" description="Meet the Aristurtle team and its subdivisions.">
+	<PageHero
+		eyebrow="Team"
+		title="the people behind the car"
+		subtitle="Students from many majors, working across eight subdivisions to build one race car."
+	/>
+
+	<section class="section-pad bg-void" aria-labelledby="subdivisions-title">
+		<div class="container-site">
+			<h2 id="subdivisions-title" class="h-section" data-reveal>subdivisions</h2>
+			<div class="mt-14 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
+				{subdivisions.map((s) => (
+					<article class="flex flex-col bg-void" data-reveal>
+						<div class="aspect-[4/3] overflow-hidden bg-panel-2">
+							<Image src={s.image} alt="" class="h-full w-full object-cover" widths={[400, 700]} sizes="(max-width: 640px) 100vw, 25vw" loading="lazy" />
+						</div>
+						<div class="flex flex-col gap-3 p-6">
+							<h3 class="h-card !text-xl">{s.name}</h3>
+							<p class="text-sm text-muted">{s.description}</p>
+						</div>
+					</article>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="section-pad border-t border-line bg-panel" aria-labelledby="members-title">
+		<div class="container-site">
+			<h2 id="members-title" class="h-section" data-reveal>members by season</h2>
+
+			<div class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Select season" data-season-tabs>
+				{seasons.map((s, i) => (
+					<button type="button" class="season-tab btn !min-h-11 !px-5 !py-2" data-season={s.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+						{s.data.year}
+					</button>
+				))}
+			</div>
+
+			{seasons.map((s, i) => (
+				<div class="mt-12" data-season-panel={s.id} hidden={i !== 0}>
+					{s.data.heroImage && (
+						<img src={asset(s.data.heroImage)} alt={`Team ${s.data.year}`} class="mb-12 aspect-[16/7] w-full object-cover" loading="lazy" decoding="async" />
+					)}
+					{(s.data.departments ?? []).map((d) => (
+						<div class="mb-14">
+							<h3 class="eyebrow mb-6">{d.name}</h3>
+							<ul class="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-4 xl:grid-cols-6">
+								{d.members.map((m) => (
+									<li class="flex flex-col gap-3">
+										<div class="aspect-[3/4] overflow-hidden bg-panel-2">
+											{m.image
+												? <img src={asset(m.image)} alt={m.name} class="h-full w-full object-cover" loading="lazy" decoding="async" />
+												: <div class="ph-box h-full w-full">Photo</div>}
+										</div>
+										<div>
+											<p class="font-bold leading-tight">{m.name}</p>
+											{m.role && <p class="mt-1 text-xs uppercase tracking-[0.12em] text-muted">{m.role}</p>}
+										</div>
+									</li>
+								))}
+							</ul>
+						</div>
+					))}
+				</div>
+			))}
+		</div>
+	</section>
+
+	<section class="section-pad border-t border-line bg-void">
+		<div class="container-site flex flex-col items-start gap-10">
+			<h2 class="h-section" data-reveal>find your place</h2>
+			<a href={href('/join')} class="btn btn--solid" data-reveal>Become a Team Member</a>
+		</div>
+	</section>
+</BaseLayout>
+
+<style is:global>
+	.season-tab[aria-pressed='true'] { background: var(--color-brand-orange); color: var(--color-void); }
+</style>
+
+<script>
+	const tabs = document.querySelectorAll<HTMLButtonElement>('.season-tab');
+	const panels = document.querySelectorAll<HTMLElement>('[data-season-panel]');
+	tabs.forEach((tab) => {
+		tab.addEventListener('click', () => {
+			tabs.forEach((t) => t.setAttribute('aria-pressed', String(t === tab)));
+			panels.forEach((p) => {
+				p.hidden = p.dataset.seasonPanel !== tab.dataset.season;
+			});
+		});
+	});
+</script>

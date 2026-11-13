@@ -1,74 +1,70 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 import { getCollection } from 'astro:content';
-import TargetCursor from '../components/reactbits/TargetCursor';
+import { contact } from '../data/site';
 
-import SponsorHero from '../components/sponsors/SponsorHero.astro';
-import SponsorAssembly from '../components/sponsors/SponsorAssembly.astro';
-import SponsorCTA from '../components/sponsors/SponsorCTA.astro';
-
-const pageGradient = ['#9FFF10', '#00F3CB'];
 const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
+const asset = (p: string) => (p.startsWith('http') ? p : `${baseUrl}${p.replace(/^\//, '')}`);
 
-const allSponsors = await getCollection('sponsors', ({ data }) => data.active === true);
-const allCategories = await getCollection('sponsorCategories');
-const sortedCategories = allCategories.sort((a, b) => a.data.order - b.data.order);
+const categories = (await getCollection('sponsorCategories')).sort((a, b) => a.data.order - b.data.order);
+const sponsors = (await getCollection('sponsors', ({ data }) => data.active === true)).sort((a, b) => a.data.order - b.data.order);
 
-const getSponsorsByCategory = (categoryKey: string) =>
-  allSponsors
-    .filter((sponsor) => sponsor.data.category === categoryKey)
-    .sort((a, b) => a.data.order - b.data.order);
-
-const tiers = sortedCategories
-  .map((category) => ({
-    id: category.data.key,
-    title: category.data.title,
-    description: category.data.description,
-    sponsors: getSponsorsByCategory(category.data.key).map((sponsor) => {
-      const rawLogo = sponsor.data.logo;
-      const logoUrl = rawLogo.startsWith('http')
-        ? rawLogo
-        : `${baseUrl}${rawLogo.startsWith('/') ? rawLogo.slice(1) : rawLogo}`;
-      return {
-        name: sponsor.data.name,
-        logo: logoUrl,
-        website: sponsor.data.website,
-        alt: sponsor.data.alt || sponsor.data.name,
-      };
-    }),
-  }))
-  .filter((tier) => tier.sponsors.length > 0);
-
-const totalSponsors = tiers.reduce((sum, tier) => sum + tier.sponsors.length, 0);
-const tierData = tiers.map((tier) => ({
-  id: tier.id,
-  title: tier.title,
-  countLabel: `${tier.sponsors.length} partners indexed`,
-  sponsors: tier.sponsors,
-}));
-const initialSponsorLogoUrls = Array.from(
-  new Set((tiers[0]?.sponsors ?? []).slice(0, 6).map((sponsor) => sponsor.logo).filter(Boolean))
-);
+const groups = categories
+	.map((c) => ({
+		key: c.data.key,
+		title: c.data.title,
+		items: sponsors.filter((s) => s.data.category === c.data.key),
+	}))
+	.filter((g) => g.items.length > 0);
 ---
 
-<BaseLayout title="ARISTURTLE | Partners" description="The official partners and sponsors supporting Aristurtle Racing Team." pageColors={pageGradient}>
-  <Fragment slot="head">
-    {initialSponsorLogoUrls.map((logo) => (
-      <link rel="preload" as="image" href={logo} fetchpriority="high" />
-    ))}
-  </Fragment>
+<BaseLayout title="Sponsors | ARISTURTLE" description="The partners and sponsors that make the Aristurtle race cars possible.">
+	<PageHero
+		eyebrow="Partners"
+		title="the partners behind the car"
+		subtitle="Our cars exist because of the companies, institutions and individuals who believe in student engineering."
+	/>
 
-  <div class="sponsors-page min-h-screen overflow-clip bg-[var(--void)] text-[var(--foreground)] selection:bg-[var(--brand-orange)] selection:text-[var(--brand-emerald)] max-md:overflow-visible">
-    <TargetCursor client:media="(min-width: 1024px) and (pointer: fine) and (prefers-reduced-motion: no-preference)" targetSelector=".honeycomb-slot.is-active" spinDuration={2.6} hoverDuration={0.18} />
-    <div class="relative w-full h-[156svh] lg:h-[200svh] -mb-[78svh] lg:-mb-[100svh] pointer-events-none">
-      <div class="sticky top-0 w-full h-[78svh] lg:h-[100svh] z-0 pointer-events-auto">
-        <SponsorHero totalSponsors={totalSponsors} totalTiers={tiers.length} />
-      </div>
-    </div>
-    
-    <div class="relative z-10 bg-[var(--void)] w-full">
-      <SponsorAssembly tiers={tierData} />
-      <SponsorCTA />
-    </div>
-  </div>
+	{groups.map((g, i) => (
+		<section class="border-b border-line py-16 md:py-24" style={`background:${i % 2 ? 'var(--color-panel)' : 'var(--color-void)'}`} aria-labelledby={`cat-${g.key}`}>
+			<div class="container-site">
+				<h2 id={`cat-${g.key}`} class="h-section !text-[clamp(1.8rem,3.5vw,3rem)]" data-reveal>{g.title.toLowerCase()}</h2>
+				<ul class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+					{g.items.map((s) => (
+						<li class="aspect-[3/2]" data-reveal>
+							{(() => {
+								const img = (
+									<img
+										src={asset(s.data.logo)}
+										alt={s.data.alt || `${s.data.name} logo`}
+										class="max-h-full max-w-full object-contain"
+										loading="lazy"
+										decoding="async"
+									/>
+								);
+								return s.data.website ? (
+									<a href={s.data.website} target="_blank" rel="noopener noreferrer" aria-label={s.data.name} class="flex h-full w-full items-center justify-center bg-[#F9F8F6] p-5 transition-opacity duration-500 hover:opacity-80">{img}</a>
+								) : (
+									<div class="flex h-full w-full items-center justify-center bg-[#F9F8F6] p-5">{img}</div>
+								);
+							})()}
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+	))}
+
+	<section class="section-pad bg-panel" aria-labelledby="partner-cta">
+		<div class="container-site flex flex-col items-start gap-8">
+			<h2 id="partner-cta" class="h-section" data-reveal>become a partner</h2>
+			<p class="lead" data-reveal>Join the companies that support the next generation of engineers. Get in touch and we will send you our sponsorship package.</p>
+			<div class="flex flex-wrap gap-4" data-reveal>
+				<a href={`mailto:${contact.email}?subject=Partnership`} class="btn btn--solid">Become a Partner</a>
+				<a href={href('/sponsor-portal')} class="btn">Sponsor Portal</a>
+			</div>
+		</div>
+	</section>
 </BaseLayout>

@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { Image } from 'astro:assets';
+import { cars } from '../data/cars';
+
+const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electric');
+---
+
+<BaseLayout title="Cars | ARISTURTLE" description="The Aristurtle race cars, from Electra (2015) to Calypso (2024).">
+	<PageHero
+		eyebrow="The garage"
+		title="get to know our vehicles"
+		subtitle="Every car we have built, from our first electric prototype to our latest driverless-capable machine."
+	/>
+
+	<section class="border-b border-line bg-void py-8" aria-label="Choose car">
+		<div class="container-site flex flex-wrap items-center gap-3">
+			<p class="eyebrow mr-4">Choose car</p>
+			<button type="button" class="car-chip btn !min-h-11 !px-5 !py-2" data-car="all" aria-pressed="true">Show all</button>
+			{cars.map((c) => (
+				<button type="button" class="car-chip btn !min-h-11 !px-5 !py-2" data-car={c.id} aria-pressed="false">
+					{c.name}
+				</button>
+			))}
+			<p class="w-full text-sm text-muted" data-car-count aria-live="polite">Showing {cars.length} of {cars.length} cars</p>
+		</div>
+	</section>
+
+	{cars.map((c, i) => (
+		<section id={c.id} data-car-section={c.id} class="scroll-mt-20 border-b border-line py-20 md:py-28" style={`background:${i % 2 ? 'var(--color-panel)' : 'var(--color-void)'}`}>
+			<div class="container-site">
+				<div class="grid gap-12 lg:grid-cols-2 lg:gap-20">
+					<div>
+						<p class="eyebrow mb-4">{classOf(c.name)} · {c.years}</p>
+						<h2 class="h-section !uppercase">{c.name}</h2>
+						<p class="lead mt-8">{c.description}</p>
+					</div>
+					<div class="aspect-[4/3] overflow-hidden bg-panel-2">
+						{c.image
+							? <Image src={c.image} alt={`${c.name} race car`} class="h-full w-full object-cover" widths={[600, 1000, 1400]} sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
+							: <div class="ph-box h-full w-full">Car photo</div>}
+					</div>
+				</div>
+
+				<div class="mt-16">
+					<h3 class="eyebrow mb-6">Performance figures</h3>
+					<dl class="grid grid-cols-2 gap-px bg-line lg:grid-cols-4">
+						{c.figures.map((f) => (
+							<div class="bg-void p-6 md:p-8" style={`background:${i % 2 ? 'var(--color-panel)' : 'var(--color-void)'}`}>
+								<dt class="text-xs font-bold uppercase tracking-[0.18em] text-muted">{f.label}</dt>
+								<dd class="mt-3 flex items-baseline gap-2">
+									<span class={`text-5xl font-bold md:text-6xl ${f.placeholder ? 'text-muted' : 'text-brand-orange'}`}>{f.value}</span>
+									<span class="text-sm text-muted">{f.unit}</span>
+								</dd>
+							</div>
+						))}
+					</dl>
+				</div>
+
+				<div class="mt-16 grid gap-12 lg:grid-cols-2 lg:gap-20">
+					<div>
+						<h3 class="eyebrow mb-6">Specifications</h3>
+						<ul class="flex flex-col">
+							{c.specs.map((s) => (
+								<li class="border-b border-line py-3 text-white/90">{s}</li>
+							))}
+						</ul>
+					</div>
+					<div>
+						<h3 class="eyebrow mb-6">Achievements</h3>
+						{/* TODO(content): per-competition results for each car. */}
+						<div class="ph-box !justify-items-start !text-left" style="min-height: 10rem;">
+							<span>Placeholder<br />Competition results for {c.name}</span>
+						</div>
+					</div>
+				</div>
+
+				{c.gallery.length > 0 && (
+					<div class="mt-16">
+						<h3 class="eyebrow mb-6">Gallery</h3>
+						<ul class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+							{c.gallery.slice(0, 6).map((g, gi) => (
+								<li class="aspect-square overflow-hidden bg-panel-2">
+									<Image src={g} alt={`${c.name} gallery ${gi + 1}`} class="h-full w-full object-cover" widths={[240, 420]} sizes="(max-width: 1024px) 50vw, 16vw" loading="lazy" />
+								</li>
+							))}
+						</ul>
+					</div>
+				)}
+			</div>
+		</section>
+	))}
+</BaseLayout>
+
+<style is:global>
+	.car-chip[aria-pressed='true'] { background: var(--color-brand-orange); color: var(--color-void); }
+</style>
+
+<script>
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+	const chips = document.querySelectorAll<HTMLButtonElement>('.car-chip');
+	const sections = document.querySelectorAll<HTMLElement>('[data-car-section]');
+	const count = document.querySelector<HTMLElement>('[data-car-count]');
+
+	const select = (id: string, scroll = false) => {
+		chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.car === id)));
+		let shown = 0;
+		sections.forEach((s) => {
+			const show = id === 'all' || s.dataset.carSection === id;
+			s.hidden = !show;
+			if (show) shown++;
+		});
+		if (count) count.textContent = `Showing ${shown} of ${sections.length} cars`;
+		ScrollTrigger.refresh();
+		if (scroll && id !== 'all') {
+			document.getElementById(id)?.scrollIntoView({ behavior: 'auto', block: 'start' });
+		}
+	};
+
+	chips.forEach((c) => c.addEventListener('click', () => select(c.dataset.car ?? 'all', true)));
+
+	const initial = decodeURIComponent(location.hash.replace('#', ''));
+	if (initial && document.querySelector(`[data-car-section="${initial}"]`)) select(initial);
+</script>

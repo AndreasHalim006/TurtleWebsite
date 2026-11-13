@@ -1,29 +1,27 @@
 ---
 import '../styles/global.css';
-import Navbar from '../components/Navbar.astro';
-import Preloader from '../components/Preloader.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import AnalyticsConsent from '../components/AnalyticsConsent.astro';
 
 interface Props {
 	title?: string;
 	description?: string;
+	/** Pages without a full-screen hero start in the compact header state. */
 	forceCompact?: boolean;
-	pageColors?: string[];
 }
 
-const { 
-	title = "ARISTURTLE",
-	description = "Official website of ARISTURTLE, the high-performance Formula Student racing team from Aristotle University of Thessaloniki.",
+const {
+	title = 'ARISTURTLE',
+	description = 'Official website of ARISTURTLE, the Formula Student racing team of Aristotle University of Thessaloniki.',
 	forceCompact = false,
-	pageColors = ['#9FFF10', '#00F3CB']
 } = Astro.props;
 
 const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 ---
 
 <!doctype html>
-<html lang="en" class="bg-[#0A0A0A] text-[#f6f7fb] antialiased" style={`--page-gradient: ${cssGradient};`}>
+<html lang="en" class="bg-void text-foreground antialiased">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
@@ -33,173 +31,70 @@ const cssGradient = `linear-gradient(to right, ${pageColors.join(', ')})`;
 		<title>{title}</title>
 		<link rel="preload" href={`${baseUrl}fonts/jura-latin-variable.woff2`} as="font" type="font/woff2" crossorigin />
 		<script is:inline>
-			if ('scrollRestoration' in history) {
-				history.scrollRestoration = 'manual';
+			if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+				document.documentElement.classList.add('motion-ready');
 			}
-			if (!window.location.hash) {
-				window.scrollTo(0, 0);
-			}
-			document.documentElement.classList.add('preloader-active');
-			window.addEventListener('beforeunload', () => {
-				if (!window.location.hash) {
-					window.scrollTo(0, 0);
-				}
-			});
 		</script>
 		<slot name="head" />
 	</head>
-	<body class="antialiased">
-		<Preloader />
-		
-		<!-- Global SVG Noise Overlay -->
-		<div class="site-noise pointer-events-none fixed inset-0 z-50 h-full w-full opacity-[0.03] mix-blend-overlay" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
-
-		<Navbar forceCompact={forceCompact} />
+	<body>
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-brand-orange focus:text-void focus:px-4 focus:py-2 font-bold">Skip to content</a>
+		<Header forceCompact={forceCompact} />
 		<main id="main-content">
 			<slot />
 		</main>
+		<Footer />
 		<AnalyticsConsent />
 
 		<script>
 			import { gsap } from 'gsap';
 			import { ScrollTrigger } from 'gsap/ScrollTrigger';
-			import { CustomEase } from 'gsap/CustomEase';
 
-			gsap.registerPlugin(ScrollTrigger, CustomEase);
+			gsap.registerPlugin(ScrollTrigger);
 
-			// Define mandated LUXE_EASE globally
-			CustomEase.create("luxe", "0.16, 1, 0.3, 1");
+			const LUXE_EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+			(window as any).LUXE_EASE = LUXE_EASE;
+			gsap.defaults({ ease: LUXE_EASE, duration: 0.9 });
 
-			// Set global defaults for consistent "Aristurtle" motion
-			gsap.defaults({
-				ease: "luxe",
-				duration: 0.6
-			});
+			const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-			const useSmoothScroll = window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches;
+			// Global smooth scroll with inertia (desktop pointers only).
 			let lenis: import('lenis').default | null = null;
-
-			if (useSmoothScroll) {
+			if (!reduceMotion && window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches) {
 				const { default: Lenis } = await import('lenis');
 				lenis = new Lenis({
-					duration: 1.35,
-					easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+					duration: 1.2,
+					easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
 				});
-				if (!window.location.hash) {
-					lenis.scrollTo(0, { immediate: true });
-				}
-				if (document.documentElement.classList.contains('preloader-active')) lenis.stop();
 				lenis.on('scroll', ScrollTrigger.update);
 				gsap.ticker.add((time) => lenis?.raf(time * 1000));
+				gsap.ticker.lagSmoothing(0);
 			}
+			(window as any).lenis = lenis;
 
-
-			// Release scrolling only after the loader has left and layout has settled.
-			window.addEventListener('preloader-complete', () => {
-				if (!window.location.hash) {
-					window.scrollTo(0, 0);
-					lenis?.scrollTo(0, { immediate: true });
-				}
-				lenis?.resize();
-				if (useSmoothScroll) ScrollTrigger.refresh();
-				lenis?.start();
-			}, { once: true });
-
-			// Backup safety to guarantee scroll is active on mobile devices
-			if (!useSmoothScroll) {
-				setTimeout(() => {
-					document.documentElement.classList.remove('preloader-active', 'mobile-menu-open');
-				}, 2200);
-			}
-
-			const watermarkMedia = gsap.matchMedia();
-			watermarkMedia.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
-				const context = gsap.context(() => {
-					document.querySelectorAll('.watermark-text').forEach(text => {
-						gsap.fromTo(text, { y: 150 }, {
-							y: -150,
-							ease: 'none',
-							scrollTrigger: {
-								trigger: text.closest('section') || text.parentElement,
-								start: 'top bottom',
-								end: 'bottom top',
-								scrub: 0.6
-							}
-						});
-					});
+			// Scroll reveal for [data-reveal] elements.
+			if (!reduceMotion) {
+				ScrollTrigger.batch('[data-reveal]', {
+					start: 'top 88%',
+					once: true,
+					onEnter: (els) =>
+						gsap.to(els, { opacity: 1, y: 0, duration: 1.1, stagger: 0.08, overwrite: true }),
 				});
-				return () => context.revert();
+			}
+
+			// Anchor links go through Lenis when present.
+			document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+				a.addEventListener('click', (e) => {
+					const id = a.getAttribute('href');
+					if (!id || id === '#' || !lenis) return;
+					const target = document.querySelector(id);
+					if (!target) return;
+					e.preventDefault();
+					lenis.scrollTo(target as HTMLElement, { offset: -80 });
+				});
 			});
 
-			// Global access for other components if needed
-			(window as any).lenis = lenis;
+			window.addEventListener('load', () => ScrollTrigger.refresh());
 		</script>
 	</body>
 </html>
-
-<style is:global>
-	:root {
-		--brand-primary-1: #9FFF10;
-		--brand-primary-2: #00F3CB;
-		--brand-secondary: #9400D8;
-		--brand-orange: var(--brand-primary-1);
-		--brand-emerald: #0A0A0A;
-		--brand-midnight: #141414;
-		--off-white: #F9F8F6;
-		--void: #0A0A0A;
-		--foreground: #f6f7fb;
-		
-		--font-serif: 'Jura', sans-serif;
-		--font-sans: 'Jura', sans-serif;
-		--font-accent: 'Jura', sans-serif;
-	}
-
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
-
-	html {
-		background-color: var(--void);
-	}
-
-	html.preloader-active,
-	html.preloader-active body {
-		overflow: hidden;
-	}
-
-	html.lenis,
-	html.lenis body {
-		height: auto;
-	}
-
-	.lenis.lenis-smooth {
-		scroll-behavior: auto !important;
-	}
-
-	.lenis.lenis-smooth [data-lenis-prevent] {
-		overscroll-behavior: contain;
-	}
-
-	.lenis.lenis-stopped {
-		overflow: hidden;
-	}
-
-	.lenis.lenis-scrolling iframe {
-		pointer-events: none;
-	}
-
-	body {
-		background-color: transparent;
-		color: var(--foreground);
-		font-family: var(--font-sans);
-		margin: 0;
-		width: 100%;
-		min-height: 100vh;
-	}
-
-	h1, h2, h3, h4, h5, h6 {
-		font-family: var(--font-serif);
-	}
-</style>

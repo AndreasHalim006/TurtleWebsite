@@ -1,1500 +1,187 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import Hyperspeed from '../components/reactbits/Hyperspeed.jsx';
-import JourneySVG from '../components/JourneySVG.astro';
-import HUDWindow from '../components/HUDWindow.astro';
-import RotatingText from '../components/reactbits/RotatingText.jsx';
-import FlowingMenu from '../components/reactbits/FlowingMenu.jsx';
-import FuzzyText from '../components/reactbits/FuzzyText.jsx';
-import Cubes from '../components/reactbits/Cubes.jsx';
-import BounceCards from '../components/reactbits/BounceCards.jsx';
-import SponsorLogoLoop from '../components/reactbits/SponsorLogoLoop.jsx';
-import protergiaLogo from '../images/powered_by_protergia.png';
-import calypsoHero from '../images/IMG_8879 1.jpeg';
-import teamPhoto1 from '../images/Aristurtle_photo_1-1_2.jpg';
-import teamPhoto2 from '../images/Aristurtle_photo_2-1_2.jpg';
-import teamPhoto3 from '../images/Aristurtle_photo_3-1_2.jpg';
-import teamPhoto4 from '../images/Untitled-7 1.jpg';
-import teamPhoto5 from '../images/Untitled-12 3.jpg';
-import teamPhoto6 from '../images/team.png';
-import teamPhoto7 from '../images/IMG_8908.jpg';
+import heroPoster from '../images/IMG_8879 1.jpeg';
+import { hero, worldClass, achievements, departments } from '../data/site';
+import { carsChronological } from '../data/cars';
 
-import mechanicalChassis from '../assets/subdivisions/mechanical_chassis.png';
-import mechanicalSuspension from '../assets/subdivisions/mechanical_suspension.png';
-import mechanicalAerodynamics from '../assets/subdivisions/mechanical_aerodynamics.png';
-import mechanicalDrivetrain from '../assets/subdivisions/mechanical_drivetrain.png';
-import powertrain1 from '../assets/subdivisions/powertrain_1.png';
-import vehicledynamics1 from '../assets/subdivisions/vehicledynamics_1.png';
-import electronics1 from '../assets/subdivisions/electronics_1.png';
-import driverlessPerception from '../assets/subdivisions/driverless_perception.png';
-import it1 from '../assets/subdivisions/it_1.jpg';
-import operationsGraphic from '../assets/subdivisions/operations_graphic.png';
-
-// Hero video served from public/ — not a Vite import to avoid CI failures when file is absent
 const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
 const heroVideo = `${baseUrl}videos/hero.mp4`;
-
-const platinumSponsorLogos = (await getCollection('sponsors', ({ data }) => data.active === true && data.category === 'platinum'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .map(({ data }) => ({
-    src: data.logo.startsWith('http') ? data.logo : `${baseUrl}${data.logo.replace(/^\//, '')}`,
-    alt: data.alt || `${data.name} logo`,
-    href: data.website,
-  }));
-
-const subteams = [
-    { id: 'st1', text: 'Chassis & Composites', image: mechanicalChassis.src, desc: 'Designing the structural skeleton and optimizing carbon fiber layups for maximum rigidity and minimum weight.' },
-    { id: 'st2', text: 'Suspension', image: mechanicalSuspension.src, desc: "Engineering vehicle dynamics through advanced geometry, shock absorber tuning, and tire interface optimization." },
-    { id: 'st3', text: 'Aerodynamics', image: mechanicalAerodynamics.src, desc: "Utilizing CFD and wind tunnel testing to maximize downforce across the technical car outline." },
-    { id: 'st4', text: 'Drivetrain', image: mechanicalDrivetrain.src, desc: "Developing high-efficiency power transmission systems to deliver torque precisely to the wheels." },
-    { id: 'st5', text: 'Powertrain - HV', image: powertrain1.src, desc: "Engineering the battery pack and power distribution systems with safety and efficiency at the core." },
-    { id: 'st6', text: 'Vehicle Dynamics', image: vehicledynamics1.src, desc: "Implementing control algorithms and simulating behavior to push the limits of track performance." },
-    { id: 'st7', text: 'Electronics', image: electronics1.src, desc: "Designing custom PCBs and real-time firmware for low-latency system communication." },
-    { id: 'st8', text: 'Driverless', image: driverlessPerception.src, desc: "Developing the autonomous stack including perception, SLAM, and path planning for robotic racing." },
-    { id: 'st9', text: 'IT & Software', image: it1.src, desc: "Building digital infrastructure and telemetry systems to support real-time engineering decisions." },
-    { id: 'st10', text: 'Operations', image: operationsGraphic.src, desc: "Managing logistics, sponsorships, and team coordination to ensure seamless racing program execution." }
-];
-
-const getSubteamLink = (subteamId: string) => {
-    const mapping: Record<string, string> = {
-        st1: 'mechanical',
-        st2: 'mechanical',
-        st3: 'mechanical',
-        st4: 'mechanical',
-        st5: 'powertrain',
-        st6: 'vehicle-dynamics',
-        st7: 'electronics',
-        st8: 'driverless',
-        st9: 'it-software',
-        st10: 'operations'
-    };
-    return `${baseUrl}subdivisions#${mapping[subteamId] || ''}`;
-};
-
-/**
- * JOURNEY TUNING SYSTEM
- * ----------------------------------------------------------------------------
- */
-const JOURNEY_CONFIG = [
-  {
-    id: "about",
-    p: 0.150, 
-    windows: [
-      { id: "w1", x: "29.9%", y: "10.2%", w: "65.2%", h: "31.3%", content: "team-description", noBorder: true },
-      { id: "w-dui4", x: "13.0%", y: "56.6%", w: "34.9%", h: "35.5%", content: "vision-statement", noBorder: true },
-      { id: "w-56o2", x: "53.6%", y: "48.0%", w: "40.9%", h: "44.0%", content: "hyperspeed", gradientType: "green-to-blue" }
-    ]
-  },
-  {
-    id: "mission",
-    p: 0.412,
-    windows: [
-      { id: "w-kjzy", x: "53.3%", y: "8.6%", w: "44.8%", h: "87.6%", content: "mission-pillars-interactive", noBorder: true },
-      { id: "w-9501", x: "3.4%", y: "56.0%", w: "45.3%", h: "33.7%", content: "mission-description-target", noBorder: true },
-      { id: "w-vlrq", x: "20.7%", y: "10.5%", w: "28.7%", h: "31.1%", content: "vision-node", noBorder: true }
-    ]
-  },
-  {
-    id: "subsystems",
-    p: 0.6388404733510687,
-    windows: [
-      { id: "w-gggp", w: "40.9%", h: "86.3%", x: "4.7%", y: "9.1%", content: "text-block", noBorder: true },
-      { id: "w-acrostic-expl", w: "45%", h: "35%", x: "52%", y: "60%", content: "acrostic-explanation", noBorder: true },
-      { id: "w-fuzzy-title", w: "45%", h: "45%", x: "52%", y: "12%", content: "fuzzy-title", noBorder: true }
-    ]
-  },
-  {
-    id: "history",
-    p: 0.7598072031061722,
-    windows: [
-      { id: "w-62se", w: "21.4%", h: "42.8%", x: "74.5%", y: "35.7%", content: "history-stats-panel", noBorder: false, noPadding: true, noRounding: true, borderColor: "var(--brand-primary-2)" },
-      { id: "w-ygxs", w: "68%", h: "45%", x: "2.9%", y: "3.0%", content: "history-main-header", noBorder: true },
-      { id: "w-smmv", w: "37.2%", h: "46.2%", x: "3.3%", y: "49.0%", content: "history-narrative", noBorder: true }
-    ]
-  },
-  {
-    id: "sponsors",
-    p: 0.9,
-    windows: [
-      { id: "w-fh5g", w: "93.9%", h: "29.2%", x: "2.5%", y: "13.7%", content: "sponsors-hero-title", noBorder: false, gradientType: "green-to-blue", gradientDirection: "vertical" },
-      { id: "w-5cmn", w: "28.3%", h: "45.9%", x: "67.9%", y: "49.6%", content: "sponsors-call-to-action", noBorder: true },
-      { id: "w-i6cd", w: "43.2%", h: "45.9%", x: "2.4%", y: "49.0%", content: "sponsors-partnership-text", noBorder: true }
-    ]
-  }
-];
-
-const aboutHyperspeedOptions = {
-    distortion: 'turbulentDistortion',
-    length: 400,
-    roadWidth: 10,
-    islandWidth: 2,
-    lanesPerRoad: 3,
-    fov: 90,
-    fovSpeedUp: 150,
-    speedUp: 2.0,
-    carLightsFade: 0.4,
-    totalSideLightSticks: 20,
-    lightPairsPerRoadWay: 40,
-    carLightsLength: [400 * 0.05, 400 * 0.3],
-    colors: {
-        roadColor: 0x000000,
-        islandColor: 0x020202,
-        background: 0x000000,
-        shoulderLines: 0x9FFF10,
-        brokenLines: 0x00F3CB,
-        leftCars: [0x9FFF10, 0x00F3CB, 0xffffff],
-        rightCars: [0x9400D8, 0x00F3CB, 0xffffff],
-        sticks: 0x9FFF10,
-    },
-};
-
-const getSlotClasses = (slot: string) => {
-  const map: Record<string, string> = {
-    "top-left": "top-8 left-8",
-    "top-center": "top-8 left-1/2 -translate-x-1/2",
-    "top-right": "top-8 right-8",
-    "left": "top-1/2 -translate-y-1/2 left-8",
-    "center": "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-    "right": "top-1/2 -translate-y-1/2 right-8",
-    "bottom-left": "bottom-8 left-8",
-    "bottom-center": "bottom-8 left-1/2 -translate-x-1/2",
-    "bottom-right": "bottom-8 right-8",
-  };
-  return map[slot] || map["center"];
-};
 ---
 
-<BaseLayout title="ARISTURTLE">
-	<div class="bg-void min-h-screen w-full relative overflow-x-clip text-foreground selection:bg-brand-orange selection:text-brand-emerald">
-		
-		<div class="fixed inset-0 z-0 bg-brand-emerald pointer-events-none opacity-20"></div>
+<BaseLayout title="ARISTURTLE | Formula Student Team, Aristotle University of Thessaloniki">
+	<!-- 1. HERO -->
+	<section data-hero class="relative flex min-h-[100svh] items-end overflow-hidden bg-void">
+		<Image
+			src={heroPoster}
+			alt=""
+			class="absolute inset-0 h-full w-full object-cover"
+			widths={[800, 1400, 2200]}
+			sizes="100vw"
+			loading="eager"
+			fetchpriority="high"
+		/>
+		<video
+			id="hero-video"
+			class="absolute inset-0 h-full w-full object-cover"
+			autoplay
+			muted
+			loop
+			playsinline
+			preload="metadata"
+			aria-hidden="true"
+		>
+			<source src={heroVideo} type="video/mp4" />
+		</video>
+		<div class="absolute inset-0 bg-void/60"></div>
 
-		<section id="hero" class="relative h-screen w-full flex flex-col items-center justify-center z-50 overflow-hidden bg-brand-midnight m-0 p-0">
-			<div class="absolute inset-0 z-0 hidden lg:block">
-				<video autoplay muted loop playsinline preload="auto" data-critical-asset class="w-full h-full object-cover">
-					<source src={heroVideo} type="video/mp4" media="(min-width: 1024px)" />
-				</video>
+		<div class="container-site relative z-10 pb-16 pt-44 md:pb-24">
+			<h1 class="h-hero max-w-[16ch] text-[clamp(2.5rem,6.2vw,6.5rem)]" data-reveal>{hero.title}</h1>
+			<p class="lead mt-6 text-white/80" data-reveal>{hero.subtitle}</p>
+			<div class="mt-10 flex flex-wrap gap-4" data-reveal>
+				<a href={href('/join')} class="btn btn--solid">Join the Team</a>
+				<a href={href('/sponsors')} class="btn">Become a Partner</a>
 			</div>
-			<div class="absolute inset-0 z-0 lg:hidden">
-				<Image src={calypsoHero} alt="ARISTURTLE Calypso electric race car" widths={[480, 768, 1024]} sizes="100vw" loading="eager" decoding="async" fetchpriority="high" data-critical-asset class="h-full w-full object-cover object-center" />
-				<div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/30"></div>
-				<div class="absolute inset-x-[var(--mobile-gutter)] bottom-[max(3rem,env(safe-area-inset-bottom))] z-10 max-w-sm">
-					<p class="mb-3 text-xs font-bold uppercase tracking-[.22em] text-brand-orange">Electric / Driverless</p>
-					<h1 class="text-[clamp(2.8rem,15vw,5rem)] font-black uppercase leading-[.86] tracking-[-.06em]">Built to<br/>move first.</h1>
-					<a href={`${baseUrl}garage#calypso`} class="mt-7 inline-flex min-h-12 items-center border-b-2 border-brand-orange text-sm font-bold uppercase tracking-[.16em]">Meet Calypso</a>
+		</div>
+	</section>
+
+	<!-- 2. WORLD-CLASS TEAM -->
+	<section class="section-pad bg-void" aria-labelledby="world-class-title">
+		<div class="container-site grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-24">
+			<div>
+				<h2 id="world-class-title" class="h-section" data-reveal>{worldClass.title}</h2>
+				<p class="lead mt-8" data-reveal>{worldClass.body}</p>
+				<div class="mt-10 flex flex-wrap gap-4" data-reveal>
+					<a href={href('/about')} class="btn btn--solid">Explore Our Journey</a>
+					<a href={href('/team')} class="btn">Meet the Team</a>
 				</div>
 			</div>
-			<div id="hero-parallax-wrapper" class="relative w-full max-w-[1800px] mx-auto h-full flex z-10 px-[6vw] pb-[5vh] pt-[5vh]"></div>
-		</section>
-
-		<div id="journey-container" class="relative w-full h-[100vh] max-lg:hidden">
-            <div id="journey-viewport" class="sticky top-0 left-0 w-full h-screen overflow-hidden bg-void z-10">
-                <div id="journey-stage" class="absolute top-0 left-0 will-change-transform origin-top-left">
-                    {JOURNEY_CONFIG.map((station) => (
-                      <div 
-                        id={`station-${station.id}`} 
-                        class="absolute md:w-[1920px] md:h-[960px] w-screen h-screen pointer-events-none"
-                      >
-                        {station.windows.map((win) => (
-                          <HUDWindow 
-                            id={win.id}
-                            class:list={[
-                                "pointer-events-auto", 
-                                win.slot ? getSlotClasses(win.slot) : "",
-                                win.content.toLowerCase() === 'hyperspeed' ? 'max-md:hidden' : '',
-                                win.content.toLowerCase() === 'vision-node' ? 'max-md:hidden' : '',
-                                win.content.toLowerCase() === 'history-main-header' ? 'max-md:hidden' : '',
-                                win.content.toLowerCase() === 'history-stats-panel' ? 'max-md:hidden' : '',
-                                ['mission-pillars-interactive', 'history-stats-panel'].includes(win.content.toLowerCase()) ? 'hud-window-heavy' : ''
-                            ]}
-                            noPadding={win.noPadding}
-                            noBorder={win.noBorder}
-                            noRounding={win.noRounding}
-                            gradientType={win.gradientType as any}
-                            gradientDirection={win.gradientDirection as any}
-                            borderColor={win.borderColor}
-                            style={{ 
-                                width: win.w, 
-                                height: win.h,
-                                top: win.y,
-                                left: win.x
-                            }}
-                          >
-                            <div class="h-full flex flex-col justify-center text-center p-[6%] overflow-visible">
-                              {(win.content.toLowerCase() === 'hyperspeed') && (
-                                <div class="w-full h-full scale-110 relative isolate">
-                                  <div class="absolute top-[8%] left-1/2 -translate-x-1/2 z-20 whitespace-nowrap pointer-events-none opacity-60">
-                                    <p class="font-sans text-white text-[min(1.4cqw,4cqh)] uppercase font-bold tracking-[0.25em]">
-                                        Click & hold to #feelth<span class="text-brand-orange">epower</span>
-                                    </p>
-                                  </div>
-                                  <Hyperspeed client:media="(min-width: 1024px)" effectOptions={aboutHyperspeedOptions as any} />
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'team-description') && (
-                                <p class="font-sans text-white text-[min(5.2cqw,13cqh)] leading-[1.15] uppercase tracking-tight font-bold" style="text-wrap: balance;">
-                                  Aristotle University Racing Team Electric & Driverless, also known as <span class="italic text-brand-orange">Aristurtle</span>, is the student research team of the Aristotle University of Thessaloniki, that 
-                                  <RotatingText 
-                                    client:media="(min-width: 1024px)"
-                                    texts={['designs', 'develops', 'builds']}
-                                    mainClassName="inline-flex text-brand-orange ml-2"
-                                    staggerFrom="last"
-                                    initial={{ y: "100%", opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    exit={{ y: "-120%", opacity: 0 }}
-                                    staggerDuration={0.025}
-                                    rotationInterval={2500}
-                                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
-                                    elementLevelClassName="font-sans font-bold uppercase tracking-tight"
-                                  /> electric race cars.
-                                </p>
-                              )}
-
-                              {(win.content.toLowerCase() === 'vision-statement') && (
-                                <p class="font-sans text-white text-[min(6.5cqw,18cqh)] leading-[1.15] uppercase tracking-tighter font-bold" style="text-wrap: balance;">
-                                  Our vision is to contribute in the research around innovative technologies and to promote electric mobility in Greece and abroad, by materializing high-level pioneering products.
-                                </p>
-                              )}
-
-                              {(win.content.toLowerCase() === 'mission-statement') && (
-                                <p class="font-sans text-white text-[min(5.5cqw,16cqh)] leading-[1.15] uppercase tracking-tighter font-bold" style="text-wrap: balance;">
-                                  To inspire the next generation of engineers through the development of high-performance electric racing vehicles and driverless technologies.
-                                </p>
-                              )}
-
-                              {(win.content.toLowerCase() === 'innovation-driven') && (
-                                <p class="font-sans text-white text-[min(6.5cqw,19cqh)] leading-[1.15] uppercase tracking-tighter font-bold" style="text-wrap: balance;">
-                                  Pushing the boundaries of electric mobility through rigorous testing and cutting-edge design.
-                                </p>
-                              )}
-
-                              {(win.content.toLowerCase() === 'vision-node') && (
-                                <div class="w-full h-full flex flex-col justify-center items-end pr-8 md:pr-16">
-                                  <p class="font-sans text-brand-orange text-[min(12cqw,30cqh)] leading-[0.9] uppercase tracking-tighter font-bold italic text-right">
-                                    <span class="block">Find.</span>
-                                    <span class="block">Your.</span>
-                                    <span class="block">Passion.</span>
-                                  </p>
-                                </div>
-                              )}
-                              
-                              {(win.content.toLowerCase() === 'mission-pillars-interactive') && (
-                                <div class="h-full">
-                                    <FlowingMenu 
-                                        client:media="(min-width: 1024px)"
-                                        items={subteams.map(s => ({ ...s, link: getSubteamLink(s.id) }))}
-                                        speed={20}
-                                        marqueeBgColor="var(--brand-orange)"
-                                        marqueeTextColor="#000"
-                                        borderColor="var(--brand-orange)"
-                                        bgColor="var(--void)"
-                                        onHover={(id) => {
-                                            if (typeof window !== 'undefined' && (window as any).onSubteamHover) {
-                                                (window as any).onSubteamHover(id);
-                                            }
-                                        }}
-                                    />
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'mission-description-target') && (
-                                <div id="pillar-description-container" class="relative z-10 transition-all duration-500">
-                                    <p id="pillar-description-text" class="font-sans text-white text-[min(4.8cqw,12cqh)] leading-[1.15] uppercase tracking-tight font-bold" style="text-wrap: balance;">
-                                        Explore our subdivisions: Engineering the future requires every area of expertise.
-                                    </p>
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'text-block') && (
-                                <div class="flex flex-col items-start justify-center h-full text-left font-sans uppercase">
-                                  <div class="flex flex-col gap-[0.5cqh] w-full" id="acrostic-list-container">
-                                    {[
-                                      { id: 'A', letter: 'A', rest: 'utonomous' },
-                                      { id: 'R1', letter: 'R', rest: 'esearch' },
-                                      { id: 'I', letter: 'I', rest: 'nitiative' },
-                                      { id: 'S', letter: 'S', rest: 'ustainability' },
-                                      { id: 'T1', letter: 'T', rest: 'rack record' },
-                                      { id: 'U', letter: 'U', rest: 'nity' },
-                                      { id: 'R2', letter: 'R', rest: 'eturn' },
-                                      { id: 'T2', letter: 'T', rest: 'alent' },
-                                      { id: 'L', letter: 'L', rest: 'earning' },
-                                      { id: 'E', letter: 'E', rest: 'xcellence' }
-                                    ].map((item) => (
-                                      <div 
-                                        class="flex items-baseline leading-none w-full cursor-pointer group hover:bg-white/5 transition-colors duration-200 pr-4 rounded-r-lg acrostic-item"
-                                        data-id={item.id}
-                                      >
-                                        <span class="text-[var(--brand-primary-2)] acrostic-letter text-[min(16cqw,8.2cqh)] font-black mr-[0.1em] group-hover:scale-110 transition-transform duration-300 origin-left">{item.letter}</span>
-                                        <span class="text-white text-[min(5.5cqw,3.8cqh)] font-bold tracking-tighter whitespace-nowrap group-hover:text-[var(--brand-primary-2)] transition-colors duration-300">{item.rest}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'acrostic-explanation') && (
-                                <div id="acrostic-expl-container" class="h-full flex items-center justify-start pointer-events-none opacity-0" style="clip-path: inset(-100% -100% -100% 0%);">
-                                    <div id="acrostic-marquee-wrapper" class="flex whitespace-nowrap">
-                                        <p id="acrostic-expl-text" class="font-sans text-white text-[min(10cqw,12cqh)] leading-none uppercase font-black tracking-tighter italic inline-block">
-                                        </p>
-                                    </div>
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'fuzzy-title') && (
-                                <div class="h-full flex items-center justify-center pointer-events-auto">
-                                    <FuzzyText 
-                                        client:media="(min-width: 1024px)"
-                                        text="ARISTURTLE"
-                                        baseIntensity={0.25}
-                                        hoverIntensity={0.6}
-                                        enableHover={true}
-                                        color="#ffffff"
-                                        fontSize="clamp(2rem, 8vw, 5.5rem)"
-                                        fontWeight={900}
-                                        fontFamily="Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace"
-                                        glitchMode={true}
-                                        glitchInterval={3000}
-                                        gradient={null}
-                                    />
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'history-main-header') && (
-                                <div class="w-full h-full flex items-center justify-center pointer-events-auto">
-                                    <BounceCards
-                                        client:media="(min-width: 1024px)"
-                                        className="history-bounce-cards"
-                                        images={[
-                                            teamPhoto1.src,
-                                            teamPhoto2.src,
-                                            teamPhoto3.src,
-                                            teamPhoto4.src,
-                                            teamPhoto5.src
-                                        ]}
-                                        containerWidth={800}
-                                        containerHeight={400}
-                                        animationDelay={0.5}
-                                        animationStagger={0.08}
-                                        enableHover={true}
-                                    />
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'history-narrative') && (
-                                <p class="font-sans text-white/80 text-[min(6cqw,18cqh)] leading-[1.25] uppercase tracking-tight font-bold text-justify">
-                                  Founded in 2013, Aristurtle has evolved from a group of visionaries into a premier Formula Student powerhouse, building <span class="gradient-text">8 electric race cars</span> and pioneering autonomous racing in the Balkans.
-                                </p>
-                              )}
-
-                              {(win.content.toLowerCase() === 'history-stats-panel') && (
-                                <div class="w-full h-full flex items-center justify-center pointer-events-auto">
-                                  <div class="w-[78%]">
-                                    <Cubes
-                                      client:media="(min-width: 1024px)"
-                                      gridSize={6}
-                                      maxAngle={45}
-                                      radius={3}
-                                      borderStyle="2px dashed var(--brand-primary-2)"
-                                      autoAnimate={true}
-                                      rippleOnClick={true}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'sponsors-hero-title') && (
-                                <div class="flex flex-col items-center justify-center w-full h-full gap-4">
-                                    <SponsorLogoLoop logos={platinumSponsorLogos} client:media="(min-width: 1024px)" />
-                                </div>
-                              )}
-
-                              {(win.content.toLowerCase() === 'sponsors-partnership-text') && (
-                                  <p class="font-sans text-white text-[min(5.5cqw,15cqh)] leading-[1.15] uppercase tracking-tighter font-bold text-left" style="text-wrap: balance;">
-                                    Our success is driven by the support of our <span class="text-[var(--brand-primary-2)]">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
-                                  </p>
-                              )}
-
-                              {(win.content.toLowerCase() === 'sponsors-call-to-action') && (
-                                <div class="flex flex-col gap-8 items-center justify-center h-full text-center">
-                                    <p class="font-sans text-white text-[min(6.5cqw,16cqh)] leading-[1.1] uppercase tracking-tight font-bold">
-                                        <span class="block">JOIN OUR MISSION.</span>
-                                        <span class="block">BECOME A SPONSOR.</span>
-                                    </p>
-                                    <a href={baseUrl + "sponsors"} class="px-10 py-5 bg-[var(--brand-primary-2)] text-black font-black uppercase tracking-widest text-[min(3cqw,5cqh)] hover:scale-105 transition-transform rounded-sm mt-2">
-                                        COLLABORATE WITH US
-                                    </a>
-                                </div>
-                              )}
-
-                              {/* 
-                                Default fallback removed as requested. 
-                                Windows without explicit content will remain empty 
-                                but maintain their structural frame.
-                              */}
-                            </div>
-                          </HUDWindow>
-                        ))}
-                      </div>
-                    ))}
-                    
-                    <JourneySVG />
-                </div>
-            </div>
+			<ul class="grid grid-cols-1 gap-px bg-line sm:grid-cols-2" aria-label="Achievements">
+				{achievements.map((a) => (
+					<li class="flex flex-col gap-3 bg-panel p-7" data-reveal>
+						<p class="text-3xl font-bold text-brand-orange md:text-4xl">{a.place}</p>
+						<p class="eyebrow !text-muted">{a.year}</p>
+						<p class="font-bold">{a.discipline}</p>
+						<p class="text-sm text-muted">{a.competition}</p>
+					</li>
+				))}
+			</ul>
 		</div>
+	</section>
 
-		<!-- MOBILE VERSION (Native Scrolling Fallback Layout) -->
-		<div class="lg:hidden flex flex-col w-full bg-void text-white relative z-10 px-[var(--mobile-gutter)]">
-            
-            <!-- ABOUT SECTION -->
-            <section id="mobile-about" class="flex flex-col gap-7 border-b border-white/10 py-[var(--mobile-section-space)]">
-                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// ABOUT US</h2>
-                <Image src={teamPhoto1} alt="ARISTURTLE team working around its electric race car" widths={[480, 768, 1024]} sizes="(max-width: 1023px) 100vw, 1px" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover" />
-                <p class="max-w-[var(--readable-copy)] font-jura text-xl leading-relaxed text-gray-300">
-                    Aristotle University Racing Team Electric & Driverless is the student research team that designs, develops, and builds electric race cars in Thessaloniki.
-                </p>
-                <div class="border-l-2 border-brand-orange pl-5">
-                    <p class="text-xs text-brand-orange uppercase tracking-wider mb-3 font-bold font-jura">// OUR VISION</p>
-                    <p class="font-jura text-base text-gray-300 leading-relaxed">
-                        Our vision is to contribute to research around innovative technologies and to promote electric mobility in Greece and abroad by materializing high-level pioneering products.
-                    </p>
-                </div>
-                <a href={`${baseUrl}about-us`} class="inline-flex min-h-12 items-center self-start border-b border-brand-orange text-sm font-bold uppercase tracking-[.16em]">Meet the team</a>
-            </section>
-
-            <!-- MISSION SECTION & SUBTEAMS -->
-            <section id="mobile-mission" class="flex flex-col gap-8 border-b border-white/10 py-[var(--mobile-section-space)]">
-                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// OUR MISSION</h2>
-                <p class="font-jura text-xl leading-relaxed text-gray-300">
-                    To inspire the next generation of engineers through the development of high-performance electric racing vehicles and driverless technologies.
-                </p>
-                <div class="flex flex-col gap-6 mt-4">
-                    <h3 class="text-base font-bold uppercase tracking-wider text-white font-jura">// SUBDIVISIONS</h3>
-                    <div class="divide-y divide-white/10 border-y border-white/10">
-                        {subteams.map((sub, index) => (
-                            <details class="mobile-disclosure group py-1" open={index === 0}>
-                                <summary class="flex min-h-16 cursor-pointer items-center justify-between gap-4 py-3">
-                                    <h4 class="font-jura text-base font-bold uppercase text-white">{sub.text}</h4>
-                                    <span class="text-2xl text-brand-orange transition-transform group-open:rotate-45" aria-hidden="true">+</span>
-                                </summary>
-                                <img src={sub.image} width="900" height="600" alt="" loading="lazy" decoding="async" class="mb-4 aspect-[16/9] w-full object-cover" />
-                                <p class="pb-5 font-jura text-sm leading-relaxed text-gray-400">{sub.desc}</p>
-                                <a href={getSubteamLink(sub.id)} class="mb-5 inline-flex min-h-11 items-center border-b border-brand-orange text-xs font-bold uppercase tracking-widest">Explore subdivision</a>
-                            </details>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <!-- SUBSYSTEMS SECTION (ACROSTIC) -->
-            <section id="mobile-subsystems" class="flex flex-col gap-8 border-b border-white/10 py-[var(--mobile-section-space)]">
-                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// VALUES & SUBSYSTEMS</h2>
-                <div class="grid grid-cols-2 gap-x-8 gap-y-4">
-                    {[
-                      { letter: 'A', rest: 'utonomous' },
-                      { letter: 'R', rest: 'esearch' },
-                      { letter: 'I', rest: 'nitiative' },
-                      { letter: 'S', rest: 'ustainability' },
-                      { letter: 'T', rest: 'rack record' },
-                      { letter: 'U', rest: 'nity' },
-                      { letter: 'R', rest: 'eturn' },
-                      { letter: 'T', rest: 'alent' },
-                      { letter: 'L', rest: 'earning' },
-                      { letter: 'E', rest: 'xcellence' }
-                    ].map((item) => (
-                      <div class="flex items-baseline gap-2">
-                        <span class="text-[var(--brand-primary-2)] text-3xl font-black font-jura">{item.letter}</span>
-                        <span class="text-white text-base font-bold tracking-tight uppercase font-jura">{item.rest}</span>
-                      </div>
-                    ))}
-                </div>
-            </section>
-
-            <!-- HISTORY SECTION -->
-            <section id="mobile-history" class="flex flex-col gap-8 border-b border-white/10 py-[var(--mobile-section-space)]">
-                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// OUR HISTORY</h2>
-                <p class="font-jura text-xl leading-relaxed text-gray-300">
-                    Founded in 2013, Aristurtle has evolved from a group of visionaries into a premier Formula Student powerhouse, building <span class="text-brand-orange">8 electric race cars</span> and pioneering autonomous racing in the Balkans.
-                </p>
-                <div class="grid grid-cols-2 gap-4 mt-2">
-                    <div class="border-t-2 border-brand-orange py-5">
-                        <p class="text-3xl font-black text-brand-orange font-jura">2013</p>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-jura">FOUNDED</p>
-                    </div>
-                    <div class="border-t-2 border-brand-orange py-5">
-                        <p class="text-3xl font-black text-brand-orange font-jura">8</p>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-jura">CARS BUILT</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SPONSORS SECTION -->
-            <section id="mobile-sponsors" class="flex flex-col gap-8 border-b border-white/10 py-[var(--mobile-section-space)]">
-                <h2 class="text-xs text-brand-orange font-bold uppercase tracking-[0.25em] font-jura">// PARTNERS</h2>
-                <div class="flex flex-col gap-6 items-start">
-                    <p class="font-jura text-lg leading-relaxed text-gray-300">
-                        Our success is driven by the support of our <span class="text-[var(--brand-primary-2)]">visionary partners</span>. Together, we are shaping the future of electric mobility and academic research.
-                    </p>
-                    <a href={baseUrl + "sponsors"} class="inline-flex min-h-12 w-full items-center justify-center bg-[var(--brand-primary-2)] px-8 text-black font-black uppercase tracking-widest text-sm font-jura mt-2">
-                        COLLABORATE WITH US
-                    </a>
-                </div>
-            </section>
-
-            <section class="flex flex-col gap-6 py-[var(--mobile-section-space)]">
-                <p class="text-xs font-bold uppercase tracking-[.25em] text-brand-orange">// JOIN THE GRID</p>
-                <h2 class="text-[clamp(2.5rem,13vw,4.5rem)] font-black uppercase leading-[.9] tracking-[-.05em]">Build the next car.</h2>
-                <p class="max-w-md text-lg leading-relaxed text-gray-300">Engineering, software, media, and operations move as one team.</p>
-                <a href={`${baseUrl}recruitment`} class="inline-flex min-h-12 w-full items-center justify-center border border-brand-orange text-sm font-bold uppercase tracking-[.16em]">Join Aristurtle</a>
-            </section>
-
+	<!-- 3. DEPARTMENTS -->
+	<section class="section-pad border-t border-line bg-panel" aria-labelledby="departments-title">
+		<div class="container-site">
+			<div class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+				<h2 id="departments-title" class="h-section max-w-[16ch]" data-reveal>three disciplines, one car</h2>
+				<div data-reveal><a href={href('/cars')} class="btn">Get to Know Our Cars</a></div>
+			</div>
+			<div class="mt-14 grid gap-px bg-line md:grid-cols-3">
+				{departments.map((d) => (
+					<article class="flex flex-col bg-void" data-reveal>
+						<div class="aspect-[4/3] overflow-hidden bg-panel-2">
+							<Image
+								src={d.image}
+								alt=""
+								class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-105"
+								widths={[480, 800]}
+								sizes="(max-width: 768px) 100vw, 33vw"
+								loading="lazy"
+							/>
+						</div>
+						<div class="flex flex-1 flex-col gap-5 p-7 md:p-9">
+							<h3 class="h-card">{d.name}</h3>
+							<p class="text-muted">{d.blurb}</p>
+							<ul class="mt-auto flex flex-col gap-2 pt-4">
+								{d.topics.map((t) => (
+									<li>
+										<a href={href('/team')} class="group flex items-center justify-between border-b border-line py-2 text-sm font-bold uppercase tracking-[0.12em] transition-colors hover:text-brand-orange">
+											{t}<span aria-hidden="true" class="transition-transform duration-500 group-hover:translate-x-1">→</span>
+										</a>
+									</li>
+								))}
+							</ul>
+						</div>
+					</article>
+				))}
+			</div>
 		</div>
-	</div>
+	</section>
+
+	<!-- 4. JOURNEY (horizontal scroll) -->
+	<section data-journey class="journey border-t border-line bg-void" aria-labelledby="journey-title">
+		<div class="journey__inner">
+			<div class="container-site journey__head">
+				<h2 id="journey-title" class="h-section max-w-[14ch]" data-reveal>one car at a time</h2>
+				<p class="lead mt-5" data-reveal>Every season a new car. Scroll through our journey since 2013.</p>
+			</div>
+			<div class="journey__viewport" tabindex="0" role="region" aria-label="Car timeline, scrollable">
+				<ol class="journey__track">
+					{carsChronological.map((c) => (
+						<li class="journey__panel">
+							<a href={`${href('/cars')}#${c.id}`} class="group block">
+								<div class="aspect-[4/3] overflow-hidden bg-panel-2">
+									{c.image && (
+										<Image
+											src={c.image}
+											alt={`${c.name} race car`}
+											class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+											widths={[480, 800, 1100]}
+											sizes="(max-width: 1024px) 80vw, 30vw"
+											loading="lazy"
+										/>
+									)}
+								</div>
+								<p class="eyebrow mt-5">{c.years}</p>
+								<h3 class="h-card mt-2">{c.name}</h3>
+								<p class="mt-3 line-clamp-3 text-sm text-muted">{c.description}</p>
+							</a>
+						</li>
+					))}
+					<li class="journey__panel journey__panel--end">
+						<p class="h-section">next up</p>
+						<a href={href('/cars')} class="btn mt-8 self-start">Explore Our Cars</a>
+					</li>
+				</ol>
+			</div>
+		</div>
+	</section>
+
+	<!-- 5. CTA -->
+	<section class="section-pad border-t border-line bg-panel" aria-labelledby="cta-title">
+		<div class="container-site flex flex-col items-start gap-10">
+			<h2 id="cta-title" class="h-section" data-reveal>ready to race with us?</h2>
+			<div class="flex flex-wrap gap-4" data-reveal>
+				<a href={href('/join')} class="btn btn--solid">Become a Team Member</a>
+				<a href={href('/sponsors')} class="btn">Become a Partner</a>
+			</div>
+		</div>
+	</section>
 </BaseLayout>
 
-<script>
-	import { gsap } from 'gsap';
-	import { ScrollTrigger } from 'gsap/ScrollTrigger';
-	import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
-	import { CustomEase } from 'gsap/CustomEase';
-    import { SplitText } from 'gsap/SplitText';
-
-	if (window.matchMedia('(max-width: 1023px)').matches) {
-		document.getElementById('journey-container')?.remove();
-	}
-
-	gsap.registerPlugin(ScrollTrigger, DrawSVGPlugin, CustomEase, SplitText);
-
-	CustomEase.create("luxe", "0.16, 1, 0.3, 1");
-
-	const log = (...args: any[]) => {
-		if (import.meta.env.DEV) {
-			console.log(...args);
-		}
-	};
-
-	// Catch errors and display them on screen to help diagnose client-side issues
-	if (import.meta.env.DEV) {
-		window.addEventListener('error', (e) => {
-			console.error("Global script error caught:", e);
-			const errDiv = document.createElement('div');
-			errDiv.style.position = 'fixed';
-			errDiv.style.top = '10px';
-			errDiv.style.left = '10px';
-			errDiv.style.background = 'red';
-			errDiv.style.color = 'white';
-			errDiv.style.zIndex = '999999';
-			errDiv.style.padding = '10px';
-			errDiv.style.fontSize = '14px';
-			errDiv.style.fontFamily = 'monospace';
-			errDiv.innerHTML = `JS ERROR: ${e.message} at ${e.filename}:${e.lineno}`;
-			document.body.appendChild(errDiv);
-		});
-
-		window.addEventListener('unhandledrejection', (e) => {
-			console.error("Promise rejection caught:", e.reason);
-			const errDiv = document.createElement('div');
-			errDiv.style.position = 'fixed';
-			errDiv.style.top = '10px';
-			errDiv.style.left = '10px';
-			errDiv.style.background = 'red';
-			errDiv.style.color = 'white';
-			errDiv.style.zIndex = '999999';
-			errDiv.style.padding = '10px';
-			errDiv.style.fontSize = '14px';
-			errDiv.style.fontFamily = 'monospace';
-			errDiv.innerHTML = `Promise Error: ${e.reason}`;
-			document.body.appendChild(errDiv);
-		});
-	}
-
-	let mm: any = null;
-
-	const initJourney = () => {
-		if (mm) {
-			mm.revert();
-			mm = null;
-		}
-		if (!document.getElementById('journey-container')) return;
-
-		mm = gsap.matchMedia();
-
-		mm.add({
-			isDesktop: "(min-width: 1024px)",
-			reduceMotion: "(prefers-reduced-motion: reduce)",
-			noPreference: "(prefers-reduced-motion: no-preference)"
-		}, (context) => {
-			const { isDesktop, reduceMotion } = context.conditions as any;
-			if (!isDesktop) return;
-            
-            const stage = document.querySelector('#journey-stage');
-            const pathMain = document.querySelector('#journey-path-main');
-            const otherPaths = document.querySelectorAll('.other-car-paths path');
-            const journeyContainer = document.querySelector('#journey-container') as HTMLElement;
-            let cleanupJourney: (() => void) | null = null;
-
-            if (stage && pathMain) {
-                const scaleFactor = 6; 
-                const stageWidth = 1774 * scaleFactor;
-                const stageHeight = 887 * scaleFactor;
-                const LOGO_ASPECT_RATIO = 262.6 / 978.84;
-
-                const getOutroFrame = () => {
-                    const edgeGap = 24;
-                    const isFullWidthMenu = window.innerWidth <= 1024;
-                    const menuWidth = isFullWidthMenu
-                        ? 0
-                        : Math.min(460, Math.max(260, window.innerWidth * 0.4));
-                    const logoWidth = window.innerWidth < 640
-                        ? 280
-                        : window.innerWidth < 768
-                            ? 350
-                            : window.innerWidth < 1024
-                                ? 550
-                                : 700;
-                    const logoBottom = window.innerHeight * 0.02 + logoWidth * LOGO_ASPECT_RATIO;
-                    const left = edgeGap;
-                    const right = window.innerWidth - menuWidth - edgeGap;
-                    const top = Math.min(logoBottom + edgeGap, window.innerHeight * 0.45);
-                    const bottom = window.innerHeight - edgeGap;
-                    const availableWidth = Math.max(right - left, 1);
-                    const availableHeight = Math.max(bottom - top, 1);
-                    const scale = Math.min(availableWidth / stageWidth, availableHeight / stageHeight);
-
-                    return {
-                        centerX: isFullWidthMenu ? window.innerWidth / 2 : left + availableWidth / 2,
-                        centerY: top + availableHeight / 2,
-                        scale
-                    };
-                };
-
-                gsap.set(stage, { width: stageWidth, height: stageHeight });
-
-                // Map of stations from CONFIG
-                const waypoints = [
-                    { id: '#station-about',    p: 0.150 }, 
-                    { id: '#station-mission',  p: 0.412 }, 
-                    { id: '#station-subsystems', p: 0.6388404733510687 }, 
-                    { id: '#station-history',  p: 0.7598072031061722 }, 
-                    { id: '#station-sponsors', p: 0.9 }  
-                ];
-
-                const journeyTimeline = gsap.timeline({
-                    paused: true
-                });
-
-                // Hero Dive-In ScrollTrigger
-                const heroDiveTimeline = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: "#hero",
-                        start: "top top",
-                        end: "+=100%", // Pin for 100vh of scroll
-                        scrub: true,
-                        pin: true,
-                        pinSpacing: false // Allows journey-container to slide up behind the pinned hero
-                    }
-                });
-
-                if (!reduceMotion) {
-                    heroDiveTimeline
-                        .to("#hero-parallax-wrapper", { scale: 3, autoAlpha: 0, duration: 1 })
-                        .to("#hero video", { scale: 1.5, duration: 1 }, 0)
-                        .to("#hero", { autoAlpha: 0, duration: 0.5 }, 0.5);
-                } else {
-                    heroDiveTimeline.to("#hero", { autoAlpha: 0, duration: 1 });
-                }
-
-                const getTransformedPos = (progress: number) => {
-                    const pathEl = pathMain as SVGPathElement;
-                    const length = pathEl.getTotalLength() || 1; 
-                    const pt = pathEl.getPointAtLength(progress * length);
-                    return {
-                        x: (pt.x * 0.1) * scaleFactor,
-                        y: (887 - (pt.y * 0.1)) * scaleFactor
-                    };
-                };
-
-                // CAMERA HELPERS FOR DECOUPLED SMOOTH TRANSITIONS
-                const getStationPos = (stateIndex: number) => {
-                    // 0 = hero (path origin)
-                    if (stateIndex === 0) {
-                        return getTransformedPos(0);
-                    } else if (stateIndex >= 1 && stateIndex <= 5) {
-                        const wp = waypoints[stateIndex - 1];
-                        return getTransformedPos(wp.p);
-                    } else if (stateIndex === 6) {
-                        return { x: stageWidth / 2, y: stageHeight / 2 };
-                    }
-                    return { x: 0, y: 0 };
-                };
-
-                const getCameraParamsForState = (stateIndex: number) => {
-                    const isOutro = stateIndex === 6;
-                    if (isOutro) {
-                        const frame = getOutroFrame();
-                        const pos = getStationPos(stateIndex);
-                        return {
-                            x: -pos.x * frame.scale + frame.centerX,
-                            y: -pos.y * frame.scale + frame.centerY,
-                            scale: frame.scale
-                        };
-                    }
-
-                    const pos = getStationPos(stateIndex);
-                    
-                    // Calculate responsive scale based on a 1920x960 baseline canvas (2:1 aspect ratio)
-                    const baseScale = Math.min(window.innerWidth / 1920, window.innerHeight / 960);
-                    return {
-                        x: -pos.x * baseScale + window.innerWidth / 2,
-                        y: -pos.y * baseScale + window.innerHeight / 2,
-                        scale: baseScale
-                    };
-                };
-
-                const initialCamera = getCameraParamsForState(0);
-                gsap.set(stage, { x: initialCamera.x, y: initialCamera.y, scale: initialCamera.scale, transformOrigin: "0 0" });
-
-                waypoints.forEach((wp) => {
-                    const pos = getTransformedPos(wp.p);
-                    const stationEl = document.querySelector(wp.id) as HTMLElement;
-                    if (stationEl) {
-                        gsap.set(stationEl, {
-                            left: pos.x,
-                            top: pos.y,
-                            xPercent: -50,
-                            yPercent: -50,
-                            autoAlpha: 0 
-                        });
-                        const allWindows = stationEl.querySelectorAll('.hud-window');
-                        gsap.set(allWindows, { autoAlpha: 0, scale: 0.8 });
-                    }
-                });
-
-                gsap.set(pathMain, { drawSVG: "0%" });
-                gsap.set(otherPaths, { drawSVG: "0%" });
-
-                // Starting label — camera at path origin, nothing drawn yet
-                journeyTimeline.addLabel("journey-start");
-
-                let lastP = 0;
-
-                waypoints.forEach((wp, index) => {
-                    const duration = wp.p - lastP;
-                    const stationEl = document.querySelector(wp.id) as HTMLElement;
-                    const segmentTracker = { progress: lastP };
-
-                    const startVal = lastP;
-                    const endVal = wp.p;
-                    const startPos = getStationPos(index);
-                    const endPos = getStationPos(index + 1);
-                    const startScale = getCameraParamsForState(index).scale;
-                    const endScale = getCameraParamsForState(index + 1).scale;
-
-                    journeyTimeline.to(segmentTracker, {
-                        progress: wp.p,
-                        ease: "none",
-                        duration: duration * 30,
-                        onUpdate: function() {
-                            const p = segmentTracker.progress;
-                            const s = (p - startVal) / (endVal - startVal || 1);
-                            gsap.set(pathMain, { drawSVG: `${p * 100}%` });
-                            gsap.set(otherPaths, { drawSVG: `${Math.min(p / 0.9, 1) * 100}%` });
-
-                            // Cinematic zoom out-in centered trajectory
-                            // Scale S: dips relative to the interpolated target scale
-                            const targetScale = startScale + (endScale - startScale) * s;
-                            const S = targetScale * (1.0 - 2.4 * s * (1.0 - s));
-                            const px = startPos.x + (endPos.x - startPos.x) * s;
-                            const py = startPos.y + (endPos.y - startPos.y) * s;
-                            gsap.set(stage, {
-                                x: -px * S + window.innerWidth / 2,
-                                y: -py * S + window.innerHeight / 2,
-                                scale: S
-                            });
-                        }
-                    });
-
-                    if (stationEl) {
-                        const allWindows = stationEl.querySelectorAll('.hud-window');
-                        const lightWindows = Array.from(allWindows).filter(window => !window.classList.contains('hud-window-heavy'));
-                        const heavyWindows = Array.from(allWindows).filter(window => window.classList.contains('hud-window-heavy'));
-                        const lightFrames = lightWindows.flatMap(window => Array.from(window.querySelectorAll('.hud-frame-path')));
-                        const heavyFrames = heavyWindows.flatMap(window => Array.from(window.querySelectorAll('.hud-frame-path')));
-
-                        journeyTimeline.to(stationEl, { autoAlpha: 1, duration: 0.1 });
-
-                        if (lightFrames.length > 0) {
-                            journeyTimeline.fromTo(lightFrames, { drawSVG: "0%" }, {
-                                drawSVG: "100%", 
-                                duration: 0.45,
-                                stagger: 0.05,
-                                ease: "luxe"
-                            });
-                        }
-
-                        journeyTimeline.to(lightWindows, {
-                            autoAlpha: 1, 
-                            scale: 1, 
-                            duration: 0.4,
-                            stagger: 0.06,
-                            ease: "luxe"
-                        }, lightFrames.length > 0 ? "-=0.4" : "<");
-
-                        if (heavyFrames.length > 0) {
-                            journeyTimeline.fromTo(heavyFrames, { drawSVG: "0%" }, {
-                                drawSVG: "100%",
-                                duration: 0.4,
-                                stagger: 0.05,
-                                ease: "luxe"
-                            }, ">-=0.1");
-                        }
-
-                        if (heavyWindows.length > 0) {
-                            journeyTimeline.to(heavyWindows, {
-                                autoAlpha: 1,
-                                scale: 1,
-                                duration: 0.4,
-                                stagger: 0.05,
-                                ease: "luxe"
-                            }, heavyFrames.length > 0 ? "-=0.35" : ">+=0.1");
-                        }
-
-                        // Labeled anchor for stopping programmatic scrolls
-                        journeyTimeline.addLabel(`station-${wp.id.replace('#station-', '')}-active`);
-
-                        // HOLD: shortened to 0.1 to prevent visual delay when initiating transitions
-                        journeyTimeline.to({}, { duration: 0.1 }); 
-
-                        journeyTimeline.to(allWindows, { autoAlpha: 0, scale: 0.8, duration: 0.5, stagger: 0.05 });
-                        const allFrames = [...lightFrames, ...heavyFrames];
-                        if (allFrames.length > 0) {
-                            journeyTimeline.to(allFrames, {
-                                drawSVG: "0%", 
-                                duration: 0.8, 
-                                stagger: 0.05,
-                                ease: "power2.in" 
-                            }, "-=0.4");
-                        }
-                        
-                        journeyTimeline.to(stationEl, { autoAlpha: 0, duration: 0.2 });
-                    }
-                    lastP = wp.p;
-                });
-
-                const remainingDuration = (1 - lastP) * 30;
-                const lastStation = document.querySelector(waypoints[waypoints.length - 1].id);
-                const finalTracker = { progress: lastP };
-                const endPosFinal = getStationPos(6);
-
-                journeyTimeline
-                    .to(lastStation, { autoAlpha: 0, duration: 1.5 }, "+=1.5")
-                    // 1. Draw the path completely over 3.0 seconds (starts stationary)
-                    .to(finalTracker, {
-                        progress: 1,
-                        ease: "none",
-                        duration: remainingDuration,
-                        onUpdate: function() {
-                            const p = finalTracker.progress;
-                            gsap.set(pathMain, { drawSVG: `${p * 100}%` });
-                            gsap.set(otherPaths, { drawSVG: `${Math.min(p / 0.9, 1) * 100}%` });
-                        }
-                    })
-                    // 2. Zoom out and center the stage, starting 1.5 seconds into the drawing (50% overlap)
-                    .to(stage, {
-                        x: () => {
-                            const frame = getOutroFrame();
-                            return -endPosFinal.x * frame.scale + frame.centerX;
-                        },
-                        y: () => {
-                            const frame = getOutroFrame();
-                            return -endPosFinal.y * frame.scale + frame.centerY;
-                        },
-                        scale: () => getOutroFrame().scale,
-                        force3D: true,
-                        ease: "none",
-                        duration: remainingDuration * 0.5
-                    }, `-=${remainingDuration * 0.5}`)
-                    .addLabel("outro");
-
-                // CINEMATIC SECTION SCROLL STATE MACHINE
-                let currentStateIndex = 0;
-                let isAnimating = false;
-                let activeStateTween: gsap.core.Tween | null = null;
-                let outroStrokeTween: gsap.core.Tween | null = null;
-
-                const STATES = [
-                    { name: 'hero', label: null, scrollY: 0 },
-                    { name: 'about', label: 'station-about-active', scrollY: 0 },
-                    { name: 'mission', label: 'station-mission-active', scrollY: 0 },
-                    { name: 'subsystems', label: 'station-subsystems-active', scrollY: 0 },
-                    { name: 'history', label: 'station-history-active', scrollY: 0 },
-                    { name: 'sponsors', label: 'station-sponsors-active', scrollY: 0 },
-                    { name: 'outro', label: 'outro', scrollY: 0 }
-                ];
-
-                const updateScrollYPositions = () => {
-                    // Use client rect and window scroll offset for pixel-perfect document Y coordination
-                    const targetY = journeyContainer ? journeyContainer.getBoundingClientRect().top + window.scrollY : window.innerHeight;
-                    for (let i = 1; i < STATES.length; i++) {
-                        STATES[i].scrollY = targetY;
-                    }
-                    log("Cinematic Scroll: Scroll Y positions initialized:", STATES.map(s => `${s.name}: ${s.scrollY}`));
-                };
-                updateScrollYPositions();
-
-                const goToState = (targetIndex: number) => {
-                    if (targetIndex < 0 || targetIndex >= STATES.length) return;
-                    if (isAnimating) return;
-
-                    // A station may be visually settled while its eased tween still has an
-                    // imperceptible tail. Complete that tail before starting another tween.
-                    const previousStateTween = activeStateTween;
-                    if (previousStateTween?.isActive()) {
-                        previousStateTween.progress(1);
-                    }
-                    previousStateTween?.kill();
-                    activeStateTween = null;
-                    isAnimating = true;
-
-                    const targetState = STATES[targetIndex];
-                    const currentState = STATES[currentStateIndex];
-                    const lenis = (window as any).lenis;
-
-                    log(`Cinematic Scroll: Transitioning ${currentState.name} (${currentState.scrollY}px) -> ${targetState.name} (${targetState.scrollY}px)`);
-
-                    const isOutroTransition = targetIndex === 6 || currentStateIndex === 6;
-                    const transitionDuration = reduceMotion ? 0 : (isOutroTransition ? 2.5 : 6.0);
-                    const scrollDuration = reduceMotion ? 0 : 4.0;
-
-                    const isReturningToHero = currentStateIndex === 1 && targetIndex === 0;
-                    const isLeavingHero = currentStateIndex === 0 && targetIndex === 1;
-
-                    // 1. Scroll transition between hero and journey sections (using Lenis native scrollTo)
-                    if (currentState.scrollY !== targetState.scrollY && lenis) {
-                        if (isReturningToHero && !reduceMotion) {
-                            // Delay the scroll up so the journey line undraws first, 
-                            // overlapping slightly with the start of the scroll up
-                            setTimeout(() => {
-                                lenis.scrollTo(targetState.scrollY, { duration: scrollDuration });
-                            }, scrollDuration * 0.5 * 1000);
-                        } else {
-                            lenis.scrollTo(targetState.scrollY, { duration: scrollDuration });
-                        }
-                    }
-
-                    // Delay the timeline start if transitioning from hero to journey
-                    // Overlap slightly with the end of the scroll (50% of duration) to eliminate empty time
-                    const delayTimeline = (isLeavingHero && !reduceMotion) ? scrollDuration * 0.5 : 0;
-
-                     if (currentStateIndex === 6 && targetIndex < 6) {
-                        outroStrokeTween?.kill();
-                        outroStrokeTween = null;
-                        document.getElementById('journey-svg')?.classList.remove('outro-lines-final');
-
-                        // 1. Close menu immediately
-                        const toggleBtn = document.querySelector('.sm-toggle') as HTMLElement;
-                        if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'true') {
-                            toggleBtn.click();
-                        }
-                        
-                        // 2. Animate logo back to compact size
-                        const logo = document.getElementById('nav-logo');
-                        const isMobile = window.innerWidth < 768;
-                        gsap.to(logo, { 
-                            width: isMobile ? "150px" : "200px", 
-                            duration: 0.6, 
-                            ease: "luxe" 
-                        });
-
-                        // 3. Clear non-scaling stroke immediately
-                        const pathMain = document.querySelector('#journey-path-main');
-                        const otherPaths = document.querySelectorAll('.other-car-paths path');
-                        pathMain?.removeAttribute('vector-effect');
-                        (pathMain as HTMLElement).style.strokeWidth = '';
-                        otherPaths.forEach(path => {
-                            path.removeAttribute('vector-effect');
-                            (path as HTMLElement).style.strokeWidth = '';
-                        });
-                    }
-
-                    if (targetIndex === 6) {
-                        // Set non-scaling stroke for outro zoom
-                        const pathMain = document.querySelector('#journey-path-main');
-                        const otherPaths = document.querySelectorAll('.other-car-paths path');
-                        pathMain?.setAttribute('vector-effect', 'non-scaling-stroke');
-                        (pathMain as HTMLElement).style.strokeWidth = '2.5px';
-                        otherPaths.forEach(path => {
-                            path.setAttribute('vector-effect', 'non-scaling-stroke');
-                            (path as HTMLElement).style.strokeWidth = '2.5px';
-                        });
-                    }
-
-                    // 2. Play journey timeline to the corresponding label anchor using GSAP native tweenTo
-                    if (targetState.label) {
-                        const targetTime = journeyTimeline.labels[targetState.label];
-                        const startTime = journeyTimeline.time();
-                        const travelDistance = Math.max(Math.abs(targetTime - startTime), 0.001);
-                        let stateSettled = false;
-                        let outroPathsFinalized = false;
-
-                        const finalizeOutroPaths = () => {
-                            if (targetIndex !== 6 || outroPathsFinalized) return;
-                            outroPathsFinalized = true;
-
-                            // This must run after tweenTo's final timeline update. DrawSVG
-                            // otherwise writes its dash styles back during the easing tail.
-                            const outroPaths = [
-                                document.querySelector('#journey-path-main'),
-                                ...document.querySelectorAll('.other-car-paths path')
-                            ].filter((path): path is SVGPathElement => path instanceof SVGPathElement);
-                            gsap.set(outroPaths, { drawSVG: "100%" });
-                            outroPaths.forEach((path) => {
-                                path.style.removeProperty('stroke-dasharray');
-                                path.style.removeProperty('stroke-dashoffset');
-                                path.removeAttribute('stroke-dasharray');
-                                path.removeAttribute('stroke-dashoffset');
-                            });
-                            document.getElementById('journey-svg')?.classList.add('outro-lines-final');
-                            outroStrokeTween?.kill();
-                            outroStrokeTween = gsap.to(outroPaths, {
-                                strokeWidth: "6px",
-                                duration: reduceMotion ? 0 : 0.5,
-                                ease: "luxe",
-                                overwrite: true
-                            });
-                        };
-
-                        const settleState = () => {
-                            if (stateSettled) return;
-                            stateSettled = true;
-                            currentStateIndex = targetIndex;
-                            isAnimating = false;
-                            log(`Cinematic Scroll: Arrived at ${targetState.name}`);
-                            if (targetIndex === 6) {
-                                // 1. Animate logo to large size
-                                const logo = document.getElementById('nav-logo');
-                                gsap.to(logo, {
-                                    width: () => {
-                                        if (window.innerWidth < 640) return "280px";
-                                        if (window.innerWidth < 768) return "350px";
-                                        if (window.innerWidth < 1024) return "550px";
-                                        return "700px";
-                                    },
-                                    duration: 0.8,
-                                    ease: "luxe"
-                                });
-
-                                // 2. Open menu
-                                const toggleBtn = document.querySelector('.sm-toggle') as HTMLElement;
-                                if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'false') {
-                                    toggleBtn.click();
-                                }
-                            }
-                        };
-
-                        activeStateTween = journeyTimeline.tweenTo(targetState.label, {
-                            delay: delayTimeline,
-                            duration: transitionDuration,
-                            ease: isLeavingHero ? "power2.inOut" : "luxe",
-                            onUpdate: () => {
-                                const remainingRatio = Math.abs(targetTime - journeyTimeline.time()) / travelDistance;
-                                if (remainingRatio <= 0.005) {
-                                    settleState();
-                                }
-                            },
-                            onComplete: () => {
-                                settleState();
-                                finalizeOutroPaths();
-                                activeStateTween = null;
-                            }
-                        });
-                    } else {
-                        // Return journey stage camera to path start (Hero state)
-                        journeyTimeline.tweenTo(0, {
-                            duration: scrollDuration,
-                            ease: isReturningToHero ? "power2.inOut" : "luxe",
-                            onComplete: () => {
-                                if (isReturningToHero && !reduceMotion) {
-                                    // The physical scroll up started at 50% of this timeline's duration and takes scrollDuration to finish.
-                                    // We must wait for it to complete before releasing the isAnimating lock.
-                                    setTimeout(() => {
-                                        currentStateIndex = targetIndex;
-                                        isAnimating = false;
-                                        log(`Cinematic Scroll: Returned to ${targetState.name}`);
-                                    }, scrollDuration * 0.5 * 1000);
-                                } else {
-                                    currentStateIndex = targetIndex;
-                                    isAnimating = false;
-                                    log(`Cinematic Scroll: Returned to ${targetState.name}`);
-                                }
-                            }
-                        });
-                    }
-                };
-
-                const handleScrollIntent = (direction: 'up' | 'down') => {
-                    if (isAnimating) return;
-                    if (direction === 'down') {
-                        if (currentStateIndex < STATES.length - 1) {
-                            goToState(currentStateIndex + 1);
-                        }
-                    } else if (direction === 'up') {
-                        if (currentStateIndex > 0) {
-                            goToState(currentStateIndex - 1);
-                        }
-                    }
-                };
-
-                // CAPTURE PHASE GESTURE INTERCEPTORS
-                // Registering on capturing phase and calling stopImmediatePropagation
-                // prevents manual scroll inputs from reaching Lenis or the browser.
-                const wheelHandler = (e: WheelEvent) => {
-                    const active = currentStateIndex > 0 || isAnimating;
-                    if (active) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                    }
-                    if (isAnimating) return;
-                    
-                    if (Math.abs(e.deltaY) > 8) {
-                        // Cancel the event so it does not cause native scroll/fight with scrollTo
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        handleScrollIntent(e.deltaY > 0 ? 'down' : 'up');
-                    }
-                };
-
-                let touchStartY = 0;
-                const touchStartHandler = (e: TouchEvent) => {
-                    touchStartY = e.touches[0].clientY;
-                };
-
-                const touchMoveHandler = (e: TouchEvent) => {
-                    if (currentStateIndex > 0 || isAnimating) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                    }
-                };
-
-                const touchEndHandler = (e: TouchEvent) => {
-                    if (isAnimating) return;
-                    const touchEndY = e.changedTouches[0].clientY;
-                    const deltaY = touchStartY - touchEndY;
-                    
-                    if (Math.abs(deltaY) > 30) {
-                        handleScrollIntent(deltaY > 0 ? 'down' : 'up');
-                    }
-                };
-
-                const keydownHandler = (e: KeyboardEvent) => {
-                    if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Space'].includes(e.code)) {
-                        if (currentStateIndex > 0 || isAnimating) {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                        }
-                    }
-                    if (isAnimating) return;
-
-                    if (e.code === 'ArrowDown' || e.code === 'PageDown' || (e.code === 'Space' && !e.shiftKey)) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        handleScrollIntent('down');
-                    } else if (e.code === 'ArrowUp' || e.code === 'PageUp' || (e.code === 'Space' && e.shiftKey)) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        handleScrollIntent('up');
-                    }
-                };
-
-                const mousedownHandler = (e: MouseEvent) => {
-                    if (e.button === 1) { // Middle click auto-scroll
-                        if (currentStateIndex > 0 || isAnimating) {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                        }
-                    }
-                };
-
-                const resizeHandler = () => {
-                    updateScrollYPositions();
-                    if (currentStateIndex > 0) {
-                        const lenis = (window as any).lenis;
-                        if (lenis) {
-                            lenis.scrollTo(STATES[currentStateIndex].scrollY, { duration: 0 });
-                        }
-                    }
-                    const currentCam = getCameraParamsForState(currentStateIndex);
-                    gsap.set(stage, { x: currentCam.x, y: currentCam.y, scale: currentCam.scale });
-                };
-
-                // Register capturing phase listeners
-                window.addEventListener('wheel', wheelHandler, { capture: true, passive: false });
-                window.addEventListener('touchstart', touchStartHandler, { capture: true, passive: true });
-                window.addEventListener('touchmove', touchMoveHandler, { capture: true, passive: false });
-                window.addEventListener('touchend', touchEndHandler, { capture: true, passive: true });
-                window.addEventListener('keydown', keydownHandler, { capture: true });
-                window.addEventListener('mousedown', mousedownHandler, { capture: true });
-                window.addEventListener('resize', resizeHandler);
-
-                // Store cleanup for later (do NOT return early — code below still needs to run)
-                cleanupJourney = () => {
-                    activeStateTween?.kill();
-                    activeStateTween = null;
-                    outroStrokeTween?.kill();
-                    outroStrokeTween = null;
-                    window.removeEventListener('wheel', wheelHandler, { capture: true });
-                    window.removeEventListener('touchstart', touchStartHandler, { capture: true });
-                    window.removeEventListener('touchmove', touchMoveHandler, { capture: true });
-                    window.removeEventListener('touchend', touchEndHandler, { capture: true });
-                    window.removeEventListener('keydown', keydownHandler, { capture: true });
-                    window.removeEventListener('mousedown', mousedownHandler, { capture: true });
-                    window.removeEventListener('resize', resizeHandler);
-                };
-            }
-
-            // INTERACTIVE SUBTEAMS SCRIPT
-            const subteamDescriptions: Record<string, string> = {
-                st1: "Designing the structural skeleton and optimizing carbon fiber layups for maximum rigidity and minimum weight.",
-                st2: "Engineering vehicle dynamics through advanced geometry, shock absorber tuning, and tire interface optimization.",
-                st3: "Utilizing CFD and wind tunnel testing to maximize downforce across the technical car outline.",
-                st4: "Developing high-efficiency power transmission systems to deliver torque precisely to the wheels.",
-                st5: "Engineering the battery pack and power distribution systems with safety and efficiency at the core.",
-                st6: "Implementing control algorithms and simulating behavior to push the limits of track performance.",
-                st7: "Designing custom PCBs and real-time firmware for low-latency system communication.",
-                st8: "Developing the autonomous stack including perception, SLAM, and path planning for robotic racing.",
-                st9: "Building digital infrastructure and telemetry systems to support real-time engineering decisions.",
-                st10: "Managing logistics, sponsorships, and team coordination to ensure seamless racing program execution."
-            };
-
-            const targetContainer = document.getElementById('pillar-description-container');
-            const targetText = document.getElementById('pillar-description-text');
-
-            (window as any).onSubteamHover = (id: string) => {
-                if (id && subteamDescriptions[id] && targetText && targetContainer) {
-                    gsap.to(targetContainer, { 
-                        autoAlpha: 0, 
-                        y: 10, 
-                        duration: 0.2, 
-                        onComplete: () => {
-                            targetText.textContent = subteamDescriptions[id];
-                            gsap.to(targetContainer, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" });
-                        }
-                    });
-                }
-            };
-
-            // ACROSTIC INTERACTIVITY
-            const acrosticDescriptions: Record<string, string> = {
-                A: "We have created the first Autonomous / Driverless Electric race car in the Balkan region.",
-                R1: "Aristurtle is a team that fosters research on cutting-edge technologies and empowers young engineers to innovate.",
-                I: "Back in 2013, we built the first electric race car in Northern Greece. Aristurtle is a pioneering team in the field of electric mobility and is driven solely by the will of its members.",
-                S: "Our commitment to safeguarding the environment is something we actively prove every day. Raising public awareness for Electric and Autonomous mobility is our main focus.",
-                T1: "Our team has had an unparalleled course in the Formula Student competitions it has participated. Our performance is improving exponentially.",
-                U: "We believe in long-lasting relationships. By supporting our work, you become part of our ever-growing family.",
-                R2: "Aristurtle's sponsorship program offers strategic promotion solutions to all of its sponsors by creating unique, stimulative content. By leveraging our exposure on mass and social media, we are able to create value for our sponsors that exceeds the amount of their contribution.",
-                T2: "Our team members are exceptionally skilled individuals and we constantly strive to contribute to each and every one's personal development and cultivation.",
-                L: "We provide engineering students with hands-on practical experience by bridging the gap between theory and practice.",
-                E: "Aristurtle is the Greek Electric Vehicle Formula Student team with the most participations and distinctions in international FSAE competitions."
-            };
-
-            const acrosticExplContainer = document.getElementById('acrostic-expl-container');
-            const acrosticExplText = document.getElementById('acrostic-expl-text');
-            const marqueeWrapper = document.getElementById('acrostic-marquee-wrapper');
-            let currentAcrosticId = "";
-            let marqueeTimeline: gsap.core.Timeline | null = null;
-
-            const startMarquee = (entryID: string) => {
-                const container = document.getElementById('acrostic-expl-container');
-                const wrapper = document.getElementById('acrostic-marquee-wrapper');
-                
-                if (!container || !wrapper) return;
-                
-                if (marqueeTimeline) {
-                    marqueeTimeline.kill();
-                    marqueeTimeline = null;
-                }
-                gsap.killTweensOf([wrapper, container]);
-                
-                const newText = acrosticDescriptions[entryID];
-                if (!newText) return;
-
-                wrapper.innerHTML = `<p id="acrostic-expl-text" class="font-sans text-white text-[min(10cqw,12cqh)] leading-none uppercase font-black tracking-tighter italic inline-block">${newText}</p>`;
-                const textEl = document.getElementById('acrostic-expl-text');
-                if (!textEl) return;
-
-                const viewWidth = container.offsetWidth || 0;
-                const split = new SplitText(textEl, { type: "chars" });
-                
-                gsap.set(wrapper, { x: viewWidth });
-                gsap.set(container, { autoAlpha: 1 });
-                
-                const textWidth = wrapper.scrollWidth;
-                const scrollDistance = viewWidth + textWidth;
-                const speed = 250; 
-                const duration = scrollDistance / speed;
-
-                marqueeTimeline = gsap.timeline({
-                    onComplete: () => {
-                        gsap.delayedCall(2, () => {
-                            if (currentAcrosticId === entryID) startMarquee(entryID);
-                        });
-                    }
-                });
-
-                marqueeTimeline.to(wrapper, {
-                    x: -textWidth,
-                    duration: duration,
-                    ease: "none"
-                }, 0);
-
-                split.chars.forEach((char, i) => {
-                    const charOffset = char.offsetLeft; 
-                    const appearTime = charOffset / speed;
-                    const settleDistance = viewWidth * 0.3; 
-                    const settleDuration = settleDistance / speed;
-
-                    marqueeTimeline.fromTo(char, 
-                        {
-                            yPercent: gsap.utils.random(-200, 200),
-                            rotation: gsap.utils.random(-20, 20),
-                            opacity: 0
-                        },
-                        {
-                            yPercent: 0,
-                            rotation: 0,
-                            opacity: 1,
-                            duration: settleDuration,
-                            ease: "back.out(1.2)",
-                            immediateRender: false
-                        }, 
-                        appearTime
-                    );
-                });
-            };
-
-            const acrosticItems = document.querySelectorAll('.acrostic-item');
-            log(`[Acrostic] Found ${acrosticItems.length} acrostic items`);
-            acrosticItems.forEach((item) => {
-                item.addEventListener('mouseenter', () => {
-                    const id = item.getAttribute('data-id');
-                    log(`[Acrostic] Hover on item: ${id}`);
-                    if (id) {
-                        if (id === currentAcrosticId) return;
-                        currentAcrosticId = id;
-                        startMarquee(id);
-                    }
-                });
-            });
-
-            const acrosticList = document.getElementById('acrostic-list-container');
-            if (acrosticList) {
-                acrosticList.addEventListener('mouseleave', () => {
-                    currentAcrosticId = "";
-                    if (marqueeTimeline) marqueeTimeline.kill();
-                    gsap.to(acrosticExplContainer, { autoAlpha: 0, duration: 0.3 });
-                });
-            }
-
-			return () => {
-				if (cleanupJourney) cleanupJourney();
-				context.revert();
-			};
-		});
-	};
-
-	if (document.readyState === 'loading') {
-		window.addEventListener('DOMContentLoaded', initJourney);
-	} else {
-		initJourney();
-	}
-
-	document.addEventListener('astro:page-load', () => {
-		initJourney();
-	});
-
-	document.addEventListener('astro:before-swap', () => {
-		if (mm) {
-			mm.revert();
-			mm = null;
-		}
-	});
-</script>
-
 <style is:global>
-    #journey-svg.outro-lines-final path {
-        stroke-dasharray: none !important;
-        stroke-dashoffset: 0 !important;
-        stroke-width: 6px !important;
-        vector-effect: non-scaling-stroke;
-    }
+	.journey__inner { padding-block: clamp(4rem, 8vw, 7rem); }
+	.journey__head { margin-bottom: 3rem; }
+	.journey__viewport {
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		padding-inline: var(--gutter);
+		scrollbar-width: thin;
+	}
+	.journey__track { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; width: max-content; }
+	.journey__panel { flex: 0 0 min(80vw, 26rem); scroll-snap-align: start; }
+	.journey__panel--end { display: flex; flex-direction: column; justify-content: center; }
 
-    h1, h2, h3, h4 { letter-spacing: -0.04em; font-weight: 300; }
-	.ease-expo { transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 137, 0, 0.3); border-radius: 10px; }
-    
-    /* Hide scrollbars for the cinematic homepage experience */
-    html, body {
-        scrollbar-width: none; /* Firefox */
-    }
-    html::-webkit-scrollbar, body::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
-    }
-
-    @media (max-width: 767px) {
-        /* Allow station container to stack its HUD windows vertically */
-        [id^="station-"] {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 1.5rem !important;
-            padding: 8vh 1.5rem 2rem 1.5rem !important; /* Spacing to prevent overlap with the header/logo */
-            pointer-events: auto !important;
-            overflow-y: auto !important;
-        }
-
-        /* Make HUD windows responsive block containers */
-        .hud-window-container {
-            position: relative !important;
-            top: auto !important;
-            left: auto !important;
-            width: 90vw !important;
-            height: auto !important;
-            min-height: fit-content !important;
-        }
-
-        /* Ensure inner container has suitable height and responsive padding */
-        .hud-window-container > div {
-            position: relative !important;
-            height: auto !important;
-            min-height: fit-content !important;
-            border-radius: 16px !important;
-        }
-
-        /* Ensure text size doesn't collapse to zero due to height: auto */
-        .hud-window-container p,
-        .hud-window-container span:not(.acrostic-letter) {
-            font-size: 1rem !important;
-            line-height: 1.4 !important;
-        }
-        
-        /* Acrostic letters should remain reasonably large */
-        .acrostic-item span.acrostic-letter {
-            font-size: 2.2rem !important;
-        }
-        .acrostic-item span:not(.acrostic-letter) {
-            font-size: 1.1rem !important;
-        }
-
-        /* Sponsors CTA support button text size */
-        .hud-window-container a {
-            font-size: 0.9rem !important;
-            padding: 0.8rem 1.5rem !important;
-        }
-    }
+	@media (min-width: 1024px) {
+		.journey__panel { flex-basis: 30vw; max-width: 34rem; }
+		html.motion-ready .journey { min-height: 100svh; display: flex; align-items: center; }
+		html.motion-ready .journey__inner { width: 100%; padding-block: 0; }
+		html.motion-ready .journey__viewport { overflow: hidden; scroll-snap-type: none; }
+	}
 </style>
+
+<script>
+	import '../scripts/journey';
+	import '../scripts/hero-video';
+</script>

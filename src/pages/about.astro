@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { Image } from 'astro:assets';
+import teamPhoto from '../images/Aristurtle_photo_2-1_2.jpg';
+import { aboutValues } from '../data/site';
+
+const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
+---
+
+<BaseLayout title="About | ARISTURTLE" description="Aristurtle is the Aristotle University of Thessaloniki Formula Student team building electric and driverless race cars.">
+	<PageHero
+		eyebrow="About"
+		title="who we are"
+		subtitle="Aristotle University Racing Team Electric, better known as Aristurtle."
+	/>
+
+	<section class="section-pad bg-void">
+		<div class="container-site grid gap-14 lg:grid-cols-2 lg:gap-24">
+			<div class="flex flex-col gap-6">
+				<p class="lead !max-w-none text-white/90" data-reveal>
+					Aristurtle is a pioneering student research team at the Aristotle University of Thessaloniki, dedicated to designing, developing and building electric and driverless race cars. The team operates under the Department of Electrical and Computer Engineering and consists of students from fields ranging from Electrical and Mechanical Engineering to Physics and Economics.
+				</p>
+				<p class="lead !max-w-none" data-reveal>
+					Working under the pressure of demanding deadlines, our members tackle tasks that demand their full theoretical and practical abilities. Our cars are built according to the rules and standards of Formula Student, and the team is organised into specialised subgroups that collaborate under the Team Captain to deliver one unified, impeccably operating result.
+				</p>
+			</div>
+			<div class="aspect-[4/3] overflow-hidden bg-panel-2" data-reveal>
+				<Image src={teamPhoto} alt="The Aristurtle team with the race car" class="h-full w-full object-cover" widths={[600, 1000, 1400]} sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
+			</div>
+		</div>
+	</section>
+
+	<section class="section-pad border-t border-line bg-panel" aria-label="Purpose and vision">
+		<div class="container-site grid gap-px bg-line md:grid-cols-2">
+			<div class="bg-panel p-8 md:p-14" data-reveal>
+				<h2 class="h-section !text-[clamp(1.8rem,3.5vw,3rem)]">our purpose</h2>
+				<p class="lead mt-6">To design, develop and build top-tier electric race cars and compete in international Formula Student competitions against academic institutions from all around the world.</p>
+			</div>
+			<div class="bg-panel p-8 md:p-14" data-reveal>
+				<h2 class="h-section !text-[clamp(1.8rem,3.5vw,3rem)] !text-brand-orange">our vision</h2>
+				<p class="lead mt-6">To contribute to research around innovative technologies and to promote electric mobility in Greece and abroad, by materialising high-level pioneering products.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section-pad border-t border-line bg-void" aria-labelledby="values-title">
+		<div class="container-site">
+			<h2 id="values-title" class="h-section" data-reveal>what ARISTURTLE stands for</h2>
+			<ol class="mt-14 grid grid-cols-1 gap-px bg-line sm:grid-cols-2 lg:grid-cols-5">
+				{aboutValues.map((v) => (
+					<li class="flex flex-col gap-3 bg-void p-7" data-reveal>
+						<p class="text-5xl font-bold leading-none text-brand-orange" aria-hidden="true">{v.letter}</p>
+						<h3 class="text-lg font-bold" aria-label={`${v.letter}${v.title}`}>{v.letter}{v.title}</h3>
+						<p class="text-sm text-muted">{v.text}</p>
+					</li>
+				))}
+			</ol>
+		</div>
+	</section>
+
+	<section class="section-pad border-t border-line bg-panel">
+		<div class="container-site flex flex-col items-start gap-10">
+			<h2 class="h-section" data-reveal>meet the people behind the car</h2>
+			<div class="flex flex-wrap gap-4" data-reveal>
+				<a href={href('/team')} class="btn btn--solid">Meet the Team</a>
+				<a href={href('/cars')} class="btn">See the Cars</a>
+			</div>
+		</div>
+	</section>
+</BaseLayout>
