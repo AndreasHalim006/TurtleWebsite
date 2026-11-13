@@ -5,16 +5,14 @@ This file serves as the definitive source of truth for workflow, design, and tec
 
 ## 1. Project Overview & Identity
 - **Goal:** Official website for **ARISTURTLE**, the Formula Student racing team from the Aristotle University of Thessaloniki.
-- **Aesthetics:** Minimalist Monochrome. Emphasizes engineering precision through clean lines, high-contrast typography, and a strict color palette.
-- **UI Bias:** Prefer strong brand presence, one clear job per section, restrained motion, and real imagery. Avoid floating badges, dashboard-like clutter, and generic template aesthetics.
+- **Aesthetics:** The site follows the layout, section structure and typography of https://www.revolve.no/ (used with permission): full-bleed photo sections with dark fades, uppercase display headings, thin-bordered translucent buttons. Only the old Aristurtle color palette and content were kept.
+- **UI Bias:** Prefer strong brand presence, one clear job per section, restrained motion, and real imagery. Avoid floating badges and dashboard-like clutter.
 
 ## 2. Core Technologies
 - **Framework:** Astro (Static Site Generator)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS v4
-- **Animations:** GSAP with ScrollTrigger
-- **Scrolling:** Lenis (Global smooth scroll with inertia)
-- **3D/Visuals:** Three.js (integrated for advanced components)
+- **Animations:** GSAP with ScrollTrigger (native browser scrolling, no smooth-scroll library)
 
 ## 3. Required Workflow
 
@@ -25,13 +23,12 @@ This file serves as the definitive source of truth for workflow, design, and tec
 
 ## 4. Design System & Development Conventions
 
-- **Colors:** Strict monochrome palette (Blacks, Dark Grays `#0A0A0A`, `#141414`) with a single high-contrast accent: Aristurtle Orange (`--brand-orange`).
-- **Typography:** **Jura** (Sans-serif) for all text. No italics, no serif fonts.
-- **Spacing:** Container-based model (`max-w-[1800px]`) with generous viewport gutters (`px-[5vw]`).
-- **Motion Design:** Always use the `LUXE_EASE` curve (`cubic-bezier(0.16, 1, 0.3, 1)`) for GSAP animations to maintain smooth, high-end motion.
-- **Visuals:** Maintain perfectly flat, clean backgrounds. Avoid gradients, film grain, or complex textures.
-- **Interactive UI:** Navigation uses "Discrete Switch" logic (large during hero, snaps to compact when content begins).
-- **Assets:** Large video assets should be in `src/images/` and imported via Astro's asset system.
+- **Colors:** Palette carried over from the previous site: blacks/dark grays `#0A0A0A`, `#141414` and a single accent `--color-brand-orange` (currently `#9FFF10`; change it in `src/styles/global.css`).
+- **Typography:** **Syne** (display headings, uppercase, bold) and **Host Grotesk** (body, UI), both self-hosted via `@fontsource-variable`. Same pairing as the reference.
+- **Spacing:** `.container-site` (`max-width: 1440px`) with `5vw` gutters.
+- **Motion:** Restrained GSAP/ScrollTrigger (reveal on scroll, pinned horizontal car timeline). Always honor `prefers-reduced-motion`.
+- **Navigation:** Fixed bar (menu button left, logo center, Join Us right); transparent over the hero, solid after scrolling. Menu overlay closes with Esc and traps focus.
+- **Assets:** Photos live in `src/images/` and `src/assets/`, imported via Astro's asset system.
 
 ## 5. Repository Layout & Editing Boundaries
 

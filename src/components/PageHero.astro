@@ -1,18 +1,30 @@
 ---
-// Compact page hero used by every inner page. Provides the [data-hero] sentinel
-// that drives the header's large -> compact switch.
+// Page hero used by every inner page. [data-hero] marks the top of the page.
 interface Props {
-  title: string;
-  subtitle?: string;
-  eyebrow?: string;
+    title: string;
+    subtitle?: string;
+    eyebrow?: string;
 }
 const { title, subtitle, eyebrow } = Astro.props;
 ---
 
-<section data-hero class="relative flex min-h-[56svh] items-end border-b border-line bg-void pt-40 pb-14 md:pb-20">
-  <div class="container-site">
-    {eyebrow && <p class="eyebrow mb-5" data-reveal>{eyebrow}</p>}
-    <h1 class="h-hero max-w-[18ch]" data-reveal>{title}</h1>
-    {subtitle && <p class="lead mt-6" data-reveal>{subtitle}</p>}
-  </div>
+<section
+    data-hero
+    class="relative flex min-h-[50svh] items-end border-b border-line bg-void pt-36 pb-12 md:pb-16"
+>
+    <div class="container-site">
+        {eyebrow && (
+            <p class="eyebrow mb-4" data-reveal>
+                {eyebrow}
+            </p>
+        )}
+        <h1 class="h-hero max-w-[20ch]" data-reveal>
+            {title}
+        </h1>
+        {subtitle && (
+            <p class="lead lead--hero mt-5" data-reveal>
+                {subtitle}
+            </p>
+        )}
+    </div>
 </section>

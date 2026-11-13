@@ -1,100 +1,88 @@
 ---
-import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import AnalyticsConsent from '../components/AnalyticsConsent.astro';
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import AnalyticsConsent from "../components/AnalyticsConsent.astro";
 
 interface Props {
-	title?: string;
-	description?: string;
-	/** Pages without a full-screen hero start in the compact header state. */
-	forceCompact?: boolean;
+    title?: string;
+    description?: string;
+    /** Pages without a full-screen hero start with a solid header. */
+    forceCompact?: boolean;
 }
 
 const {
-	title = 'ARISTURTLE',
-	description = 'Official website of ARISTURTLE, the Formula Student racing team of Aristotle University of Thessaloniki.',
-	forceCompact = false,
+    title = "ARISTURTLE",
+    description = "Official website of ARISTURTLE, the Formula Student racing team of Aristotle University of Thessaloniki.",
+    forceCompact = false,
 } = Astro.props;
 
-const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const baseUrl = import.meta.env.BASE_URL.endsWith("/")
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`;
 ---
 
 <!doctype html>
 <html lang="en" class="bg-void text-foreground antialiased">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-		<link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-		<link rel="preload" href={`${baseUrl}fonts/jura-latin-variable.woff2`} as="font" type="font/woff2" crossorigin />
-		<script is:inline>
-			if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-				document.documentElement.classList.add('motion-ready');
-			}
-		</script>
-		<slot name="head" />
-	</head>
-	<body>
-		<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-brand-orange focus:text-void focus:px-4 focus:py-2 font-bold">Skip to content</a>
-		<Header forceCompact={forceCompact} />
-		<main id="main-content">
-			<slot />
-		</main>
-		<Footer />
-		<AnalyticsConsent />
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content={description} />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+        <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+        <script is:inline>
+            if (
+                window.matchMedia("(prefers-reduced-motion: no-preference)")
+                    .matches
+            ) {
+                document.documentElement.classList.add("motion-ready");
+            }
+        </script>
+        <slot name="head" />
+    </head>
+    <body>
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-brand-orange focus:text-void focus:px-4 focus:py-2 font-bold"
+        >
+            Skip to content
+        </a>
+        <Header forceCompact={forceCompact} />
+        <main id="main-content">
+            <slot />
+        </main>
+        <Footer />
+        <AnalyticsConsent />
 
-		<script>
-			import { gsap } from 'gsap';
-			import { ScrollTrigger } from 'gsap/ScrollTrigger';
+        <script>
+            import { gsap } from "gsap";
+            import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-			gsap.registerPlugin(ScrollTrigger);
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.defaults({ ease: "power2.out", duration: 0.9 });
 
-			const LUXE_EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
-			(window as any).LUXE_EASE = LUXE_EASE;
-			gsap.defaults({ ease: LUXE_EASE, duration: 0.9 });
+            if (
+                !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ) {
+                ScrollTrigger.batch("[data-reveal]", {
+                    start: "top 90%",
+                    once: true,
+                    onEnter: (els) =>
+                        gsap.to(els, {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.9,
+                            stagger: 0.08,
+                            overwrite: true,
+                        }),
+                });
+            }
 
-			const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-			// Global smooth scroll with inertia (desktop pointers only).
-			let lenis: import('lenis').default | null = null;
-			if (!reduceMotion && window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches) {
-				const { default: Lenis } = await import('lenis');
-				lenis = new Lenis({
-					duration: 1.2,
-					easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-				});
-				lenis.on('scroll', ScrollTrigger.update);
-				gsap.ticker.add((time) => lenis?.raf(time * 1000));
-				gsap.ticker.lagSmoothing(0);
-			}
-			(window as any).lenis = lenis;
-
-			// Scroll reveal for [data-reveal] elements.
-			if (!reduceMotion) {
-				ScrollTrigger.batch('[data-reveal]', {
-					start: 'top 88%',
-					once: true,
-					onEnter: (els) =>
-						gsap.to(els, { opacity: 1, y: 0, duration: 1.1, stagger: 0.08, overwrite: true }),
-				});
-			}
-
-			// Anchor links go through Lenis when present.
-			document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
-				a.addEventListener('click', (e) => {
-					const id = a.getAttribute('href');
-					if (!id || id === '#' || !lenis) return;
-					const target = document.querySelector(id);
-					if (!target) return;
-					e.preventDefault();
-					lenis.scrollTo(target as HTMLElement, { offset: -80 });
-				});
-			});
-
-			window.addEventListener('load', () => ScrollTrigger.refresh());
-		</script>
-	</body>
+            window.addEventListener("load", () => ScrollTrigger.refresh());
+        </script>
+    </body>
 </html>

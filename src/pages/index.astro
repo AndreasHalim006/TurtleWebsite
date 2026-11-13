@@ -1,187 +1,299 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
-import heroPoster from '../images/IMG_8879 1.jpeg';
-import { hero, worldClass, achievements, departments } from '../data/site';
-import { carsChronological } from '../data/cars';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import heroPhoto from "../images/IMG_8879 1.jpeg";
+import teamPhoto from "../images/Aristurtle_photo_2-1_2.jpg";
+import joinPhoto from "../images/IMG_8908.jpg";
+import { hero, worldClass, achievements, departments } from "../data/site";
+import { carsChronological } from "../data/cars";
 
-const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
-const heroVideo = `${baseUrl}videos/hero.mp4`;
+const baseUrl = import.meta.env.BASE_URL.endsWith("/")
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`;
+const href = (path: string) => `${baseUrl}${path.replace(/^\//, "")}`;
 ---
 
 <BaseLayout title="ARISTURTLE | Formula Student Team, Aristotle University of Thessaloniki">
-	<!-- 1. HERO -->
-	<section data-hero class="relative flex min-h-[100svh] items-end overflow-hidden bg-void">
-		<Image
-			src={heroPoster}
-			alt=""
-			class="absolute inset-0 h-full w-full object-cover"
-			widths={[800, 1400, 2200]}
-			sizes="100vw"
-			loading="eager"
-			fetchpriority="high"
-		/>
-		<video
-			id="hero-video"
-			class="absolute inset-0 h-full w-full object-cover"
-			autoplay
-			muted
-			loop
-			playsinline
-			preload="metadata"
-			aria-hidden="true"
-		>
-			<source src={heroVideo} type="video/mp4" />
-		</video>
-		<div class="absolute inset-0 bg-void/60"></div>
+    <!-- 1. HERO -->
+    <section data-hero class="img-section flex min-h-[100svh] items-end">
+        <Image
+            src={heroPhoto}
+            alt=""
+            class="img-section__media"
+            widths={[800, 1400, 2200]}
+            sizes="100vw"
+            loading="eager"
+            fetchpriority="high"
+        />
+        <div class="img-section__fade"></div>
+        <div class="container-site pb-16 pt-40 md:pb-24">
+            <h1 class="h-hero max-w-[16ch]" data-reveal>
+                {hero.title}
+            </h1>
+            <p
+                class="lead lead--hero mt-6 max-w-[40rem] text-white/85"
+                data-reveal
+            >
+                {hero.subtitle}
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3" data-reveal>
+                <a href={href("/join")} class="btn btn--solid btn--lg">
+                    Join the Team
+                </a>
+                <a href={href("/sponsors")} class="btn btn--lg">
+                    Become a Partner
+                </a>
+            </div>
+        </div>
+    </section>
 
-		<div class="container-site relative z-10 pb-16 pt-44 md:pb-24">
-			<h1 class="h-hero max-w-[16ch] text-[clamp(2.5rem,6.2vw,6.5rem)]" data-reveal>{hero.title}</h1>
-			<p class="lead mt-6 text-white/80" data-reveal>{hero.subtitle}</p>
-			<div class="mt-10 flex flex-wrap gap-4" data-reveal>
-				<a href={href('/join')} class="btn btn--solid">Join the Team</a>
-				<a href={href('/sponsors')} class="btn">Become a Partner</a>
-			</div>
-		</div>
-	</section>
+    <!-- 2. WORLD-CLASS TEAM -->
+    <section
+        class="img-section section-pad"
+        aria-labelledby="world-class-title"
+    >
+        <Image
+            src={teamPhoto}
+            alt=""
+            class="img-section__media"
+            widths={[800, 1400, 2000]}
+            sizes="100vw"
+            loading="lazy"
+        />
+        <div class="img-section__fade"></div>
+        <div class="container-site">
+            <h2 id="world-class-title" class="h-section" data-reveal>
+                {worldClass.title}
+            </h2>
+            <p class="lead mt-5 max-w-[34rem]" data-reveal>
+                {worldClass.body}
+            </p>
+            <div class="mt-6 flex flex-wrap gap-3" data-reveal>
+                <a href={href("/about")} class="btn btn--solid">
+                    Explore Our Journey
+                </a>
+                <a href={href("/team")} class="btn">
+                    Meet the Team
+                </a>
+            </div>
+            <ul
+                class="mt-14 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
+                aria-label="Achievements"
+            >
+                {achievements.map((a) => (
+                    <li
+                        class="flex min-h-[300px] flex-col justify-end gap-2 border border-line bg-void/70 p-6 backdrop-blur-sm"
+                        data-reveal
+                    >
+                        <p class="font-[family-name:var(--font-display)] text-3xl font-bold text-brand-orange">
+                            {a.place}
+                        </p>
+                        <p class="eyebrow !text-muted">{a.year}</p>
+                        <p class="h-card">{a.discipline}</p>
+                        <p class="text-muted">{a.competition}</p>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </section>
 
-	<!-- 2. WORLD-CLASS TEAM -->
-	<section class="section-pad bg-void" aria-labelledby="world-class-title">
-		<div class="container-site grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-24">
-			<div>
-				<h2 id="world-class-title" class="h-section" data-reveal>{worldClass.title}</h2>
-				<p class="lead mt-8" data-reveal>{worldClass.body}</p>
-				<div class="mt-10 flex flex-wrap gap-4" data-reveal>
-					<a href={href('/about')} class="btn btn--solid">Explore Our Journey</a>
-					<a href={href('/team')} class="btn">Meet the Team</a>
-				</div>
-			</div>
-			<ul class="grid grid-cols-1 gap-px bg-line sm:grid-cols-2" aria-label="Achievements">
-				{achievements.map((a) => (
-					<li class="flex flex-col gap-3 bg-panel p-7" data-reveal>
-						<p class="text-3xl font-bold text-brand-orange md:text-4xl">{a.place}</p>
-						<p class="eyebrow !text-muted">{a.year}</p>
-						<p class="font-bold">{a.discipline}</p>
-						<p class="text-sm text-muted">{a.competition}</p>
-					</li>
-				))}
-			</ul>
-		</div>
-	</section>
+    <!-- 3. DEPARTMENTS -->
+    <section class="bg-void section-pad" aria-labelledby="departments-title">
+        <div class="container-site">
+            <h2
+                id="departments-title"
+                class="h-section max-w-[18ch]"
+                data-reveal
+            >
+                three disciplines, one car
+            </h2>
+            <div class="mt-10 grid gap-3 md:grid-cols-3">
+                {departments.map((d) => (
+                    <article
+                        class="img-section flex min-h-[400px] flex-col justify-end gap-3 overflow-hidden border border-line p-6"
+                        data-reveal
+                    >
+                        <Image
+                            src={d.image}
+                            alt=""
+                            class="img-section__media"
+                            widths={[480, 800]}
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            loading="lazy"
+                        />
+                        <div class="img-section__fade"></div>
+                        <h3 class="h-card !text-2xl">{d.name}</h3>
+                        <p class="text-[#c9ccd2]">{d.blurb}</p>
+                        <ul class="mt-2 flex flex-col">
+                            {d.topics.map((t) => (
+                                <li>
+                                    <a
+                                        href={href("/team")}
+                                        class="flex items-center justify-between border-t border-white/20 py-2 transition-colors hover:text-brand-orange"
+                                    >
+                                        {t}
+                                        <span aria-hidden="true">→</span>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </article>
+                ))}
+            </div>
+            <div class="mt-8" data-reveal>
+                <a href={href("/cars")} class="btn btn--solid">
+                    Get to Know Our Cars
+                </a>
+            </div>
+        </div>
+    </section>
 
-	<!-- 3. DEPARTMENTS -->
-	<section class="section-pad border-t border-line bg-panel" aria-labelledby="departments-title">
-		<div class="container-site">
-			<div class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-				<h2 id="departments-title" class="h-section max-w-[16ch]" data-reveal>three disciplines, one car</h2>
-				<div data-reveal><a href={href('/cars')} class="btn">Get to Know Our Cars</a></div>
-			</div>
-			<div class="mt-14 grid gap-px bg-line md:grid-cols-3">
-				{departments.map((d) => (
-					<article class="flex flex-col bg-void" data-reveal>
-						<div class="aspect-[4/3] overflow-hidden bg-panel-2">
-							<Image
-								src={d.image}
-								alt=""
-								class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-105"
-								widths={[480, 800]}
-								sizes="(max-width: 768px) 100vw, 33vw"
-								loading="lazy"
-							/>
-						</div>
-						<div class="flex flex-1 flex-col gap-5 p-7 md:p-9">
-							<h3 class="h-card">{d.name}</h3>
-							<p class="text-muted">{d.blurb}</p>
-							<ul class="mt-auto flex flex-col gap-2 pt-4">
-								{d.topics.map((t) => (
-									<li>
-										<a href={href('/team')} class="group flex items-center justify-between border-b border-line py-2 text-sm font-bold uppercase tracking-[0.12em] transition-colors hover:text-brand-orange">
-											{t}<span aria-hidden="true" class="transition-transform duration-500 group-hover:translate-x-1">→</span>
-										</a>
-									</li>
-								))}
-							</ul>
-						</div>
-					</article>
-				))}
-			</div>
-		</div>
-	</section>
+    <!-- 4. JOURNEY (horizontal scroll) -->
+    <section
+        data-journey
+        class="journey border-t border-line bg-void"
+        aria-labelledby="journey-title"
+    >
+        <div class="journey__inner">
+            <div class="container-site journey__head">
+                <h2
+                    id="journey-title"
+                    class="h-section max-w-[16ch]"
+                    data-reveal
+                >
+                    one car at a time
+                </h2>
+                <p class="lead mt-4" data-reveal>
+                    Every season a new car. Scroll through our journey since
+                    2013.
+                </p>
+            </div>
+            <div
+                class="journey__viewport"
+                tabindex="0"
+                role="region"
+                aria-label="Car timeline, scrollable"
+            >
+                <ol class="journey__track">
+                    {carsChronological.map((c) => (
+                        <li class="journey__panel">
+                            <a
+                                href={`${href("/cars")}#${c.id}`}
+                                class="group block"
+                            >
+                                <div class="aspect-[4/3] overflow-hidden bg-panel-2">
+                                    {c.image && (
+                                        <Image
+                                            src={c.image}
+                                            alt={`${c.name} race car`}
+                                            class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                            widths={[480, 800, 1100]}
+                                            sizes="(max-width: 1024px) 80vw, 30vw"
+                                            loading="lazy"
+                                        />
+                                    )}
+                                </div>
+                                <p class="eyebrow mt-4">{c.years}</p>
+                                <h3 class="h-card mt-1">{c.name}</h3>
+                                <p class="mt-2 line-clamp-3 text-muted">
+                                    {c.description}
+                                </p>
+                            </a>
+                        </li>
+                    ))}
+                    <li class="journey__panel journey__panel--end">
+                        <p class="h-section">next up</p>
+                        <a href={href("/cars")} class="btn mt-6 self-start">
+                            Explore Our Cars
+                        </a>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
 
-	<!-- 4. JOURNEY (horizontal scroll) -->
-	<section data-journey class="journey border-t border-line bg-void" aria-labelledby="journey-title">
-		<div class="journey__inner">
-			<div class="container-site journey__head">
-				<h2 id="journey-title" class="h-section max-w-[14ch]" data-reveal>one car at a time</h2>
-				<p class="lead mt-5" data-reveal>Every season a new car. Scroll through our journey since 2013.</p>
-			</div>
-			<div class="journey__viewport" tabindex="0" role="region" aria-label="Car timeline, scrollable">
-				<ol class="journey__track">
-					{carsChronological.map((c) => (
-						<li class="journey__panel">
-							<a href={`${href('/cars')}#${c.id}`} class="group block">
-								<div class="aspect-[4/3] overflow-hidden bg-panel-2">
-									{c.image && (
-										<Image
-											src={c.image}
-											alt={`${c.name} race car`}
-											class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-											widths={[480, 800, 1100]}
-											sizes="(max-width: 1024px) 80vw, 30vw"
-											loading="lazy"
-										/>
-									)}
-								</div>
-								<p class="eyebrow mt-5">{c.years}</p>
-								<h3 class="h-card mt-2">{c.name}</h3>
-								<p class="mt-3 line-clamp-3 text-sm text-muted">{c.description}</p>
-							</a>
-						</li>
-					))}
-					<li class="journey__panel journey__panel--end">
-						<p class="h-section">next up</p>
-						<a href={href('/cars')} class="btn mt-8 self-start">Explore Our Cars</a>
-					</li>
-				</ol>
-			</div>
-		</div>
-	</section>
-
-	<!-- 5. CTA -->
-	<section class="section-pad border-t border-line bg-panel" aria-labelledby="cta-title">
-		<div class="container-site flex flex-col items-start gap-10">
-			<h2 id="cta-title" class="h-section" data-reveal>ready to race with us?</h2>
-			<div class="flex flex-wrap gap-4" data-reveal>
-				<a href={href('/join')} class="btn btn--solid">Become a Team Member</a>
-				<a href={href('/sponsors')} class="btn">Become a Partner</a>
-			</div>
-		</div>
-	</section>
+    <!-- 5. JOIN US -->
+    <section
+        class="img-section section-pad flex min-h-[70svh] items-end"
+        aria-labelledby="cta-title"
+    >
+        <Image
+            src={joinPhoto}
+            alt=""
+            class="img-section__media"
+            widths={[800, 1400, 2000]}
+            sizes="100vw"
+            loading="lazy"
+        />
+        <div class="img-section__fade"></div>
+        <div class="container-site">
+            <h2 id="cta-title" class="h-section" data-reveal>
+                will you race with us?
+            </h2>
+            <div class="mt-6 flex flex-wrap gap-3" data-reveal>
+                <a href={href("/join")} class="btn btn--solid btn--lg">
+                    Become a Team Member
+                </a>
+                <a href={href("/sponsors")} class="btn btn--lg">
+                    Become a Partner
+                </a>
+            </div>
+        </div>
+    </section>
 </BaseLayout>
 
 <style is:global>
-	.journey__inner { padding-block: clamp(4rem, 8vw, 7rem); }
-	.journey__head { margin-bottom: 3rem; }
-	.journey__viewport {
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		padding-inline: var(--gutter);
-		scrollbar-width: thin;
-	}
-	.journey__track { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: 0; width: max-content; }
-	.journey__panel { flex: 0 0 min(80vw, 26rem); scroll-snap-align: start; }
-	.journey__panel--end { display: flex; flex-direction: column; justify-content: center; }
+    .journey__inner {
+        padding-block: clamp(4rem, 8vw, 7rem);
+    }
+    .journey__head {
+        margin-bottom: 2.5rem;
+    }
+    .journey__viewport {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-inline: var(--gutter);
+        scrollbar-width: thin;
+    }
+    .journey__track {
+        display: flex;
+        gap: 1.25rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: max-content;
+    }
+    .journey__panel {
+        flex: 0 0 min(80vw, 26rem);
+        scroll-snap-align: start;
+    }
+    .journey__panel--end {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 
-	@media (min-width: 1024px) {
-		.journey__panel { flex-basis: 30vw; max-width: 34rem; }
-		html.motion-ready .journey { min-height: 100svh; display: flex; align-items: center; }
-		html.motion-ready .journey__inner { width: 100%; padding-block: 0; }
-		html.motion-ready .journey__viewport { overflow: hidden; scroll-snap-type: none; }
-	}
+    @media (min-width: 1024px) {
+        .journey__panel {
+            flex-basis: 30vw;
+            max-width: 34rem;
+        }
+        html.motion-ready .journey {
+            min-height: 100svh;
+            display: flex;
+            align-items: center;
+        }
+        html.motion-ready .journey__inner {
+            width: 100%;
+            padding-block: 0;
+        }
+        html.motion-ready .journey__viewport {
+            overflow: hidden;
+            scroll-snap-type: none;
+        }
+    }
 </style>
 
 <script>
-	import '../scripts/journey';
-	import '../scripts/hero-video';
+    import "../scripts/journey";
 </script>

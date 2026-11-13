@@ -1,38 +1,21 @@
 import { gsap } from 'gsap';
 
-const LUXE_EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
-
 const header = document.getElementById('site-header') as HTMLElement | null;
 const toggle = document.getElementById('menu-toggle') as HTMLButtonElement | null;
 const overlay = document.getElementById('menu-overlay') as HTMLElement | null;
 
 if (header && toggle && overlay) {
   const root = document.documentElement;
-  const forced = header.dataset.forceCompact === 'true';
-  const compactBarH = 68;
-  let contentStarted = forced;
+  const forced = header.dataset.forceSolid === 'true';
   let menuOpen = false;
 
+  // Transparent over the hero, solid once the page scrolls.
   const applyState = () => {
-    header.dataset.compact = String(forced || contentStarted || menuOpen);
+    const scrolled = window.scrollY > 24;
+    header.dataset.solid = String(forced || scrolled || menuOpen);
   };
-
-  // "Discrete Switch": large bar over the hero, snaps to compact once content begins.
-  if (!forced) {
-    const hero = document.querySelector('[data-hero]');
-    if (hero) {
-      new IntersectionObserver(
-        ([entry]) => {
-          contentStarted = !entry.isIntersecting;
-          applyState();
-        },
-        { rootMargin: `-${compactBarH}px 0px 0px 0px`, threshold: 0 }
-      ).observe(hero);
-    } else {
-      contentStarted = true;
-      applyState();
-    }
-  }
+  applyState();
+  window.addEventListener('scroll', applyState, { passive: true });
 
   let lastFocus: HTMLElement | null = null;
   // DOM order: toggle button first, then overlay links.
@@ -48,27 +31,23 @@ if (header && toggle && overlay) {
     else overlay.setAttribute('inert', '');
     applyState();
 
-    const lenis = (window as any).lenis;
     if (open) {
       lastFocus = document.activeElement as HTMLElement;
-      lenis?.stop();
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         gsap.fromTo(
           overlay.querySelectorAll('.menu-overlay__nav li, .menu-overlay__side > *'),
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1, stagger: 0.04, delay: 0.25, ease: LUXE_EASE, overwrite: true }
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, stagger: 0.04, delay: 0.1, ease: 'power2.out', overwrite: true }
         );
       }
       (overlay.querySelector('a[href]') as HTMLElement | null)?.focus();
     } else {
-      lenis?.start();
       (lastFocus ?? toggle).focus();
     }
   };
 
   toggle.addEventListener('click', () => setOpen(!menuOpen));
 
-  // Close after choosing a link (same-page anchors don't reload).
   overlay.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).closest('a[href]')) setOpen(false);
   });
@@ -94,4 +73,5 @@ if (header && toggle && overlay) {
       }
     }
   });
+
 }
