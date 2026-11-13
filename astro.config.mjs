@@ -4,8 +4,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://aristurtle.gr',
-  base: '/',
+  // Overridden by the GitHub Pages workflow so project-page previews work on a sub-path.
+  site: process.env.SITE_URL ?? 'https://aristurtle.gr',
+  base: process.env.SITE_BASE ?? '/',
   build: {
     assets: 'assets'
   },

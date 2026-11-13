@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   # Trigger the workflow every time you push to the branch
   push:
-    branches: [ chali, main, master ]
+    branches: [ chali, main, master, v2 ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -16,6 +16,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Project page of the fork: https://andreashalim006.github.io/TurtleWebsite/
+      SITE_URL: https://andreashalim006.github.io
+      SITE_BASE: /TurtleWebsite/
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
