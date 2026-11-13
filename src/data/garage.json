@@ -2,7 +2,7 @@
   {
     "id": "calypso",
     "name": "CALYPSO",
-    "years": "2022-2024",
+    "years": "2022–2024",
     "description": "Calypso is the seventh single-seater car of our team, symbolising the seven years she held Odysseus captive in her island. Just as the mythological figure offered devotion and adventure to Odysseus, our Calypso takes us on quests of knowledge and competition. Moreover, just like our previous car, Persephone, Calypso is able to compete in two categories based on the new regulations that follow technological developments.",
     "drawingImage": "continuous_line_car.svg",
     "image": "IMG_8879 1.jpeg",
@@ -14,7 +14,7 @@
       "7.5 kWh Accumulator Capacity",
       "Electronic Differential and Traction Control",
       "Planetary Gearbox 3.85:1",
-      "10\" Magnesium Rims w/ 16\" Hoosier tyres",
+      "10″ Magnesium Rims w/ 16″ Hoosier tyres",
       "Total weight 205 kg (w/out driver)",
       "120 km/h Top Speed"
     ],
@@ -230,21 +230,21 @@
   {
     "id": "persephone",
     "name": "PERSEPHONE",
-    "years": "2021-2022",
+    "years": "2021–2022",
     "description": "Like the goddess Persephone, who lived after her abduction by Hades for 6 months in the underworld and 6 months in the upper world, our Persephone also has a dual nature. The first car designed and built by our team to be both driven and self-driving has redefined the nature of Aristurtle’s cars. Persephone is the first of many cars that our team will create and the first in Greece that can compete in two categories based on the new regulations that follow technological developments.",
     "drawingImage": "simplified_formula_car.svg",
     "image": "IMG_8908.jpg",
     "specs": [
-      "Hybrid Driven and Driverless Architecture",
-      "LiDAR and Stereo Camera Sensor Fusion",
-      "Custom SLAM Algorithms for Track Mapping",
-      "Steel Tubular Spaceframe Chassis",
+      "Optimized Aluminum Monocoque Frame",
+      "Lightweight CFRP Accumulator Container and Inverter Enclosure",
       "Dual RWD w/ 39kW Electric Motors",
       "600V Maximum Tractive System Voltage",
+      "7.5 kWh Accumulator Capacity",
+      "Electronic Differential and Traction Control",
       "Planetary Gearbox 3.85:1",
-      "Custom BMS with Real-time Telemetry",
-      "Total weight 215 kg (w/out driver)",
-      "115 km/h Top Speed"
+      "10″ Magnesium Rims w/ 16″ Hoosier tyres",
+      "Total weight 205 kg (w/out driver)",
+      "120 km/h Top Speed"
     ],
     "gallery": [
       "persephone.jpg",
@@ -513,20 +513,21 @@
   {
     "id": "nemesis",
     "name": "NEMESIS",
-    "years": "2020-2021",
-    "description": "Nemesis, the kindly and the implacable. In mythology, Nemesis was the goddess of divine justice, balance and retribution. Nemesis, derived from the Greek Νέμειν, which means to distribute, equally distributes justice, as the Gods see fit.",
+    "years": "2020–2021",
+    "description": "Nemesis, the kindly and the implacable. In mythology, Nemesis was the goddess of divine justice, balance and retribution. Nemesis, derived from the Greek Νέμειν, which means to distribute, equally distributes justice, as the Gods see fit.\n\nIn our reality, Nemesis is Aristurtle’s 5th electric race car. Nemesis will push you to maximize your potential and drive you to become your better self, just as our racecar did in FSA and FS East in 2021!",
     "drawingImage": "continuous_line_car_2.svg",
     "image": "Untitled-12 3.jpg",
     "specs": [
-      "Steel Tubular Spaceframe Chassis",
-      "Full CFRP Aerodynamic Package",
-      "Dual RWD Emrax Motors",
-      "400V Tractive System Voltage",
-      "6.8 kWh Accumulator Capacity",
-      "Electronic Differential",
-      "Custom Inverter Cooling System",
-      "10\" Rims w/ Hoosier tyres",
-      "Total weight 220 kg (w/out driver)"
+      "Optimized Aluminum Monocoque Frame",
+      "Lightweight CFRP Accumulator Container and Inverter Enclosure",
+      "Dual RWD w/ 39kW Electric Motors",
+      "600V Maximum Tractive System Voltage",
+      "7.5 kWh Accumulator Capacity",
+      "Electronic Differential and Traction Control",
+      "Planetary Gearbox 3.85:1",
+      "10″ Magnesium Rims w/ 16″ Hoosier tyres",
+      "Total weight 211 kg (w/out driver)",
+      "120 km/h Top Speed"
     ],
     "gallery": [
       "Screenshot-2022-01-09-131814-1.png",
@@ -814,20 +815,18 @@
   {
     "id": "thetisdv",
     "name": "THETIS DV",
-    "years": "2020-2021",
-    "description": "Aristurtle's vision for innovation lead our team to the decision of developing its first autonomous vehicle in 2019. Thetis, our 4th electric vehicle, was chosen as the base vehicle to complete this ambitious task. The team's hard work bore fruition in 2021, when Thetis DV came into operation, becoming the first driverless race car in Greece.\n\nThe goal the team set for autonomous Thetis in season 2020-21 was to finish all four autonomous dynamic events in a DV competition. Thetis managed to complete all the events in her first try in FS East 2021, an achievement a handful of DV teams have accomplished. Furthermore, the vehicle won 4th place in the dynamic events, snatching also 3rd place in DV Skidpad and adding one more trophy to its award-winning collection.",
+    "years": "2020–2021",
+    "description": "Aristurtle’s vision for innovation lead our team to the decision of developing its first autonomous vehicle in 2019. Thetis, our 4th electric vehicle, was chosen as the base vehicle to complete this ambitious task. The team’s hard work bore fruition in 2021, when Thetis DV came into operation, becoming the first driverless race car in Greece.\n\nThe goal the team set for autonomous Thetis in season 2020-21 was to finish all four autonomous dynamic events in a DV competition. Thetis managed to complete all the events in her first try in FS East 2021, an achievement a handful of DV teams have accomplished. Furthermore, the vehicle won 4th place in the dynamic events, snatching also 3rd place in DV Skidpad and adding one more trophy to its award-winning collection.",
     "drawingImage": "formula_car_one_main_line.svg",
     "image": "Untitled-7 1.jpg",
     "specs": [
-      "Fully Autonomous DV Architecture",
-      "Dual LiDAR Setup",
-      "Stereo Vision Cameras",
-      "NVIDIA Jetson Computing Platform",
-      "Redundant Emergency Brake System (EBS)",
-      "CAN Protocol (Digital Communication)",
-      "Steel Tubular Spaceframe Chassis",
-      "Single Rear Wheel Drive",
-      "Custom Path Planning Algorithm"
+      "Planetary Gearbox Reducer",
+      "2x Electric Motors 55kW (RWD)",
+      "Custom Electronic Control Unit (ECU) and Battery Management System (BMS)",
+      "Actuators for autonomous steering wheel control and emergency braking",
+      "Dual Camera Perception Pipeline",
+      "Custom SLAM implementation based on graph optimization",
+      "Custom state estimation implementation based on fusing readouts from multiple sensors"
     ],
     "gallery": [
       "Screenshot-356.png",
@@ -1112,20 +1111,18 @@
   {
     "id": "thetis",
     "name": "THETIS",
-    "years": "2018-2020",
-    "description": "Thetis. Nymph of water. Daughter of gods. Mother of heroes. Object of desire, clash and contradiction. Aristurtle pays tribute to the myth of Thetis by bringing her essence to life with the newest edition of its race car. Thetis’ winning attitude enables her to establish her dominance even against theoretically superior rivals while advanced engineering bring unprecedented vehicle dynamics and record-breaking performance in Aristurtle’s most successful package to date. Award-winning achievements and international podium finishes over the 2018 - 2019 racing season have solidified Thetis’ own place in history.",
+    "years": "2018–2020",
+    "description": "Thetis. Nymph of water. Daughter of gods. Mother of heroes. Object of desire, clash and contradiction. Aristurtle pays tribute to the myth of Thetis by bringing her essence to life with the newest edition of its race car. Thetis’ winning attitude enables her to establish her dominance even against theoretically superior rivals while advanced engineering bring unprecedented vehicle dynamics and record-breaking performance in Aristurtle’s most successful package to date. Award-winning achievements and international podium finishes over the 2018–2019 racing season have solidified Thetis’ own place in history.",
     "drawingImage": "continuous_line_car.svg",
     "image": "Aristurtle_photo_1-1_2.jpg",
     "specs": [
-      "Optimized Steel Tubular Spaceframe",
-      "Carbon Fiber Aerodynamic Package",
+      "Planetary Gearbox Reducer",
+      "2x Electric Motors 55kW",
+      "ECU dSpace Microautobox II",
+      "ECU Tuning Wireless (WLAN)",
       "CAN Protocol (Digital Communication)",
-      "Single Rear Motor Architecture",
-      "400V Tractive System Voltage",
-      "6.5 kWh Accumulator Capacity",
-      "Chain Drive Transmission",
-      "13\" Magnesium Rims",
-      "Custom Dashboard with Telemetry"
+      "Ohlins Dampers (Suspension)",
+      "240 kg"
     ],
     "gallery": [
       "rollin-page-gif.gif",
@@ -1366,19 +1363,22 @@
   {
     "id": "iris",
     "name": "IRIS",
-    "years": "2017-2018",
+    "years": "2017–2018",
     "description": "Iris. the evolutionary. In mythology, Iris was the messenger of the Gods. In our reality, Iris is Aristurtle’s third electric race car. The similarity between the two? Speed. “Golden-winged”, “swift-footed” and “storm-swift” are only a few of the epithets that Iris has; both in mythical and mechanical form.",
     "drawingImage": "simplified_formula_car.svg",
     "image": "Aristurtle_photo_2-1_2.jpg",
     "specs": [
-      "Steel Tubular Spaceframe Chassis",
-      "First Aerodynamic Package integration",
-      "Single Rear Motor",
-      "Chain Drive Transmission",
-      "400V Tractive System Voltage",
-      "Custom Battery Management System",
-      "13\" Rims with Hoosier Tyres",
-      "Total weight 240 kg (w/out driver)"
+      "Monocoque Aluminum Frame",
+      "Planetary Gear System",
+      "2x Electric Motors 55kW",
+      "ECU dSpace Microautobox II",
+      "ECU Tuning Wireless (WLAN)",
+      "CAN Protocol (Digital Communication)",
+      "Electronic Differential with 8 settings",
+      "Carbon Fiber Aerodynamics Package",
+      "Ohlins Dampers (Suspension)",
+      "Drag Reduction System (DRS)",
+      "259 kg"
     ],
     "gallery": [
       "iris.png",
@@ -1685,19 +1685,21 @@
   {
     "id": "eve",
     "name": "EVE",
-    "years": "2016-2017",
+    "years": "2016–2017",
     "description": "Eve; the game-changer. She was the one who set the standards for our team’s future race car philosophy. Aluminum monocoque chassis, planetary gearboxes, carbon aerodynamic package, suspension setup; they were all implemented for the first time in Eve. Eve set the foundation for Aristurtle’s success on the track and her influence is still present in every subsequent Aristurtle race car. This is why she was named after the goddess of youth.",
     "drawingImage": "continuous_line_car_2.svg",
     "image": "Aristurtle_photo_3-1_2.jpg",
     "specs": [
-      "Experimental Aluminum Monocoque Chassis",
-      "Experimental Planetary Gearboxes",
-      "Early Carbon Aerodynamic Package",
-      "Custom Suspension Setup",
-      "Single RWD Electric Motor",
-      "Lead-Acid / Li-Ion hybrid testing",
-      "13\" Wheels",
-      "Foundation for future Aristurtle EV Architecture"
+      "Monocoque Aluminum Frame",
+      "Planetary Gear System",
+      "2x Electric Motors 55kW",
+      "ECU dSpace Microautobox II",
+      "ECU Tuning Wireless (WLAN)",
+      "CAN Protocol (Digital Communication)",
+      "Electronic Differential with 8 settings",
+      "Carbon Fiber Aerodynamics Package",
+      "Ohlins Dampers (Suspension)",
+      "299 kg"
     ],
     "gallery": [
       "eve-scaled.jpg",
@@ -1996,19 +1998,21 @@
   {
     "id": "electra",
     "name": "ELECTRA",
-    "years": "2015-2016",
+    "years": "2015–2016",
     "description": "Electra; the one who started it all. The pioneer. The one destined to change the course of the automotive landscape. Electra is our first-ever race car brought to life, and the beginning of a new era for the Greek motorsport scene. She is the child of the new era of electric vehicles and her creation poses a threat to her older siblings, the combustion vehicles, by constituting them obsolete.",
     "drawingImage": "formula_car_one_main_line.svg",
     "image": "team.png",
     "specs": [
-      "First Greek EV Race Car",
-      "Heavy Steel Tubular Spaceframe",
-      "Basic Single Motor RWD",
-      "Chain Drive Transmission",
-      "Early Battery Management System",
-      "No Aerodynamics Package",
-      "Pioneer in EV technology for the team",
-      "Total weight 300+ kg"
+      "Tubular Frame",
+      "Conventional Reducer",
+      "2x Electric Motors 55kW",
+      "ECU dSpace Microautobox II",
+      "ECU Tuning Wireless (WLAN)",
+      "Analog Communication",
+      "Electronic Differential",
+      "Fiberglass Aerodynamic Package",
+      "Ohlins Dampers (Suspension)",
+      "348 kg"
     ],
     "gallery": [
       "electra-1.jpg",

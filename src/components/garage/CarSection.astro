@@ -86,9 +86,13 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
       {/* Description */}
       <div class="w-full lg:col-span-5 flex flex-col">
         <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] mb-6">About the Car</h3>
-        <p class="font-jura text-gray-300 text-lg lg:text-xl leading-relaxed">
-          {car.description}
-        </p>
+        <div class="flex flex-col gap-6">
+          {car.description.split(/\n\s*\n/).map(paragraph => (
+            <p class="font-jura text-gray-300 text-lg lg:text-xl leading-relaxed">
+              {paragraph}
+            </p>
+          ))}
+        </div>
       </div>
 
       {/* Tech Specs (Bento Grid) */}
@@ -114,22 +118,38 @@ const galleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/images/
       <h3 class="font-jura text-sm lg:text-base text-[--brand-orange] uppercase tracking-[0.2em] text-center mb-12">Gallery</h3>
       <button class="car-gallery-toggle lg:hidden mb-6 min-h-12 w-full border border-white/20 text-xs font-bold uppercase tracking-[.16em]" type="button" aria-expanded="false">View gallery</button>
       <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
-        {car.gallery.slice(1).map(imgFile => {
+        {car.gallery.slice(1).map((imgFile, index) => {
            const imgPath = `/src/images/garage/gallery/${imgFile}`;
            const imgAsset = galleryImages[imgPath];
            if (!imgAsset) return null;
+           const imageNumber = index + 1;
+           const galleryLength = car.gallery!.length - 1;
            return (
-             <div class="aspect-[4/3] w-full overflow-hidden rounded-md bg-[#111] group">
+             <button
+               type="button"
+               class="car-gallery-item aspect-[4/3] w-full overflow-hidden rounded-md bg-[#111] group relative cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[--brand-orange]"
+               data-gallery-item
+               data-gallery-src={imgAsset.default.src}
+               data-gallery-group={car.id}
+               data-gallery-label={`${car.name} — image ${imageNumber} of ${galleryLength}`}
+               aria-label={`Open ${car.name} gallery image ${imageNumber} of ${galleryLength} full screen`}
+             >
                <Image
                  src={imgAsset.default}
-                 alt={`${car.name} Gallery Image`}
+                 alt={`${car.name} gallery image ${imageNumber}`}
                  widths={[320, 640, 960]}
                  sizes="(max-width: 767px) 50vw, (max-width: 1279px) 33vw, 25vw"
                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] opacity-80 group-hover:opacity-100"
                  loading="lazy"
                  decoding="async"
+                 draggable="false"
                />
-             </div>
+               <span class="absolute right-3 bottom-3 grid size-9 place-items-center border border-white/35 bg-black/55 text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true">
+                 <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8">
+                   <path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5" />
+                 </svg>
+               </span>
+             </button>
            );
         })}
       </div>
