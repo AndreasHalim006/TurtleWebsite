@@ -62,7 +62,7 @@ const seasons = (await getCollection('seasons')).sort((a, b) => a.data.order - b
 			{seasons.map((s, i) => (
 				<div class="mt-12" data-season-panel={s.id} hidden={i !== 0}>
 					{s.data.heroImage && (
-						<img src={asset(s.data.heroImage)} alt={`Team ${s.data.year}`} class="mb-12 aspect-[16/7] w-full object-cover border border-line" loading="lazy" decoding="async" />
+						<img src={asset(s.data.heroImage)} alt={`Team ${s.data.year}`} class="mb-12 aspect-[16/9] w-full object-cover object-top border border-line" loading="lazy" decoding="async" />
 					)}
 					{(s.data.departments ?? []).map((d) => (
 						<div class="mb-14">
