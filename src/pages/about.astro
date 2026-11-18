@@ -3,6 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import { Image } from 'astro:assets';
 import teamPhoto from '../images/Aristurtle_photo_2-1_2.jpg';
+import tracksidePhoto from '../images/Aristurtle_photo_1-1_2.jpg';
+import paddockPhoto from '../images/Aristurtle_photo_3-1_2.jpg';
+import workshopPhoto from '../images/Untitled-12_3.jpg';
+import testingPhoto from '../images/Untitled-7_1.jpg';
 import { aboutValues } from '../data/site';
 
 const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
@@ -26,7 +30,7 @@ const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
 					Working under the pressure of demanding deadlines, our members tackle tasks that demand their full theoretical and practical abilities. Our cars are built according to the rules and standards of Formula Student, and the team is organised into specialised subgroups that collaborate under the Team Captain to deliver one unified, impeccably operating result.
 				</p>
 			</div>
-			<div class="aspect-[4/3] overflow-hidden bg-panel-2" data-reveal>
+			<div class="aspect-[4/3] overflow-hidden bg-panel-2 border border-line" data-reveal>
 				<Image src={teamPhoto} alt="The Aristurtle team with the race car" class="h-full w-full object-cover" widths={[600, 1000, 1400]} sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
 			</div>
 		</div>
@@ -45,7 +49,54 @@ const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
 		</div>
 	</section>
 
-	<section class="section-pad border-t border-line bg-void" aria-labelledby="values-title">
+	<!-- GALLERY: LIFE AT ARISTURTLE -->
+	<section class="section-pad border-t border-line bg-void" aria-labelledby="life-title">
+		<div class="container-site">
+			<div class="flex flex-col gap-4 max-w-2xl mb-12" data-reveal>
+				<p class="eyebrow">Life at Aristurtle</p>
+				<h2 id="life-title" class="h-section">from workshop to racetrack</h2>
+				<p class="lead">
+					Thousands of hours of research, computer-aided design, composite manufacturing, and dynamometer testing culminate in competition days at Europe's most challenging Formula Student tracks.
+				</p>
+			</div>
+
+			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+				<div class="group relative aspect-[4/5] overflow-hidden bg-panel-2 border border-line" data-reveal>
+					<Image src={workshopPhoto} alt="Workshop fabrication" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" widths={[400, 700]} sizes="(max-width: 640px) 100vw, 25vw" loading="lazy" />
+					<div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-void/90 via-void/40 to-transparent p-5">
+						<p class="text-xs font-bold uppercase tracking-wider text-brand-orange">Manufacture</p>
+						<p class="text-sm font-semibold mt-1">In-house composite & electrical fabrication</p>
+					</div>
+				</div>
+
+				<div class="group relative aspect-[4/5] overflow-hidden bg-panel-2 border border-line" data-reveal>
+					<Image src={testingPhoto} alt="Vehicle track testing" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" widths={[400, 700]} sizes="(max-width: 640px) 100vw, 25vw" loading="lazy" />
+					<div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-void/90 via-void/40 to-transparent p-5">
+						<p class="text-xs font-bold uppercase tracking-wider text-brand-orange">Testing</p>
+						<p class="text-sm font-semibold mt-1">Telemetry calibration and track validation</p>
+					</div>
+				</div>
+
+				<div class="group relative aspect-[4/5] overflow-hidden bg-panel-2 border border-line" data-reveal>
+					<Image src={paddockPhoto} alt="Paddock preparations" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" widths={[400, 700]} sizes="(max-width: 640px) 100vw, 25vw" loading="lazy" />
+					<div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-void/90 via-void/40 to-transparent p-5">
+						<p class="text-xs font-bold uppercase tracking-wider text-brand-orange">Paddock</p>
+						<p class="text-sm font-semibold mt-1">High-pressure mechanical & electrical scrutineering</p>
+					</div>
+				</div>
+
+				<div class="group relative aspect-[4/5] overflow-hidden bg-panel-2 border border-line" data-reveal>
+					<Image src={tracksidePhoto} alt="Team celebration trackside" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" widths={[400, 700]} sizes="(max-width: 640px) 100vw, 25vw" loading="lazy" />
+					<div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-void/90 via-void/40 to-transparent p-5">
+						<p class="text-xs font-bold uppercase tracking-wider text-brand-orange">Competition</p>
+						<p class="text-sm font-semibold mt-1">Racing against world-class universities</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="section-pad border-t border-line bg-panel" aria-labelledby="values-title">
 		<div class="container-site">
 			<h2 id="values-title" class="h-section" data-reveal>what ARISTURTLE stands for</h2>
 			<ol class="mt-14 grid grid-cols-1 gap-px bg-line sm:grid-cols-2 lg:grid-cols-5">
@@ -60,11 +111,12 @@ const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
 		</div>
 	</section>
 
-	<section class="section-pad border-t border-line bg-panel">
+	<section class="section-pad border-t border-line bg-void">
 		<div class="container-site flex flex-col items-start gap-10">
 			<h2 class="h-section" data-reveal>meet the people behind the car</h2>
 			<div class="flex flex-wrap gap-4" data-reveal>
-				<a href={href('/team')} class="btn btn--solid">Meet the Team</a>
+				<a href={href('/subteams')} class="btn btn--solid">Explore Subteams</a>
+				<a href={href('/team')} class="btn">Meet the Members</a>
 				<a href={href('/cars')} class="btn">See the Cars</a>
 			</div>
 		</div>

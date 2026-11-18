@@ -4,7 +4,7 @@
 
 @theme {
   /* Palette carried over from the previous Aristurtle site. */
-  --color-brand-orange: #9FFF10;
+  --color-brand-orange: #00A651;
   --color-void: #0A0A0A;
   --color-panel: #141414;
   --color-panel-2: #1c1c1c;
@@ -159,7 +159,7 @@ html.menu-open, html.menu-open body { overflow: hidden; }
   cursor: pointer;
   transition: border-color 0.35s ease, background-color 0.35s ease, color 0.35s ease;
 }
-.btn:hover { border-color: var(--color-brand-orange); background-color: rgba(159, 255, 16, 0.12); }
+.btn:hover { border-color: var(--color-brand-orange); background-color: rgba(0, 166, 81, 0.15); }
 .btn--solid { border-color: var(--color-brand-orange); }
 .btn--solid:hover { background-color: var(--color-brand-orange); color: var(--color-void); }
 .btn--lg { padding: 1.1rem 2rem; font-size: 1.25rem; line-height: 1.25rem; }

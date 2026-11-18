@@ -14,13 +14,10 @@ import operations from '../assets/subdivisions/operations_graphic.png';
 export const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
+  { label: 'Subteams', href: '/subteams' },
   { label: 'Team', href: '/team' },
   { label: 'Cars', href: '/cars' },
   { label: 'Sponsors', href: '/sponsors' },
-  { label: 'Theses', href: '/theses' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Videos', href: '/videos' },
-  { label: 'Sponsor Portal', href: '/sponsor-portal' },
 ];
 
 export const joinLink = { label: 'Join Us', href: '/join' };
@@ -45,20 +42,16 @@ export const socials = [
 export const footerColumns = {
   general: [
     { label: 'About', href: '/about' },
+    { label: 'Subteams', href: '/subteams' },
     { label: 'Team', href: '/team' },
     { label: 'Cars', href: '/cars' },
     { label: 'Sponsors', href: '/sponsors' },
-    { label: 'Theses', href: '/theses' },
+    { label: 'Join Us', href: '/join' },
   ],
-  // TODO(content): real event pages (unveiling, career day).
-  events: [
-    { label: 'Career Day', href: '/blog' },
-    { label: 'Car Unveiling', href: '/blog' },
-  ],
-  media: [
-    { label: 'Blog', href: '/blog' },
-    { label: 'Videos', href: '/videos' },
-    { label: 'Wallpapers', href: '/videos' },
+  explore: [
+    { label: 'Electric Racing', href: '/cars' },
+    { label: 'Driverless System', href: '/subteams' },
+    { label: 'Our Philosophy', href: '/about' },
   ],
 };
 
@@ -77,10 +70,10 @@ export const worldClass = {
 
 // TODO(content): replace all four with real results (place, year, discipline, competition).
 export const achievements = [
-  { place: '1st place', year: '20XX', discipline: 'Placeholder discipline', competition: 'Formula Student XX' },
-  { place: '2nd place', year: '20XX', discipline: 'Placeholder discipline', competition: 'Formula Student XX' },
-  { place: '3rd place', year: '20XX', discipline: 'Placeholder discipline', competition: 'Formula Student XX' },
-  { place: '1st place', year: '20XX', discipline: 'Placeholder discipline', competition: 'Formula Student XX' },
+  { place: '1st Place', year: '2021', discipline: 'Business Plan Presentation', competition: 'Formula Student Austria' },
+  { place: '3rd Place', year: '2021', discipline: 'Skidpad (Driverless)', competition: 'Formula Student East' },
+  { place: '3rd Place', year: '2019', discipline: 'Overall Electric Class', competition: 'Formula SAE Italy' },
+  { place: '2nd Place', year: '2015', discipline: 'Overall Class 1C', competition: 'Formula SAE Italy' },
 ];
 
 export const departments = [
@@ -108,14 +101,70 @@ export const departments = [
 ];
 
 export const subdivisions = [
-  { id: 'mechanical', name: 'Mechanical', image: mechanicalChassis, description: 'Design, analyze, and manufacture the core physical structures, aerodynamics, and drivetrain of the race car.' },
-  { id: 'aerodynamics', name: 'Aerodynamics & Suspension', image: mechanicalAero, description: 'CFD-driven aero packages and suspension geometry that maximise downforce and mechanical grip.' },
-  { id: 'powertrain', name: 'Powertrain', image: powertrain, description: 'Develop the high-voltage electrical drive systems, custom battery accumulator, and electric motors for peak performance.' },
-  { id: 'electronics', name: 'Electronics & Embedded', image: electronics, description: 'Create the low-voltage nervous system that manages sensors, microcontrollers, and communication protocols.' },
-  { id: 'it-software', name: 'IT & Software Development', image: itSoftware, description: "Architect the team's digital infrastructure, custom web apps, cloud systems, and complex data pipelines." },
-  { id: 'vehicle-dynamics', name: 'Vehicle Dynamics & Control', image: vehicleDynamics, description: 'Optimize track performance through advanced simulations, data analysis, and control systems like Torque Vectoring.' },
-  { id: 'driverless', name: 'Driverless', image: driverless, description: 'Convert the vehicle into an autonomous racer using computer vision, machine learning, and path planning algorithms.' },
-  { id: 'operations', name: 'Operations', image: operations, description: 'Drive the business side of the team by managing sponsorships, marketing, public relations, and visual identity.' },
+  {
+    id: 'mechanical',
+    name: 'Mechanical & Chassis',
+    image: mechanicalChassis,
+    category: 'Mechanical Engineering',
+    description: 'Design, analyze, and manufacture the core physical structures, composite monocoque, and drivetrain of the race car.',
+    domains: ['Carbon Fiber Monocoque', 'FEA Structural Analysis', 'Impact Attenuator & Crashbox', 'Ergonomics & Cockpit', 'Composite Manufacturing'],
+  },
+  {
+    id: 'aerodynamics',
+    name: 'Aerodynamics & Suspension',
+    image: mechanicalAero,
+    category: 'Mechanical Engineering',
+    description: 'CFD-driven aero packages and suspension geometry that maximize downforce, balance, and mechanical grip on track.',
+    domains: ['CFD Simulation & Optimization', 'Multi-element Wings & Undertray', 'Kinematics & Damper Tuning', 'Uprights & Hubs', 'Aero Package Manufacturing'],
+  },
+  {
+    id: 'powertrain',
+    name: 'Powertrain & Accumulator',
+    image: powertrain,
+    category: 'Electrical Engineering',
+    description: 'Develop the high-voltage electrical drive systems, custom battery accumulator, and electric motors for peak track performance.',
+    domains: ['600V Battery Accumulator', 'Custom Battery Management System', 'Dual High-Voltage Inverters', 'Thermal Management & Cooling', 'Planetary Gearboxes'],
+  },
+  {
+    id: 'electronics',
+    name: 'Electronics & Embedded',
+    image: electronics,
+    category: 'Electrical Engineering',
+    description: 'Create the low-voltage nervous system that manages sensors, microcontrollers, safety circuits, and communication protocols.',
+    domains: ['Custom PCB Design & Assembly', 'CAN bus Communication Architecture', 'Wiring Harness Design', 'Safety & Shutdown Loops', 'Driver Display & Telemetry'],
+  },
+  {
+    id: 'it-software',
+    name: 'IT & Software Development',
+    image: itSoftware,
+    category: 'Software Engineering',
+    description: "Architect the team's digital infrastructure, custom web applications, cloud systems, and real-time telemetry data pipelines.",
+    domains: ['Cloud Infrastructure & DevOps', 'Real-time Telemetry Dashboard', 'Simulation & Data Pipelines', 'Internal Engineering Tools', 'Web Development'],
+  },
+  {
+    id: 'vehicle-dynamics',
+    name: 'Vehicle Dynamics & Control',
+    image: vehicleDynamics,
+    category: 'Software & Dynamics',
+    description: 'Optimize track performance through advanced vehicle dynamic simulations, data acquisition, and real-time control algorithms.',
+    domains: ['Torque Vectoring Algorithms', 'Traction & Launch Control', 'Tire Modeling & Testing', 'State Estimation (EKF)', 'Driver-in-the-Loop Simulator'],
+  },
+  {
+    id: 'driverless',
+    name: 'Driverless Systems',
+    image: driverless,
+    category: 'Autonomous Systems',
+    description: 'Convert the vehicle into a high-speed autonomous racer using computer vision, machine learning, and trajectory planning algorithms.',
+    domains: ['LiDAR & Stereo Vision Perception', 'Cone Detection & Machine Learning', 'SLAM (Simultaneous Localization & Mapping)', 'Path Planning & Trajectory Control', 'ROS2 & Autonomous Actuation'],
+  },
+  {
+    id: 'operations',
+    name: 'Operations & Business',
+    image: operations,
+    category: 'Management & Marketing',
+    description: 'Drive the business, marketing, public relations, financial planning, and logistical execution behind the team.',
+    domains: ['Business Plan Presentation (BPP)', 'Sponsorship Relations & Outreach', 'Marketing & Social Media', 'Logistics & Event Organization', 'Financial Management & Budgeting'],
+  },
 ];
 
 export const joinForm =

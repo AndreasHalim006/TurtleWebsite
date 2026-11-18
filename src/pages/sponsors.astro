@@ -25,7 +25,18 @@ const groups = categories
 		eyebrow="Partners"
 		title="the partners behind the car"
 		subtitle="Our cars exist because of the companies, institutions and individuals who believe in student engineering."
-	/>
+	>
+		<div class="mt-8 flex flex-wrap gap-4" data-reveal>
+			<a href="mailto:info@aristurtle.gr?subject=Partnership%20Inquiry" class="btn btn--solid btn--lg">
+				Become a Partner
+			</a>
+			<a href="#sponsor-categories" class="btn btn--lg">
+				View Current Partners
+			</a>
+		</div>
+	</PageHero>
+
+	<div id="sponsor-categories"></div>
 
 	{groups.map((g, i) => (
 		<section class="border-b border-line py-16 md:py-24" style={`background:${i % 2 ? 'var(--color-panel)' : 'var(--color-void)'}`} aria-labelledby={`cat-${g.key}`}>

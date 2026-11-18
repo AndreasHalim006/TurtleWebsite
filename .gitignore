@@ -58,6 +58,8 @@ video-debug.png
 *.ai
 
 # Local research, extraction, and import working files
+/_optimize.cjs
+/_renames.json
 /.npmrc
 /2016_raw_content.html
 /2020_raw_content.html

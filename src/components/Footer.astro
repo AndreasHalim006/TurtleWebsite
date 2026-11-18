@@ -8,7 +8,7 @@ const year = new Date().getFullYear();
 
 <footer class="border-t border-line bg-panel">
   <div class="container-site py-16 md:py-24">
-    <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-5">
+    <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
       <div class="flex flex-col gap-3">
         <h3 class="eyebrow">Contact</h3>
         <a href={`mailto:${contact.email}`} class="link-inline self-start">{contact.email}</a>
@@ -29,13 +29,8 @@ const year = new Date().getFullYear();
       </div>
 
       <div class="flex flex-col gap-2">
-        <h3 class="eyebrow mb-1">Events</h3>
-        {footerColumns.events.map((l) => <a href={href(l.href)} class="text-muted hover:text-white transition-colors">{l.label}</a>)}
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <h3 class="eyebrow mb-1">Media</h3>
-        {footerColumns.media.map((l) => <a href={href(l.href)} class="text-muted hover:text-white transition-colors">{l.label}</a>)}
+        <h3 class="eyebrow mb-1">Explore</h3>
+        {footerColumns.explore.map((l) => <a href={href(l.href)} class="text-muted hover:text-white transition-colors">{l.label}</a>)}
         <h3 class="eyebrow mb-1 mt-6">Follow</h3>
         <ul class="flex flex-wrap gap-x-5 gap-y-2">
           {socials.map((s) => (

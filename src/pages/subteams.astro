@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { Image } from 'astro:assets';
+import { subdivisions, joinLink } from '../data/site';
+
+const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
+---
+
+<BaseLayout
+  title="Subteams | ARISTURTLE"
+  description="Explore Aristurtle's 8 engineering and operational subteams: Mechanical, Aerodynamics, Powertrain, Electronics, IT, Vehicle Dynamics, Driverless, and Operations."
+>
+  <PageHero
+    eyebrow="Subteams"
+    title="disciplines in unison"
+    subtitle="Aristurtle is organized into eight specialized engineering and operational departments that design, simulate, build, and race our single-seaters."
+  >
+    <div class="mt-8 flex flex-wrap gap-4" data-reveal>
+      <a href={href(joinLink.href)} class="btn btn--solid btn--lg">
+        Join a Subteam
+      </a>
+      <a href="#subteams-list" class="btn btn--lg">
+        Explore Disciplines
+      </a>
+    </div>
+  </PageHero>
+
+  <div id="subteams-list"></div>
+
+  <section class="section-pad bg-void">
+    <div class="container-site flex flex-col gap-16 md:gap-24">
+      {subdivisions.map((sub, i) => (
+        <article
+          id={sub.id}
+          class="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-14 border-b border-line pb-16 md:pb-24 last:border-b-0"
+          data-reveal
+        >
+          <div class={`lg:col-span-6 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+            <div class="aspect-[16/10] overflow-hidden bg-panel-2 border border-line">
+              <Image
+                src={sub.image}
+                alt={`${sub.name} diagram and CAD`}
+                class="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-105"
+                widths={[500, 800, 1200]}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          <div class={`flex flex-col gap-4 lg:col-span-6 ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
+            <p class="eyebrow">{sub.category}</p>
+            <h2 class="h-section !text-[clamp(1.75rem,3vw,2.5rem)]">{sub.name}</h2>
+            <p class="lead !max-w-none text-white/90">
+              {sub.description}
+            </p>
+
+            <div class="mt-4">
+              <p class="text-xs font-bold uppercase tracking-wider text-muted mb-3">Key Focus Areas & Domains</p>
+              <ul class="flex flex-wrap gap-2">
+                {sub.domains.map((dom) => (
+                  <li class="border border-line bg-panel px-3 py-1.5 text-xs text-muted font-medium">
+                    {dom}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- Join CTA -->
+  <section class="border-t border-line bg-panel py-16 md:py-24" aria-labelledby="subteams-cta-title">
+    <div class="container-site flex flex-col items-start gap-6 max-w-3xl">
+      <p class="eyebrow">Recruitment</p>
+      <h2 id="subteams-cta-title" class="h-section">
+        find your department
+      </h2>
+      <p class="lead">
+        Whether you are passionate about carbon fiber composites, high-voltage battery architecture, autonomous machine learning, or brand marketing, Aristurtle offers hands-on experience on a real international stage.
+      </p>
+      <a href={href(joinLink.href)} class="btn btn--solid btn--lg mt-2">
+        Apply to Join Aristurtle
+      </a>
+    </div>
+  </section>
+</BaseLayout>

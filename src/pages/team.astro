@@ -17,7 +17,16 @@ const seasons = (await getCollection('seasons')).sort((a, b) => a.data.order - b
 		eyebrow="Team"
 		title="the people behind the car"
 		subtitle="Students from many majors, working across eight subdivisions to build one race car."
-	/>
+	>
+		<div class="mt-8 flex flex-wrap gap-4" data-reveal>
+			<a href="#members-section" class="btn btn--solid btn--lg">
+				Browse Members
+			</a>
+			<a href={href("/subteams")} class="btn btn--lg">
+				Explore Subteams &rarr;
+			</a>
+		</div>
+	</PageHero>
 
 	<section class="section-pad bg-void" aria-labelledby="subdivisions-title">
 		<div class="container-site">
@@ -38,7 +47,7 @@ const seasons = (await getCollection('seasons')).sort((a, b) => a.data.order - b
 		</div>
 	</section>
 
-	<section class="section-pad border-t border-line bg-panel" aria-labelledby="members-title">
+	<section class="section-pad border-t border-line bg-panel" id="members-section" aria-labelledby="members-title">
 		<div class="container-site">
 			<h2 id="members-title" class="h-section" data-reveal>members by season</h2>
 
@@ -53,7 +62,7 @@ const seasons = (await getCollection('seasons')).sort((a, b) => a.data.order - b
 			{seasons.map((s, i) => (
 				<div class="mt-12" data-season-panel={s.id} hidden={i !== 0}>
 					{s.data.heroImage && (
-						<img src={asset(s.data.heroImage)} alt={`Team ${s.data.year}`} class="mb-12 aspect-[16/7] w-full object-cover" loading="lazy" decoding="async" />
+						<img src={asset(s.data.heroImage)} alt={`Team ${s.data.year}`} class="mb-12 aspect-[16/7] w-full object-cover border border-line" loading="lazy" decoding="async" />
 					)}
 					{(s.data.departments ?? []).map((d) => (
 						<div class="mb-14">
@@ -61,9 +70,9 @@ const seasons = (await getCollection('seasons')).sort((a, b) => a.data.order - b
 							<ul class="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-4 xl:grid-cols-6">
 								{d.members.map((m) => (
 									<li class="flex flex-col gap-3">
-										<div class="aspect-[3/4] overflow-hidden bg-panel-2">
+										<div class="aspect-[3/4] overflow-hidden bg-panel-2 rounded-sm border border-line/40">
 											{m.image
-												? <img src={asset(m.image)} alt={m.name} class="h-full w-full object-cover" loading="lazy" decoding="async" />
+												? <img src={asset(m.image)} alt={m.name} class="h-full w-full object-cover object-top transition-transform duration-500 hover:scale-105" loading="lazy" decoding="async" />
 												: <div class="ph-box h-full w-full">Photo</div>}
 										</div>
 										<div>

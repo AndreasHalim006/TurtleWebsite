@@ -1,35 +1,50 @@
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
-
+// Native smooth horizontal swipe for car journey without locking page scroll
 const section = document.querySelector<HTMLElement>('[data-journey]');
 const viewport = section?.querySelector<HTMLElement>('.journey__viewport');
-const track = section?.querySelector<HTMLElement>('.journey__track');
+const prevBtn = document.getElementById('journey-prev');
+const nextBtn = document.getElementById('journey-next');
 
-if (section && viewport && track) {
-  const mm = gsap.matchMedia();
+if (viewport) {
+  const getScrollAmount = () => {
+    const firstPanel = viewport.querySelector<HTMLElement>('.journey__panel');
+    return firstPanel ? firstPanel.offsetWidth + 20 : 340;
+  };
 
-  // Desktop: pin the section and translate the track horizontally with scroll.
-  mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
-    // Stop when the last panel reaches the right gutter.
-    const distance = () => {
-      const pad = parseFloat(getComputedStyle(viewport).paddingLeft) || 0;
-      return Math.max(0, track.scrollWidth - (viewport.clientWidth - pad * 2));
-    };
+  prevBtn?.addEventListener('click', () => {
+    viewport.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+  });
 
-    gsap.to(track, {
-      x: () => -distance(),
-      ease: 'none', // scrubbed movement must stay linear to track the scrollbar
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: () => `+=${distance()}`,
-        pin: true,
-        scrub: 0.8,
-        invalidateOnRefresh: true,
-        anticipatePin: 1,
-      },
-    });
+  nextBtn?.addEventListener('click', () => {
+    viewport.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+  });
+
+  // Enable subtle drag-to-scroll for desktop mouse users
+  let isDown = false;
+  let startX = 0;
+  let scrollLeft = 0;
+
+  viewport.addEventListener('mousedown', (e) => {
+    isDown = true;
+    viewport.classList.add('is-dragging');
+    startX = e.pageX - viewport.offsetLeft;
+    scrollLeft = viewport.scrollLeft;
+  });
+
+  viewport.addEventListener('mouseleave', () => {
+    isDown = false;
+    viewport.classList.remove('is-dragging');
+  });
+
+  viewport.addEventListener('mouseup', () => {
+    isDown = false;
+    viewport.classList.remove('is-dragging');
+  });
+
+  viewport.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - viewport.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    viewport.scrollLeft = scrollLeft - walk;
   });
 }

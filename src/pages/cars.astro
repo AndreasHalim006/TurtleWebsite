@@ -30,16 +30,36 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 	{cars.map((c, i) => (
 		<section id={c.id} data-car-section={c.id} class="scroll-mt-20 border-b border-line py-20 md:py-28" style={`background:${i % 2 ? 'var(--color-panel)' : 'var(--color-void)'}`}>
 			<div class="container-site">
-				<div class="grid gap-12 lg:grid-cols-2 lg:gap-20">
+				<div class="grid gap-12 lg:grid-cols-2 lg:gap-20 lg:items-center">
 					<div>
 						<p class="eyebrow mb-4">{classOf(c.name)} · {c.years}</p>
 						<h2 class="h-section !uppercase">{c.name}</h2>
 						<p class="lead mt-8">{c.description}</p>
 					</div>
-					<div class="aspect-[4/3] overflow-hidden bg-panel-2">
-						{c.image
-							? <Image src={c.image} alt={`${c.name} race car`} class="h-full w-full object-cover" widths={[600, 1000, 1400]} sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
-							: <div class="ph-box h-full w-full">Car photo</div>}
+					<div>
+						{c.image ? (
+							<button
+								type="button"
+								class="lightbox-trigger group relative block aspect-[4/3] w-full overflow-hidden bg-panel-2 border border-line cursor-zoom-in"
+								data-lightbox-src={c.image.src}
+								data-lightbox-alt={`${c.name} race car`}
+								aria-label={`Open enlarged photo of ${c.name}`}
+							>
+								<Image
+									src={c.image}
+									alt={`${c.name} race car`}
+									class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+									widths={[600, 1000, 1400]}
+									sizes="(max-width: 1024px) 100vw, 50vw"
+									loading="lazy"
+								/>
+								<div class="absolute inset-0 bg-void/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+									<span class="btn btn--solid !min-h-9 !px-3 !py-1 text-xs">View Full Photo &;</span>
+								</div>
+							</button>
+						) : (
+							<div class="aspect-[4/3] overflow-hidden bg-panel-2 ph-box h-full w-full">Car photo</div>
+						)}
 					</div>
 				</div>
 
@@ -58,31 +78,42 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 					</dl>
 				</div>
 
-				<div class="mt-16 grid gap-12 lg:grid-cols-2 lg:gap-20">
-					<div>
-						<h3 class="eyebrow mb-6">Specifications</h3>
-						<ul class="flex flex-col">
-							{c.specs.map((s) => (
-								<li class="border-b border-line py-3 text-white/90">{s}</li>
-							))}
-						</ul>
-					</div>
-					<div>
-						<h3 class="eyebrow mb-6">Achievements</h3>
-						{/* TODO(content): per-competition results for each car. */}
-						<div class="ph-box !justify-items-start !text-left" style="min-height: 10rem;">
-							<span>Placeholder<br />Competition results for {c.name}</span>
-						</div>
-					</div>
+				<div class="mt-16">
+					<h3 class="eyebrow mb-6">Specifications</h3>
+					<ul class="grid grid-cols-1 md:grid-cols-2 gap-x-16 border-t border-line">
+						{c.specs.map((s) => (
+							<li class="border-b border-line py-3.5 text-white/90 text-sm md:text-base">
+								{s}
+							</li>
+						))}
+					</ul>
 				</div>
 
 				{c.gallery.length > 0 && (
 					<div class="mt-16">
-						<h3 class="eyebrow mb-6">Gallery</h3>
+						<div class="flex items-center justify-between mb-6">
+							<h3 class="eyebrow">Gallery (click to expand)</h3>
+							<span class="text-xs text-muted">{c.gallery.length} photos</span>
+						</div>
 						<ul class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
 							{c.gallery.slice(0, 6).map((g, gi) => (
-								<li class="aspect-square overflow-hidden bg-panel-2">
-									<Image src={g} alt={`${c.name} gallery ${gi + 1}`} class="h-full w-full object-cover" widths={[240, 420]} sizes="(max-width: 1024px) 50vw, 16vw" loading="lazy" />
+								<li>
+									<button
+										type="button"
+										class="lightbox-trigger group block aspect-square w-full overflow-hidden bg-panel-2 border border-line cursor-zoom-in"
+										data-lightbox-src={g.src}
+										data-lightbox-alt={`${c.name} gallery image ${gi + 1}`}
+										aria-label={`Open gallery photo ${gi + 1} of ${c.name}`}
+									>
+										<Image
+											src={g}
+											alt={`${c.name} gallery ${gi + 1}`}
+											class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+											widths={[240, 420]}
+											sizes="(max-width: 1024px) 50vw, 16vw"
+											loading="lazy"
+										/>
+									</button>
 								</li>
 							))}
 						</ul>
@@ -91,10 +122,86 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 			</div>
 		</section>
 	))}
+
+	<!-- Accessible Lightbox Modal Dialog -->
+	<dialog id="car-lightbox" class="lightbox-dialog" aria-label="Photo Lightbox">
+		<div class="lightbox-dialog__backdrop" data-close-lightbox></div>
+		<div class="lightbox-dialog__content">
+			<button type="button" class="lightbox-dialog__close btn !min-h-10 !px-4" data-close-lightbox aria-label="Close dialog">
+				✕ Close
+			</button>
+			<div class="lightbox-dialog__img-wrap">
+				<img id="lightbox-img" src="" alt="" class="lightbox-dialog__img" />
+			</div>
+			<p id="lightbox-caption" class="lightbox-dialog__caption eyebrow text-center mt-4"></p>
+		</div>
+	</dialog>
 </BaseLayout>
 
 <style is:global>
 	.car-chip[aria-pressed='true'] { background: var(--color-brand-orange); color: var(--color-void); }
+
+	/* Lightbox Dialog */
+	.lightbox-dialog {
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100vh;
+		max-width: none;
+		max-height: none;
+		margin: 0;
+		padding: 0;
+		border: none;
+		background: transparent;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 150;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.25s ease;
+	}
+	.lightbox-dialog[open] {
+		opacity: 1;
+		pointer-events: auto;
+	}
+	.lightbox-dialog__backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgba(10, 10, 10, 0.92);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+	}
+	.lightbox-dialog__content {
+		position: relative;
+		z-index: 2;
+		max-width: 90vw;
+		max-height: 90vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.lightbox-dialog__img-wrap {
+		max-width: 90vw;
+		max-height: 80vh;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--color-line);
+		background: var(--color-panel);
+	}
+	.lightbox-dialog__img {
+		max-width: 100%;
+		max-height: 80vh;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+	}
+	.lightbox-dialog__close {
+		align-self: flex-end;
+		margin-bottom: 0.75rem;
+	}
 </style>
 
 <script>
@@ -123,4 +230,42 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 
 	const initial = decodeURIComponent(location.hash.replace('#', ''));
 	if (initial && document.querySelector(`[data-car-section="${initial}"]`)) select(initial);
+
+	// Lightbox functionality
+	const dialog = document.getElementById('car-lightbox') as HTMLDialogElement | null;
+	const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+	const lightboxCaption = document.getElementById('lightbox-caption');
+	const triggers = document.querySelectorAll<HTMLButtonElement>('.lightbox-trigger');
+	const closeTriggers = document.querySelectorAll('[data-close-lightbox]');
+
+	const openLightbox = (src: string, alt: string) => {
+		if (!dialog || !lightboxImg) return;
+		lightboxImg.src = src;
+		lightboxImg.alt = alt;
+		if (lightboxCaption) lightboxCaption.textContent = alt;
+		dialog.showModal();
+		document.documentElement.classList.add('menu-open');
+	};
+
+	const closeLightbox = () => {
+		if (!dialog) return;
+		dialog.close();
+		document.documentElement.classList.remove('menu-open');
+	};
+
+	triggers.forEach((btn) => {
+		btn.addEventListener('click', () => {
+			const src = btn.dataset.lightboxSrc;
+			const alt = btn.dataset.lightboxAlt || '';
+			if (src) openLightbox(src, alt);
+		});
+	});
+
+	closeTriggers.forEach((btn) => {
+		btn.addEventListener('click', closeLightbox);
+	});
+
+	dialog?.addEventListener('cancel', () => {
+		document.documentElement.classList.remove('menu-open');
+	});
 </script>
