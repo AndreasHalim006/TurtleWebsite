@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import { Image } from 'astro:assets';
-import teamPhoto from '../images/Aristurtle_photo_2-1_2.jpg';
+import { fsgPhotos } from '../data/fsg-media';
 import tracksidePhoto from '../images/Aristurtle_photo_1-1_2.jpg';
 import paddockPhoto from '../images/Aristurtle_photo_3-1_2.jpg';
 import workshopPhoto from '../images/Untitled-12_3.jpg';
@@ -30,23 +30,29 @@ const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
 					Working under the pressure of demanding deadlines, our members tackle tasks that demand their full theoretical and practical abilities. Our cars are built according to the rules and standards of Formula Student, and the team is organised into specialised subgroups that collaborate under the Team Captain to deliver one unified, impeccably operating result.
 				</p>
 			</div>
-			<div class="aspect-[4/3] overflow-hidden bg-panel-2 border border-line" data-reveal>
-				<Image src={teamPhoto} alt="The Aristurtle team with the race car" class="h-full w-full object-cover" widths={[600, 1000, 1400]} sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
-			</div>
+			<figure data-reveal>
+				<Image src={fsgPhotos.team.image} alt={fsgPhotos.team.alt} class="block h-auto w-full border border-line" widths={[600, 1000, 1400]} sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
+				<figcaption class="mt-3 text-xs text-muted"><a href={fsgPhotos.team.source} target="_blank" rel="noopener noreferrer" class="link-inline">{fsgPhotos.team.credit}</a></figcaption>
+			</figure>
 		</div>
 	</section>
 
-	<section class="section-pad border-t border-line bg-panel" aria-label="Purpose and vision">
-		<div class="container-site grid gap-px bg-line md:grid-cols-2">
-			<div class="bg-panel p-8 md:p-14" data-reveal>
+	<section class="purpose-section img-section section-pad border-t border-line" aria-label="Purpose and vision">
+		<Image src={fsgPhotos.purpose.image} alt="" class="img-section__media" widths={[800, 1400, 2200]} sizes="100vw" loading="lazy" />
+		<div class="purpose-section__fade" aria-hidden="true"></div>
+		<div class="container-site grid gap-12 md:grid-cols-2 md:gap-16 lg:gap-24">
+			<div class="border-t border-white/30 pt-8" data-reveal>
+				<p class="eyebrow mb-5">What drives us</p>
 				<h2 class="h-section !text-[clamp(1.8rem,3.5vw,3rem)]">our purpose</h2>
-				<p class="lead mt-6">To design, develop and build top-tier electric race cars and compete in international Formula Student competitions against academic institutions from all around the world.</p>
+				<p class="lead mt-6 !text-white/90">To design, develop and build top-tier electric race cars and compete in international Formula Student competitions against academic institutions from all around the world.</p>
 			</div>
-			<div class="bg-panel p-8 md:p-14" data-reveal>
+			<div class="border-t border-brand-orange/60 pt-8" data-reveal>
+				<p class="eyebrow mb-5">Where we are headed</p>
 				<h2 class="h-section !text-[clamp(1.8rem,3.5vw,3rem)] !text-brand-orange">our vision</h2>
-				<p class="lead mt-6">To contribute to research around innovative technologies and to promote electric mobility in Greece and abroad, by materialising high-level pioneering products.</p>
+				<p class="lead mt-6 !text-white/90">To contribute to research around innovative technologies and to promote electric mobility in Greece and abroad, by materialising high-level pioneering products.</p>
 			</div>
 		</div>
+		<div class="container-site mt-12 text-xs text-white/70"><a href={fsgPhotos.purpose.source} target="_blank" rel="noopener noreferrer" class="link-inline">{fsgPhotos.purpose.credit}</a></div>
 	</section>
 
 	<!-- GALLERY: LIFE AT ARISTURTLE -->
@@ -122,3 +128,15 @@ const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
 		</div>
 	</section>
 </BaseLayout>
+
+<style>
+	.purpose-section { min-height: 36rem; display: flex; flex-direction: column; justify-content: center; }
+	.purpose-section__fade {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background:
+			linear-gradient(90deg, rgb(10 10 10 / 94%), rgb(10 10 10 / 70%)),
+			linear-gradient(0deg, var(--color-void), transparent 45%, var(--color-void));
+	}
+</style>

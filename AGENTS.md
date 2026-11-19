@@ -27,9 +27,9 @@ This file serves as the definitive source of truth for workflow, design, and tec
 - **Colors:** Palette carried over from the previous site: blacks/dark grays `#0A0A0A`, `#141414` and a single accent `--color-brand-orange` (currently `#9FFF10`; change it in `src/styles/global.css`).
 - **Typography:** **Sansation** throughout, with regular body/UI and bold uppercase display headings, self-hosted via `@fontsource/sansation` (400 and 700). This replaces the Barlow trial and distinguishes Aristurtle from the reference.
 - **Spacing:** `.container-site` (`max-width: 1440px`) with `5vw` gutters.
-- **Motion:** Restrained GSAP/ScrollTrigger (reveal on scroll, pinned horizontal car timeline). Always honor `prefers-reduced-motion`.
-- **Navigation:** Fixed bar (menu button left, logo center, Join Us right); transparent over the hero, solid after scrolling. Menu overlay closes with Esc and traps focus.
-- **Assets:** Photos live in `src/images/` and `src/assets/`, imported via Astro's asset system.
+- **Motion:** Restrained GSAP/ScrollTrigger reveals; the home car timeline uses native manual horizontal scrolling without pinning. Always honor `prefers-reduced-motion`.
+- **Navigation:** Fixed bar with logo and direct links to Home, About, Subteams, Team, Cars, Sponsors, and Join Us. Mobile links scroll horizontally; no pages dropdown or menu overlay. Solid background after scrolling.
+- **Assets:** Photos live in `src/images/` and `src/assets/`, imported via Astro's asset system. Prefer the downloaded `src/images/fsg26/` pool for general site imagery; preserve historically accurate car and season photos. FSG photo uses must display the photographer credit from `src/data/fsg-media.ts` near the image; source records live in `src/data/fsg-media-manifest.json`.
 
 ## 5. Repository Layout & Editing Boundaries
 

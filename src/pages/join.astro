@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import { Image } from 'astro:assets';
-import joinImage from '../images/IMG_8908.jpg';
+import { fsgPhotos } from '../data/fsg-media';
 import { joinForm, joinBenefits, subdivisions, contact } from '../data/site';
 ---
 
@@ -23,9 +23,10 @@ import { joinForm, joinBenefits, subdivisions, contact } from '../data/site';
 					<a href={`mailto:${contact.email}`} class="btn">Ask a Question</a>
 				</div>
 			</div>
-			<div class="aspect-[4/3] overflow-hidden bg-panel-2" data-reveal>
-				<Image src={joinImage} alt="Aristurtle members working on the car" class="h-full w-full object-cover" widths={[600, 1000, 1400]} sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
-			</div>
+			<figure data-reveal>
+				<Image src={fsgPhotos.teamwork.image} alt={fsgPhotos.teamwork.alt} class="aspect-[4/3] w-full object-cover" widths={[600, 1000, 1400]} sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
+				<figcaption class="mt-3 text-xs text-muted">{fsgPhotos.teamwork.credit}</figcaption>
+			</figure>
 		</div>
 	</section>
 

@@ -4,6 +4,12 @@ import PageHero from '../components/PageHero.astro';
 import { Image } from 'astro:assets';
 import { cars } from '../data/cars';
 
+const lightboxGalleries = Object.fromEntries(cars.map((car) => {
+  const images = [car.image, ...car.gallery].filter((image): image is ImageMetadata => Boolean(image));
+  const unique = images.filter((image, index) => images.findIndex((other) => other.src === image.src) === index);
+  return [car.id, unique.map((image, index) => ({ src: image.src, alt: `${car.name}: photo ${index + 1}` }))];
+}));
+const lightboxIndex = (id: string, src: string) => lightboxGalleries[id].findIndex((image) => image.src === src);
 const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electric');
 ---
 
@@ -41,8 +47,8 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 							<button
 								type="button"
 								class="lightbox-trigger group relative block aspect-[4/3] w-full overflow-hidden bg-panel-2 border border-line cursor-zoom-in"
-								data-lightbox-src={c.image.src}
-								data-lightbox-alt={`${c.name} race car`}
+								data-lightbox-car={c.id}
+								data-lightbox-index={lightboxIndex(c.id, c.image.src)}
 								aria-label={`Open enlarged photo of ${c.name}`}
 							>
 								<Image
@@ -54,7 +60,7 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 									loading="lazy"
 								/>
 								<div class="absolute inset-0 bg-void/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-									<span class="btn btn--solid !min-h-9 !px-3 !py-1 text-xs">View Full Photo &;</span>
+									<span class="btn btn--solid !min-h-9 !px-3 !py-1 text-xs">View Full Photo &nearr;</span>
 								</div>
 							</button>
 						) : (
@@ -101,8 +107,8 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 									<button
 										type="button"
 										class="lightbox-trigger group block aspect-square w-full overflow-hidden bg-panel-2 border border-line cursor-zoom-in"
-										data-lightbox-src={g.src}
-										data-lightbox-alt={`${c.name} gallery image ${gi + 1}`}
+										data-lightbox-car={c.id}
+										data-lightbox-index={lightboxIndex(c.id, g.src)}
 										aria-label={`Open gallery photo ${gi + 1} of ${c.name}`}
 									>
 										<Image
@@ -123,17 +129,23 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 		</section>
 	))}
 
-	<!-- Accessible Lightbox Modal Dialog -->
-	<dialog id="car-lightbox" class="lightbox-dialog" aria-label="Photo Lightbox">
+	<script is:inline type="application/json" id="car-lightbox-data" set:html={JSON.stringify(lightboxGalleries).replace(/</g, '\\u003c')} />
+	<dialog id="car-lightbox" class="lightbox-dialog" aria-label="Car photo gallery" aria-describedby="lightbox-caption">
 		<div class="lightbox-dialog__backdrop" data-close-lightbox></div>
 		<div class="lightbox-dialog__content">
-			<button type="button" class="lightbox-dialog__close btn !min-h-10 !px-4" data-close-lightbox aria-label="Close dialog">
-				✕ Close
-			</button>
-			<div class="lightbox-dialog__img-wrap">
-				<img id="lightbox-img" src="" alt="" class="lightbox-dialog__img" />
+			<div class="lightbox-dialog__toolbar">
+				<p id="lightbox-count" class="text-sm text-muted" aria-live="polite"></p>
+				<button type="button" class="btn !min-h-11 !px-4" data-close-lightbox autofocus aria-label="Close photo gallery">Close &times;</button>
 			</div>
-			<p id="lightbox-caption" class="lightbox-dialog__caption eyebrow text-center mt-4"></p>
+			<div class="lightbox-dialog__img-wrap" aria-busy="false">
+				<img id="lightbox-img" alt="" class="lightbox-dialog__img" hidden />
+				<p id="lightbox-status" class="lightbox-dialog__status text-muted" role="status"></p>
+			</div>
+			<div class="lightbox-dialog__footer">
+				<button type="button" class="btn !min-h-11 !px-4" data-lightbox-prev aria-label="Previous photo">&larr; <span>Previous</span></button>
+				<p id="lightbox-caption" class="lightbox-dialog__caption text-sm text-center"></p>
+				<button type="button" class="btn !min-h-11 !px-4" data-lightbox-next aria-label="Next photo"><span>Next</span> &rarr;</button>
+			</div>
 		</div>
 	</dialog>
 </BaseLayout>
@@ -141,67 +153,48 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 <style is:global>
 	.car-chip[aria-pressed='true'] { background: var(--color-brand-orange); color: var(--color-void); }
 
-	/* Lightbox Dialog */
+	/* Native dialog stays absent from the layout until opened. */
 	.lightbox-dialog {
 		position: fixed;
 		inset: 0;
-		width: 100vw;
-		height: 100vh;
+		width: 100%;
+		height: 100%;
 		max-width: none;
 		max-height: none;
 		margin: 0;
-		padding: 0;
+		padding: 1rem;
 		border: none;
 		background: transparent;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 150;
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.25s ease;
+		color: var(--color-foreground);
 	}
-	.lightbox-dialog[open] {
-		opacity: 1;
-		pointer-events: auto;
-	}
+	.lightbox-dialog[open] { display: grid; place-items: center; }
+	.lightbox-dialog::backdrop { background: transparent; }
+	html.lightbox-open, html.lightbox-open body { overflow: hidden; }
 	.lightbox-dialog__backdrop {
 		position: absolute;
 		inset: 0;
-		background: rgba(10, 10, 10, 0.92);
+		background: rgba(10, 10, 10, .96);
 		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
 	}
-	.lightbox-dialog__content {
-		position: relative;
-		z-index: 2;
-		max-width: 90vw;
-		max-height: 90vh;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
+	.lightbox-dialog__content { position: relative; width: min(100%, 1440px); max-height: 100%; display: flex; flex-direction: column; gap: .75rem; }
+	.lightbox-dialog__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 	.lightbox-dialog__img-wrap {
-		max-width: 90vw;
-		max-height: 80vh;
-		overflow: hidden;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border: 1px solid var(--color-line);
+		position: relative;
+		min-height: 35svh;
+		height: 72svh;
+		width: 100%;
+		display: grid;
+		place-items: center;
 		background: var(--color-panel);
+		border: 1px solid var(--color-line);
+		overflow: hidden;
 	}
-	.lightbox-dialog__img {
-		max-width: 100%;
-		max-height: 80vh;
-		width: auto;
-		height: auto;
-		object-fit: contain;
-	}
-	.lightbox-dialog__close {
-		align-self: flex-end;
-		margin-bottom: 0.75rem;
-	}
+	.lightbox-dialog__img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+	.lightbox-dialog__img[hidden] { display: none; }
+	.lightbox-dialog__status { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 1rem; pointer-events: none; }
+	.lightbox-dialog__footer { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .75rem; }
+	.lightbox-dialog__footer button:disabled { opacity: .35; cursor: default; }
+	@media (max-width: 480px) { .lightbox-dialog__footer button span { display: none; } .lightbox-dialog__img-wrap { height: 65svh; } }
 </style>
 
 <script>
@@ -231,41 +224,5 @@ const classOf = (name: string) => (/\bDV\b/.test(name) ? 'Driverless' : 'Electri
 	const initial = decodeURIComponent(location.hash.replace('#', ''));
 	if (initial && document.querySelector(`[data-car-section="${initial}"]`)) select(initial);
 
-	// Lightbox functionality
-	const dialog = document.getElementById('car-lightbox') as HTMLDialogElement | null;
-	const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
-	const lightboxCaption = document.getElementById('lightbox-caption');
-	const triggers = document.querySelectorAll<HTMLButtonElement>('.lightbox-trigger');
-	const closeTriggers = document.querySelectorAll('[data-close-lightbox]');
-
-	const openLightbox = (src: string, alt: string) => {
-		if (!dialog || !lightboxImg) return;
-		lightboxImg.src = src;
-		lightboxImg.alt = alt;
-		if (lightboxCaption) lightboxCaption.textContent = alt;
-		dialog.showModal();
-		document.documentElement.classList.add('menu-open');
-	};
-
-	const closeLightbox = () => {
-		if (!dialog) return;
-		dialog.close();
-		document.documentElement.classList.remove('menu-open');
-	};
-
-	triggers.forEach((btn) => {
-		btn.addEventListener('click', () => {
-			const src = btn.dataset.lightboxSrc;
-			const alt = btn.dataset.lightboxAlt || '';
-			if (src) openLightbox(src, alt);
-		});
-	});
-
-	closeTriggers.forEach((btn) => {
-		btn.addEventListener('click', closeLightbox);
-	});
-
-	dialog?.addEventListener('cancel', () => {
-		document.documentElement.classList.remove('menu-open');
-	});
+	import '../scripts/car-lightbox';
 </script>

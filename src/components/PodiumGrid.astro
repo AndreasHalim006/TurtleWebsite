@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+import { achievements, achievementsSource } from '../data/site';
+import { fsgPhotos } from '../data/fsg-media';
+
+const photos = [fsgPhotos.track, fsgPhotos.detail, fsgPhotos.teamwork, fsgPhotos.paddock, fsgPhotos.celebration];
+const month = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<div class="podiums mt-14">
+  <h3 class="eyebrow mb-5">Podium finishes</h3>
+  <ol class="podiums__grid" aria-label="Achievements, newest first">
+    {achievements.map((a, i) => {
+      const rank = Number.parseInt(a.place, 10);
+      const photo = photos[i % photos.length];
+      return (
+        <li class={`podiums__tile podiums__tile--${rank}`} data-reveal>
+          <Image src={photo.image} alt="" class="podiums__photo" widths={[480, 800, 1200]} sizes="(min-width: 1024px) 50vw, 100vw" loading="lazy" />
+          <div class="podiums__result">
+            <p class="podiums__place">{a.place}</p>
+            <p class="eyebrow !text-white/75"><time datetime={a.date}>{month.format(new Date(`${a.date}-01T00:00:00Z`))}</time></p>
+            <p class="h-card">{a.discipline}</p>
+            <p class="text-sm text-white/80">{a.competition}</p>
+          </div>
+          <p class="podiums__credit">FSG 2026 photo · {photo.credit}</p>
+        </li>
+      );
+    })}
+  </ol>
+  <p class="mt-6 text-sm text-muted">
+    <a href={achievementsSource} class="link-inline" target="_blank" rel="noopener noreferrer">View results on Formula Student Germany &nearr;</a>
+  </p>
+</div>
+
+<style>
+  .podiums__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; list-style: none; padding: 0; margin: 0; }
+  .podiums__tile { position: relative; isolation: isolate; overflow: hidden; min-width: 0; min-height: 17rem; display: flex; flex-direction: column; justify-content: end; background: var(--color-panel); }
+  .podiums__tile::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgb(0 0 0 / 0.1), rgb(0 0 0 / 0.75) 45%, rgb(0 0 0 / 0.95)); }
+  .podiums__photo { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+  .podiums__result { display: grid; gap: 0.65rem; padding: 1.5rem 1.5rem 1rem; }
+  .podiums__place { color: var(--color-brand-orange); font-family: var(--font-display); font-size: 2.5rem; line-height: 1; font-weight: 700; }
+  .podiums__tile--1 .podiums__place { font-size: clamp(3rem, 6vw, 5.5rem); }
+  .podiums__tile--2 .podiums__place { font-size: clamp(2.5rem, 4vw, 3.75rem); }
+  .podiums__credit { padding: 0 1.5rem 1rem; color: rgb(255 255 255 / 0.65); font-size: 0.65rem; line-height: 1.4; }
+  @media (min-width: 640px) {
+    .podiums__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .podiums__tile--1 { grid-column: span 2; min-height: 24rem; }
+    .podiums__tile--2 { min-height: 21rem; }
+  }
+  @media (min-width: 1024px) {
+    /* Sparse placement preserves chronological reading order. Never use dense packing. */
+    .podiums__grid { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: minmax(10rem, auto); }
+    .podiums__tile { grid-column: span 2; min-height: 0; }
+    .podiums__tile--1 { grid-column: span 3; grid-row: span 2; }
+    .podiums__tile--2 { grid-row: span 2; }
+    .podiums__tile--3 { grid-row: span 1; }
+    .podiums__tile--3 .podiums__result { padding-top: 2rem; }
+  }
+</style>

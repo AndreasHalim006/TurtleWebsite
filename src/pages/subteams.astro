@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import { Image } from 'astro:assets';
 import { subdivisions, joinLink } from '../data/site';
+import { subteamDetails } from '../data/subteam-details';
+import { fsgSubteamPhotos } from '../data/fsg-media';
 
 const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
@@ -34,39 +36,55 @@ const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
       {subdivisions.map((sub, i) => (
         <article
           id={sub.id}
-          class="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-14 border-b border-line pb-16 md:pb-24 last:border-b-0"
+          class="grid scroll-mt-36 gap-8 lg:grid-cols-12 lg:items-start lg:gap-14 border-b border-line pb-16 md:pb-24 last:border-b-0"
           data-reveal
         >
           <div class={`lg:col-span-6 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+            <figure>
             <div class="aspect-[16/10] overflow-hidden bg-panel-2 border border-line">
               <Image
-                src={sub.image}
-                alt={`${sub.name} diagram and CAD`}
-                class="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-105"
+                src={fsgSubteamPhotos[i].image}
+                alt={fsgSubteamPhotos[i].alt}
+                class="h-full w-full object-cover"
                 widths={[500, 800, 1200]}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 loading="lazy"
               />
             </div>
+            <figcaption class="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-muted">
+              <span>Formula Student Germany 2026</span>
+              <a href={fsgSubteamPhotos[i].source} target="_blank" rel="noopener noreferrer" class="link-inline">{fsgSubteamPhotos[i].credit}</a>
+            </figcaption>
+            </figure>
           </div>
 
           <div class={`flex flex-col gap-4 lg:col-span-6 ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
             <p class="eyebrow">{sub.category}</p>
             <h2 class="h-section !text-[clamp(1.75rem,3vw,2.5rem)]">{sub.name}</h2>
             <p class="lead !max-w-none text-white/90">
-              {sub.description}
+              {subteamDetails[sub.id].introduction}
             </p>
 
-            <div class="mt-4">
-              <p class="text-xs font-bold uppercase tracking-wider text-muted mb-3">Key Focus Areas & Domains</p>
-              <ul class="flex flex-wrap gap-2">
-                {sub.domains.map((dom) => (
-                  <li class="border border-line bg-panel px-3 py-1.5 text-xs text-muted font-medium">
-                    {dom}
-                  </li>
+            <details class="subteam-details mt-3 border-y border-line">
+              <summary class="flex min-h-14 cursor-pointer items-center justify-between gap-4 py-4 font-bold text-white">
+                <span>Explore {sub.name}</span>
+                <span class="subteam-details__icon text-2xl text-brand-orange" aria-hidden="true">+</span>
+              </summary>
+              <div class="flex flex-col gap-7 pb-7 pt-2">
+                {subteamDetails[sub.id].sections.map((section) => (
+                  <section>
+                    <h3 class="h-card text-white">{section.title}</h3>
+                    <p class="mt-3 leading-relaxed text-white/75">{section.text}</p>
+                    {section.activities && (
+                      <ul class="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted marker:text-brand-orange">
+                        {section.activities.map((activity) => <li>{activity}</li>)}
+                      </ul>
+                    )}
+                  </section>
                 ))}
-              </ul>
-            </div>
+                <a href={href(joinLink.href)} class="link-inline self-start text-brand-orange">Join {sub.name} &rarr;</a>
+              </div>
+            </details>
           </div>
         </article>
       ))}
@@ -89,3 +107,21 @@ const href = (path: string) => `${baseUrl}${path.replace(/^\//, '')}`;
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .subteam-details summary { list-style: none; }
+  .subteam-details summary::-webkit-details-marker { display: none; }
+  .subteam-details[open] .subteam-details__icon { transform: rotate(45deg); }
+  .subteam-details summary:hover { color: var(--color-brand-orange); }
+  @media (prefers-reduced-motion: no-preference) {
+    .subteam-details__icon { transition: transform 180ms ease; }
+  }
+</style>
+
+<script>
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  document.querySelectorAll<HTMLDetailsElement>('.subteam-details').forEach((details) => {
+    details.addEventListener('toggle', () => ScrollTrigger.refresh());
+  });
+</script>

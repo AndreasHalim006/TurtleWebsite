@@ -116,8 +116,8 @@ export const subdivisions = [
     name: 'Mechanical & Chassis',
     image: mechanicalChassis,
     category: 'Mechanical Engineering',
-    description: 'Design, analyze, and manufacture the core physical structures, composite monocoque, and drivetrain of the race car.',
-    domains: ['Carbon Fiber Monocoque', 'FEA Structural Analysis', 'Impact Attenuator & Crashbox', 'Ergonomics & Cockpit', 'Composite Manufacturing'],
+    description: 'Design, analyze, and manufacture the aluminium monocoque, composite components, and mechanical drivetrain of the race car.',
+    domains: ['Aluminium Monocoque', 'FEA Structural Analysis', 'Impact Attenuator & Crashbox', 'Ergonomics & Cockpit', 'Composite Manufacturing'],
   },
   {
     id: 'aerodynamics',
