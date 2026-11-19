@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@import "@fontsource-variable/syne";
-@import "@fontsource-variable/host-grotesk";
+@import "@fontsource/sansation/400.css";
+@import "@fontsource/sansation/700.css";
 
 @theme {
   /* Palette carried over from the previous Aristurtle site. */
@@ -12,9 +12,9 @@
   --color-foreground: #f6f7fb;
   --color-muted: #a1a1aa;
 
-  /* Typography: same pairing as the reference (display + grotesk body). */
-  --font-sans: "Host Grotesk Variable", "Host Grotesk", sans-serif;
-  --font-display: "Syne Variable", "Syne", sans-serif;
+  /* Sansation throughout: regular body/UI and bold display headings. */
+  --font-sans: "Sansation", sans-serif;
+  --font-display: "Sansation", sans-serif;
 }
 
 :root {

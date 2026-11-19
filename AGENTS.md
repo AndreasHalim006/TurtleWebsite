@@ -5,7 +5,7 @@ This file serves as the definitive source of truth for workflow, design, and tec
 
 ## 1. Project Overview & Identity
 - **Goal:** Official website for **ARISTURTLE**, the Formula Student racing team from the Aristotle University of Thessaloniki.
-- **Aesthetics:** The site follows the layout, section structure and typography of https://www.revolve.no/ (used with permission): full-bleed photo sections with dark fades, uppercase display headings, thin-bordered translucent buttons. Only the old Aristurtle color palette and content were kept.
+- **Aesthetics:** The site follows the layout and section structure of https://www.revolve.no/ (used with permission): full-bleed photo sections with dark fades, uppercase display headings, thin-bordered translucent buttons. Aristurtle uses its own typography pairing, color palette, and content.
 - **UI Bias:** Prefer strong brand presence, one clear job per section, restrained motion, and real imagery. Avoid floating badges and dashboard-like clutter.
 
 ## 2. Core Technologies
@@ -25,7 +25,7 @@ This file serves as the definitive source of truth for workflow, design, and tec
 ## 4. Design System & Development Conventions
 
 - **Colors:** Palette carried over from the previous site: blacks/dark grays `#0A0A0A`, `#141414` and a single accent `--color-brand-orange` (currently `#9FFF10`; change it in `src/styles/global.css`).
-- **Typography:** **Syne** (display headings, uppercase, bold) and **Host Grotesk** (body, UI), both self-hosted via `@fontsource-variable`. Same pairing as the reference.
+- **Typography:** **Sansation** throughout, with regular body/UI and bold uppercase display headings, self-hosted via `@fontsource/sansation` (400 and 700). This replaces the Barlow trial and distinguishes Aristurtle from the reference.
 - **Spacing:** `.container-site` (`max-width: 1440px`) with `5vw` gutters.
 - **Motion:** Restrained GSAP/ScrollTrigger (reveal on scroll, pinned horizontal car timeline). Always honor `prefers-reduced-motion`.
 - **Navigation:** Fixed bar (menu button left, logo center, Join Us right); transparent over the hero, solid after scrolling. Menu overlay closes with Esc and traps focus.
@@ -53,11 +53,11 @@ git push origin v2  # Push to v2 branch (active development/deployment branch)
 
 ## 7. Verification Protocol
 
-Do NOT claim completion without verification. Minimum verification for UI work:
-1. `pnpm run build`
-2. Browser-level inspection (check for console errors).
+Do NOT claim verification that was not performed. For UI work, run `pnpm run build` and relevant local checks.
 
-**Browser Verification Order:**
-1. Playwright MCP (navigation, screenshots, viewports, flows)
-2. Chrome DevTools MCP (computed styles, layout numbers, console)
-3. If neither MCP server is available, state explicitly that browser self-verification was not possible and report only what was verified locally. Never fabricate a pass/fail report.
+**Browser testing (user preference, 2026-11-19):**
+- The user performs browser testing by default. Do not launch browser testing, screenshots, or browser console checks unless the user explicitly requests or authorizes them.
+- Tell the user what to check in the browser when handing off UI changes.
+- When agent browser testing would be particularly valuable, explain briefly why and wait for the user's authorization before doing it. Continue independent implementation and local checks.
+- Report local verification separately from browser verification; clearly state when browser testing is left to the user.
+- When authorized, prefer Playwright MCP, then Chrome DevTools MCP. Never fabricate a pass/fail report.
