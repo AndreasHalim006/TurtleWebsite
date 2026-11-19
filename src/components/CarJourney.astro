@@ -1,79 +1,65 @@
 ---
 import { Image } from 'astro:assets';
-import { carsChronological } from '../data/cars';
+import { cars } from '../data/cars';
+const [latest, ...archive] = cars;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<section data-journey class="journey border-t border-line bg-void section-pad" aria-labelledby="journey-title">
-  <div class="container-site journey__head">
-    <div>
-      <p class="eyebrow mb-4">Our evolution</p>
-      <h2 id="journey-title" class="h-section" data-reveal>one car at a time</h2>
-      <p class="lead mt-4" data-reveal>Every season a new car. Swipe through our journey.</p>
+<section class="journey border-t border-line bg-void section-pad" aria-labelledby="journey-title">
+  <div class="container-site">
+    <div class="journey__head">
+      <div>
+        <p class="eyebrow mb-4">Our evolution</p>
+        <h2 id="journey-title" class="h-section" data-reveal>one car at a time</h2>
+        <p class="lead mt-4" data-reveal>Every car a new chapter. Every season a step forward.</p>
+      </div>
+      <a href={`${base}/cars`} class="btn self-start">Explore Our Cars &rarr;</a>
     </div>
-    <a href={`${base}/cars`} class="btn self-start">Explore Our Cars &rarr;</a>
-  </div>
 
-  <div class="journey__viewport" tabindex="0" role="region" aria-label="Car photos; swipe or use the arrow keys">
-    <ol class="journey__track">
-      {carsChronological.map((car, index) => (
-        <li class="journey__panel" id={`journey-${car.id}`} data-journey-slide aria-label={`${index + 1} of ${carsChronological.length}: ${car.name}, ${car.years}`}>
-          <a href={`${base}/cars#${car.id}`} class="journey__card" draggable="false">
-            {car.image && <Image src={car.image} alt={`${car.name} race car`} class="journey__photo" widths={[600, 1000, 1600]} sizes="(min-width: 1024px) 75vw, 84vw" loading="lazy" draggable="false" />}
-            <div class="journey__caption">
-              <p class="eyebrow">{car.years}</p>
-              <h3>{car.name}</h3>
-              <span class="journey__link">Discover the car &nearr;</span>
-            </div>
-          </a>
-        </li>
-      ))}
-    </ol>
-  </div>
+    <a href={`${base}/cars#${latest.id}`} class="journey__feature" aria-label={`Explore ${latest.name}, ${latest.years}`}>
+      {latest.image && <Image src={latest.image} alt={`${latest.name} race car`} class="journey__photo" widths={[600, 1000, 1600]} sizes="90vw" loading="lazy" />}
+      <div class="journey__caption">
+        <p class="eyebrow">{latest.years}</p>
+        <h3>{latest.name}</h3>
+        <span class="journey__discover">Discover the car &nearr;</span>
+      </div>
+    </a>
 
-  <div class="container-site journey__footer">
-    <div class="journey__years" role="group" aria-label="Jump to a car year">
-      {carsChronological.map((car, index) => (
-        <button type="button" class="journey__year" data-journey-year={index} aria-controls={`journey-${car.id}`} aria-current={index === 0 ? 'true' : undefined} aria-label={`${car.years}: ${car.name}`}>
-          <span>{car.startYear}</span><span class="journey__tick" aria-hidden="true"></span>
-        </button>
-      ))}
-    </div>
-    <div class="journey__controls">
-      <p class="sr-only" data-journey-status aria-live="polite" aria-atomic="true"></p>
-      <button type="button" id="journey-prev" class="btn" aria-label="Previous car" disabled>&larr;</button>
-      <button type="button" id="journey-next" class="btn" aria-label="Next car">&rarr;</button>
+    <div class="journey__archive mt-10">
+      <h3 class="eyebrow mb-5">The cars that came before</h3>
+      <ol class="journey__names" aria-label="Previous cars, newest first">
+        {archive.map((car, index) => (
+          <li>
+            <a href={`${base}/cars#${car.id}`}>
+              <span class="journey__number" aria-hidden="true">{String(archive.length - index).padStart(2, '0')}</span>
+              <span class="journey__name">{car.name}</span>
+              <span class="journey__year">{car.years}</span>
+              <span class="journey__arrow" aria-hidden="true">&nearr;</span>
+            </a>
+          </li>
+        ))}
+      </ol>
     </div>
   </div>
 </section>
 
 <style>
   .journey__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1.5rem; margin-bottom: 2.5rem; }
-  .journey__viewport { overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline-start: var(--gutter); padding-inline: var(--gutter); scrollbar-width: none; cursor: grab; }
-  .journey__viewport::-webkit-scrollbar { display: none; }
-  .journey__track { display: flex; gap: 1rem; list-style: none; padding: 0; margin: 0; }
-  .journey__panel { flex: 0 0 84vw; min-width: 0; scroll-snap-align: start; }
-  .journey__panel:last-child { margin-right: var(--gutter); }
-  .journey__card { position: relative; isolation: isolate; display: flex; align-items: end; min-height: 22rem; aspect-ratio: 4/3; padding: clamp(1.5rem, 4vw, 3rem); overflow: hidden; background: var(--color-panel); color: white; text-decoration: none; }
-  .journey__card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 30%, rgb(0 0 0 / 0.85)); }
+  .journey__feature { position: relative; isolation: isolate; display: flex; align-items: end; min-height: 25rem; aspect-ratio: 16/9; padding: clamp(1.5rem, 4vw, 4rem); overflow: hidden; background: var(--color-panel); color: white; text-decoration: none; }
+  .journey__feature::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 25%, rgb(0 0 0 / 0.9)); }
   .journey__photo { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
-  .journey__card:hover .journey__photo { transform: scale(1.025); }
-  .journey__caption h3 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 700; line-height: 1.1; margin-top: 0.5rem; overflow-wrap: anywhere; }
-  .journey__link { display: block; margin-top: 1.25rem; font-size: 0.875rem; color: rgb(255 255 255 / 0.8); }
-  .journey__footer { display: flex; align-items: center; gap: 1.5rem; margin-top: 1.5rem; }
-  .journey__years { flex: 1; min-width: 0; display: flex; overflow-x: auto; scrollbar-width: thin; }
-  .journey__year { flex: 1 0 3.5rem; min-height: 3rem; padding: 0.5rem 0; border: 0; background: none; color: var(--color-muted); font: inherit; font-size: 0.75rem; cursor: pointer; }
-  .journey__tick { display: block; height: 2px; margin-top: 0.7rem; background: var(--color-line); transition: background 0.2s ease; }
-  .journey__year[aria-current='true'], .journey__year:hover { color: var(--color-brand-orange); }
-  .journey__year[aria-current='true'] .journey__tick { background: var(--color-brand-orange); }
-  .journey__controls { flex: none; display: flex; gap: 0.5rem; }
-  .journey__controls .btn { min-width: 2.75rem; padding-inline: 0.75rem; }
-  .journey__controls .btn:disabled { opacity: 0.35; cursor: default; }
-  .journey__viewport.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
-  @media (min-width: 1024px) { .journey__panel { flex-basis: 75vw; } .journey__card { aspect-ratio: 16/9; } }
-  @media (prefers-reduced-motion: reduce) { .journey__photo, .journey__tick { transition: none; } }
+  .journey__feature:hover .journey__photo { transform: scale(1.025); }
+  .journey__caption h3 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2rem, 6vw, 5rem); font-weight: 700; line-height: 1.1; margin-top: 0.5rem; overflow-wrap: anywhere; }
+  .journey__discover { display: block; margin-top: 1.25rem; font-size: 0.875rem; color: rgb(255 255 255 / 0.8); }
+  .journey__names { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 3rem; list-style: none; padding: 0; margin: 0; }
+  .journey__names a { display: grid; grid-template-columns: 1.5rem minmax(0, 1fr) auto; align-items: center; gap: 1rem; min-height: 6rem; padding-block: 1.25rem; border-top: 1px solid var(--color-line); color: var(--color-foreground); text-decoration: none; }
+  .journey__number { color: var(--color-muted); font-size: 0.65rem; }
+  .journey__name { font-family: var(--font-display); font-size: clamp(1.25rem, 2.3vw, 2rem); font-weight: 700; overflow-wrap: anywhere; transition: color 0.2s ease; }
+  .journey__year { color: var(--color-muted); font-size: 0.75rem; grid-column: 2; }
+  .journey__arrow { grid-column: 3; grid-row: 1 / span 2; color: var(--color-brand-orange); font-size: 1.5rem; transition: transform 0.2s ease; }
+  .journey__names a:hover .journey__name, .journey__names a:focus-visible .journey__name { color: var(--color-brand-orange); }
+  .journey__names a:hover .journey__arrow { transform: translate(2px, -2px); }
+  @media (min-width: 768px) { .journey__names { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 639px) { .journey__feature { aspect-ratio: 4/5; min-height: 22rem; } }
+  @media (prefers-reduced-motion: reduce) { .journey__photo, .journey__name, .journey__arrow { transition: none; } }
 </style>
-
-<script>
-  import '../scripts/journey';
-</script>

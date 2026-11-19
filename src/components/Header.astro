@@ -39,9 +39,11 @@ const isCurrent = (path: string) => path === "/"
         z-index: 60;
         background: linear-gradient(180deg, rgba(10,10,10,.9), rgba(10,10,10,.35));
         border-bottom: 1px solid rgba(255,255,255,.12);
-        transition: background-color .3s ease, border-color .3s ease;
+        transform: translateY(0);
+        transition: transform .25s ease, background-color .3s ease, border-color .3s ease;
     }
     .site-header[data-solid="true"] { background: var(--color-void); border-bottom-color: var(--color-line); }
+    .site-header[data-hidden="true"]:not(:focus-within) { transform: translateY(-100%); }
     .site-header__bar { display: flex; flex-direction: column; align-items: center; min-width: 0; padding-top: 1rem; }
     .site-header__logo { flex: 0 0 auto; }
     .site-header__logo img { display: block; width: auto; height: 28px; }
