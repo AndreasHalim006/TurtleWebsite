@@ -4,7 +4,7 @@ import { Image } from "astro:assets";
 import heroPhoto from "../images/IMG_8879_1.jpeg";
 import teamPhoto from "../images/Aristurtle_photo_2-1_2.jpg";
 import joinPhoto from "../images/IMG_8908.jpg";
-import { hero, worldClass, achievements, departments } from "../data/site";
+import { hero, worldClass, achievements, achievementsSource, departments } from "../data/site";
 import { carsChronological } from "../data/cars";
 
 const baseUrl = import.meta.env.BASE_URL.endsWith("/")
@@ -88,12 +88,15 @@ const href = (path: string) => `${baseUrl}${path.replace(/^\//, "")}`;
                         <p class="font-[family-name:var(--font-display)] text-3xl font-bold text-brand-orange">
                             {a.place}
                         </p>
-                        <p class="eyebrow !text-muted">{a.year}</p>
+                        <p class="eyebrow !text-muted"><time datetime={a.date}>{new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${a.date}-01T00:00:00Z`))}</time></p>
                         <p class="h-card">{a.discipline}</p>
                         <p class="text-muted">{a.competition}</p>
                     </li>
                 ))}
             </ul>
+            <p class="mt-6 text-sm text-muted">
+                <a href={achievementsSource} class="link-inline" target="_blank" rel="noopener noreferrer">View results on Formula Student Germany &nearr;</a>
+            </p>
         </div>
     </section>
 

@@ -68,13 +68,23 @@ export const worldClass = {
     'Aristurtle is the Aristotle University of Thessaloniki Formula Student team. A team of 00 students from 00 majors, we have been pushing for perfection since 2013, when we built the first electric race car in Northern Greece.',
 };
 
-// TODO(content): replace all four with real results (place, year, discipline, competition).
+// Podiums transcribed from the FSG team results table (tid/738).
+export const achievementsSource = 'https://www.formulastudent.de/teams/fse/details/tid/738';
 export const achievements = [
-  { place: '1st Place', year: '2021', discipline: 'Business Plan Presentation', competition: 'Formula Student Austria' },
-  { place: '3rd Place', year: '2021', discipline: 'Skidpad (Driverless)', competition: 'Formula Student East' },
-  { place: '3rd Place', year: '2019', discipline: 'Overall Electric Class', competition: 'Formula SAE Italy' },
-  { place: '2nd Place', year: '2015', discipline: 'Overall Class 1C', competition: 'Formula SAE Italy' },
-];
+  { place: '2nd Place', date: '2025-08', discipline: 'Engineering Design', competition: 'Formula Student Greece' },
+  { place: '2nd Place', date: '2025-08', discipline: 'Autocross', competition: 'Formula Student Greece' },
+  { place: '3rd Place', date: '2024-07', discipline: 'Business Plan Presentation', competition: 'Formula Student Switzerland' },
+  { place: '3rd Place', date: '2024-07', discipline: 'Skidpad', competition: 'Formula Student Switzerland' },
+  { place: '3rd Place', date: '2022-07', discipline: 'Endurance', competition: 'Formula Student Austria' },
+  { place: '1st Place', date: '2021-07', discipline: 'Business Plan Presentation', competition: 'Formula Student Austria' },
+  { place: '3rd Place', date: '2019-07', discipline: 'Overall Electric Class', competition: 'Formula SAE Italy' },
+  { place: '1st Place', date: '2019-07', discipline: 'Business Plan Presentation', competition: 'Formula SAE Italy' },
+  { place: '3rd Place', date: '2019-07', discipline: 'Cost & Manufacturing', competition: 'Formula SAE Italy' },
+  { place: '3rd Place', date: '2019-07', discipline: 'Endurance', competition: 'Formula SAE Italy' },
+  { place: '2nd Place', date: '2019-07', discipline: 'Efficiency', competition: 'Formula SAE Italy' },
+  { place: '1st Place', date: '2018-07', discipline: 'Business Plan Presentation', competition: 'Formula SAE Italy' },
+  { place: '3rd Place', date: '2017-07', discipline: 'Business Plan Presentation', competition: 'Formula SAE Italy' },
+].sort((a, b) => b.date.localeCompare(a.date));
 
 export const departments = [
   {

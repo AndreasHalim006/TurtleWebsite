@@ -7,7 +7,6 @@ Search the code for `TODO(content)` to jump to each one.
 |---|---|---|
 | Home hero | Final tagline and subtitle | `src/data/site.ts` (`hero`) |
 | Home "world-class team" | Number of students, number of majors | `src/data/site.ts` (`worldClass`) |
-| Home achievements (4 cards) | Real place / year / discipline / competition | `src/data/site.ts` (`achievements`) |
 | Footer | Legal entity / VAT number | `src/data/site.ts` (`contact.legal`) |
 | Footer "Events" | Real event pages (career day, unveiling) | `src/data/site.ts` (`footerColumns.events`) |
 | Footer "Media" | A real wallpapers page | `src/data/site.ts` (`footerColumns.media`) |
